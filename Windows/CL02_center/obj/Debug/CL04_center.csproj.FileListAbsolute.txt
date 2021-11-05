@@ -1,0 +1,12 @@
+C:\code\C\CL04_central\CL04_center\CL04_center\bin\Debug\CL04_center.exe.config
+C:\code\C\CL04_central\CL04_center\CL04_center\bin\Debug\CL04_center.exe
+C:\code\C\CL04_central\CL04_center\CL04_center\bin\Debug\CL04_center.pdb
+C:\code\C\CL04_central\CL04_center\CL04_center\bin\Debug\log4net.dll
+C:\code\C\CL04_central\CL04_center\CL04_center\bin\Debug\log4net.xml
+C:\code\C\CL04_central\CL04_center\CL04_center\obj\Debug\CL04_center.csprojAssemblyReference.cache
+C:\code\C\CL04_central\CL04_center\CL04_center\obj\Debug\CL04_center.CL04_center_MainInterface.resources
+C:\code\C\CL04_central\CL04_center\CL04_center\obj\Debug\CL04_center.Properties.Resources.resources
+C:\code\C\CL04_central\CL04_center\CL04_center\obj\Debug\CL04_center.csproj.GenerateResource.cache
+C:\code\C\CL04_central\CL04_center\CL04_center\obj\Debug\CL04_center.csproj.CopyComplete
+C:\code\C\CL04_central\CL04_center\CL04_center\obj\Debug\CL04_center.exe
+C:\code\C\CL04_central\CL04_center\CL04_center\obj\Debug\CL04_center.pdb
