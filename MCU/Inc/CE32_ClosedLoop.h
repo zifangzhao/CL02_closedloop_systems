@@ -14,7 +14,7 @@
 #define SC_STATE_TRAINING 	0x00001000U
 #define SC_STATE_TRAINED  	0x00002000U
 #define SC_STATE_WAITING  	0x00004000U
-
+#define SC_STATE_EXTCTRL		0x00008000U
 typedef struct{
 	long Trig_delay_this;
 	long Trig_delay;
@@ -31,6 +31,13 @@ typedef struct{
 	long STIM_CNT;
 	long count;
 }CE32_StimControl;
+
+typedef struct{
+	uint32_t min_delay; //in ms
+	uint32_t max_delay; //in ms
+	uint32_t delay_cnt;
+	uint8_t state;
+}CE32_CL_RndTrig;
 
 void DF_StimControl_init(CE32_StimControl* sc,unsigned int fs, long train_start, long train_period, long trig_duration, long trig_interval, long trig_delay, long trig_rndDelay, float trig_gain);
 void DF_StimControl_Setting(CE32_StimControl* sc,unsigned int fs, long train_start, long train_period, long trig_duration, long trig_interval, long trig_delay, long trig_rndDelay, float trig_gain);
@@ -49,19 +56,15 @@ typedef struct
 	CE32_MA_Filter *MA_fil[CE32_CL_UNIT_NUM];
 	CE32_StimControl *sc[CE32_CL_UNIT_NUM];
 	CE32_dspParam*    sysDSP[CE32_CL_UNIT_NUM];
+	CE32_CL_RndTrig rndTrig;
 }CE32_CL;
 
 void CE32_CL_Init(CE32_CL* cl, CE32_systemParam* sysParam, CE32_dspParam* sysDSP, CE32_Filter* main_Fil, CE32_MA_Filter* MA_fil, CE32_StimControl* sc); //Should be calling after the filter and stim control initialized
 void CE32_CL_Start(CE32_CL* cl);
 void CE32_CL_Reset(CE32_CL* cl,int id);
-void CE32_CL_Disabled(void* cl, float input1,float input2);
-void CE32_CL_Single(void* cl, float input1,float input2);
-void CE32_CL_Double(void* cl, float input1,float input2);
-void CE32_CL_Cascade(void* cl, float input1,float input2);
-void CE32_CL_Gated(void* cl, float input1,float input2);
 
 void CE32_CL_Set_TrigLvl(void* cl,int id,float lvl);
-
+void CE32_CL_Set_RndTrig(CE32_CL* cl,uint32_t min_delay,uint32_t max_delay);
 void CE32_CL_TrigStart(void* vcl,int id);
 void CE32_CL_TrigStop(void* vcl,int id);
 

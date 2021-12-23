@@ -40,6 +40,11 @@
             this.buttonStopCollection = new System.Windows.Forms.Button();
             this.labelPort = new System.Windows.Forms.Label();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.label17 = new System.Windows.Forms.Label();
+            this.numericUpDown_randTrigMax = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_randTrigMin = new System.Windows.Forms.NumericUpDown();
+            this.label9 = new System.Windows.Forms.Label();
+            this.checkBox_clmode = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.label_AbsThresh = new System.Windows.Forms.Label();
             this.button_forceTrig = new System.Windows.Forms.Button();
@@ -98,6 +103,8 @@
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_randTrigMax)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_randTrigMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgCyc)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThresh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgDly)).BeginInit();
@@ -128,7 +135,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel2_Paint);
             this.splitContainer1.Size = new System.Drawing.Size(1186, 795);
-            this.splitContainer1.SplitterDistance = 513;
+            this.splitContainer1.SplitterDistance = 512;
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
             // 
@@ -138,7 +145,7 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1186, 513);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1186, 512);
             this.flowLayoutPanel1.TabIndex = 0;
             this.flowLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.flowLayoutPanel1_Paint);
             // 
@@ -163,9 +170,10 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer2.Size = new System.Drawing.Size(1186, 278);
-            this.splitContainer2.SplitterDistance = 268;
+            this.splitContainer2.Size = new System.Drawing.Size(1186, 279);
+            this.splitContainer2.SplitterDistance = 244;
             this.splitContainer2.TabIndex = 11;
+            this.splitContainer2.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer2_SplitterMoved);
             // 
             // label_OutputFile
             // 
@@ -250,6 +258,11 @@
             // 
             // splitContainer3.Panel1
             // 
+            this.splitContainer3.Panel1.Controls.Add(this.label17);
+            this.splitContainer3.Panel1.Controls.Add(this.numericUpDown_randTrigMax);
+            this.splitContainer3.Panel1.Controls.Add(this.numericUpDown_randTrigMin);
+            this.splitContainer3.Panel1.Controls.Add(this.label9);
+            this.splitContainer3.Panel1.Controls.Add(this.checkBox_clmode);
             this.splitContainer3.Panel1.Controls.Add(this.checkBox1);
             this.splitContainer3.Panel1.Controls.Add(this.label_AbsThresh);
             this.splitContainer3.Panel1.Controls.Add(this.button_forceTrig);
@@ -296,9 +309,84 @@
             this.splitContainer3.Panel2.Controls.Add(this.comboBoxDisplayGain);
             this.splitContainer3.Panel2.Controls.Add(this.labelDisplayLen);
             this.splitContainer3.Panel2.Controls.Add(this.comboBoxDisplayLen);
-            this.splitContainer3.Size = new System.Drawing.Size(914, 278);
-            this.splitContainer3.SplitterDistance = 574;
+            this.splitContainer3.Size = new System.Drawing.Size(938, 279);
+            this.splitContainer3.SplitterDistance = 642;
             this.splitContainer3.TabIndex = 51;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(496, 199);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(10, 13);
+            this.label17.TabIndex = 64;
+            this.label17.Text = "-";
+            // 
+            // numericUpDown_randTrigMax
+            // 
+            this.numericUpDown_randTrigMax.DecimalPlaces = 1;
+            this.numericUpDown_randTrigMax.Location = new System.Drawing.Point(511, 197);
+            this.numericUpDown_randTrigMax.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.numericUpDown_randTrigMax.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown_randTrigMax.Name = "numericUpDown_randTrigMax";
+            this.numericUpDown_randTrigMax.Size = new System.Drawing.Size(84, 20);
+            this.numericUpDown_randTrigMax.TabIndex = 63;
+            this.numericUpDown_randTrigMax.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numericUpDown_randTrigMax.Value = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.numericUpDown_randTrigMax.ValueChanged += new System.EventHandler(this.numericUpDown_randTrigMax_ValueChanged);
+            // 
+            // numericUpDown_randTrigMin
+            // 
+            this.numericUpDown_randTrigMin.DecimalPlaces = 1;
+            this.numericUpDown_randTrigMin.Location = new System.Drawing.Point(400, 197);
+            this.numericUpDown_randTrigMin.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.numericUpDown_randTrigMin.Name = "numericUpDown_randTrigMin";
+            this.numericUpDown_randTrigMin.Size = new System.Drawing.Size(87, 20);
+            this.numericUpDown_randTrigMin.TabIndex = 62;
+            this.numericUpDown_randTrigMin.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numericUpDown_randTrigMin.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.numericUpDown_randTrigMin.ValueChanged += new System.EventHandler(this.numericUpDown_randTrigMin_ValueChanged);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(254, 198);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(137, 13);
+            this.label9.TabIndex = 61;
+            this.label9.Text = "Random Trigger Range(ms)";
+            this.label9.Click += new System.EventHandler(this.label9_Click);
+            // 
+            // checkBox_clmode
+            // 
+            this.checkBox_clmode.AutoSize = true;
+            this.checkBox_clmode.Location = new System.Drawing.Point(309, 10);
+            this.checkBox_clmode.Name = "checkBox_clmode";
+            this.checkBox_clmode.Size = new System.Drawing.Size(132, 17);
+            this.checkBox_clmode.TabIndex = 60;
+            this.checkBox_clmode.Text = "Random Trigger Mode";
+            this.checkBox_clmode.UseVisualStyleBackColor = true;
+            this.checkBox_clmode.CheckedChanged += new System.EventHandler(this.checkBox_clmode_CheckedChanged);
             // 
             // checkBox1
             // 
@@ -314,7 +402,7 @@
             // label_AbsThresh
             // 
             this.label_AbsThresh.AutoSize = true;
-            this.label_AbsThresh.Location = new System.Drawing.Point(353, 136);
+            this.label_AbsThresh.Location = new System.Drawing.Point(344, 114);
             this.label_AbsThresh.Name = "label_AbsThresh";
             this.label_AbsThresh.Size = new System.Drawing.Size(0, 13);
             this.label_AbsThresh.TabIndex = 58;
@@ -365,7 +453,7 @@
             // labelCustomFilter
             // 
             this.labelCustomFilter.AutoSize = true;
-            this.labelCustomFilter.Location = new System.Drawing.Point(344, 67);
+            this.labelCustomFilter.Location = new System.Drawing.Point(344, 59);
             this.labelCustomFilter.Name = "labelCustomFilter";
             this.labelCustomFilter.Size = new System.Drawing.Size(0, 13);
             this.labelCustomFilter.TabIndex = 54;
@@ -373,7 +461,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(253, 67);
+            this.label6.Location = new System.Drawing.Point(254, 59);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(67, 13);
             this.label6.TabIndex = 53;
@@ -387,7 +475,7 @@
             0,
             0,
             65536});
-            this.numericUpDownThresh.Location = new System.Drawing.Point(423, 133);
+            this.numericUpDownThresh.Location = new System.Drawing.Point(430, 110);
             this.numericUpDownThresh.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -412,7 +500,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(254, 136);
+            this.label5.Location = new System.Drawing.Point(251, 114);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(90, 13);
             this.label5.TabIndex = 51;
@@ -451,7 +539,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(253, 201);
+            this.label4.Location = new System.Drawing.Point(253, 166);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(44, 13);
             this.label4.TabIndex = 49;
@@ -478,7 +566,7 @@
             this.comboBox_CL_Arb.Items.AddRange(new object[] {
             "Direct(x=CH1)",
             "Differential(x=CH1-CH2)"});
-            this.comboBox_CL_Arb.Location = new System.Drawing.Point(343, 195);
+            this.comboBox_CL_Arb.Location = new System.Drawing.Point(343, 161);
             this.comboBox_CL_Arb.Name = "comboBox_CL_Arb";
             this.comboBox_CL_Arb.Size = new System.Drawing.Size(146, 21);
             this.comboBox_CL_Arb.TabIndex = 48;
@@ -496,7 +584,7 @@
             // 
             // numericUpDown_CL_MAOrd
             // 
-            this.numericUpDown_CL_MAOrd.Location = new System.Drawing.Point(343, 101);
+            this.numericUpDown_CL_MAOrd.Location = new System.Drawing.Point(347, 83);
             this.numericUpDown_CL_MAOrd.Maximum = new decimal(new int[] {
             512,
             0,
@@ -534,7 +622,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(253, 103);
+            this.label16.Location = new System.Drawing.Point(257, 85);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(52, 13);
             this.label16.TabIndex = 46;
@@ -551,9 +639,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(343, 4);
+            this.button1.Location = new System.Drawing.Point(511, 30);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(155, 26);
+            this.button1.Size = new System.Drawing.Size(115, 26);
             this.button1.TabIndex = 45;
             this.button1.Text = "Load Custom Filter";
             this.button1.UseVisualStyleBackColor = true;
@@ -594,7 +682,7 @@
             0,
             0,
             65536});
-            this.numericUpDown_TgGain.Location = new System.Drawing.Point(343, 166);
+            this.numericUpDown_TgGain.Location = new System.Drawing.Point(343, 132);
             this.numericUpDown_TgGain.Minimum = new decimal(new int[] {
             1,
             0,
@@ -633,7 +721,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(252, 170);
+            this.label14.Location = new System.Drawing.Point(252, 136);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(65, 13);
             this.label14.TabIndex = 29;
@@ -657,7 +745,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(436, 168);
+            this.label15.Location = new System.Drawing.Point(436, 134);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(31, 13);
             this.label15.TabIndex = 30;
@@ -739,7 +827,7 @@
             0,
             0,
             65536});
-            this.numericUpDown_DACgain.Location = new System.Drawing.Point(165, 191);
+            this.numericUpDown_DACgain.Location = new System.Drawing.Point(136, 193);
             this.numericUpDown_DACgain.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -786,7 +874,7 @@
             this.comboBoxDSPGain.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDSPGain.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.comboBoxDSPGain.FormattingEnabled = true;
-            this.comboBoxDSPGain.Location = new System.Drawing.Point(165, 136);
+            this.comboBoxDSPGain.Location = new System.Drawing.Point(136, 138);
             this.comboBoxDSPGain.Name = "comboBoxDSPGain";
             this.comboBoxDSPGain.Size = new System.Drawing.Size(121, 29);
             this.comboBoxDSPGain.TabIndex = 14;
@@ -818,7 +906,7 @@
             this.comboBoxDisplayGain.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDisplayGain.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.comboBoxDisplayGain.FormattingEnabled = true;
-            this.comboBoxDisplayGain.Location = new System.Drawing.Point(167, 87);
+            this.comboBoxDisplayGain.Location = new System.Drawing.Point(137, 89);
             this.comboBoxDisplayGain.Name = "comboBoxDisplayGain";
             this.comboBoxDisplayGain.Size = new System.Drawing.Size(121, 29);
             this.comboBoxDisplayGain.TabIndex = 12;
@@ -838,7 +926,7 @@
             this.comboBoxDisplayLen.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDisplayLen.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.comboBoxDisplayLen.FormattingEnabled = true;
-            this.comboBoxDisplayLen.Location = new System.Drawing.Point(167, 30);
+            this.comboBoxDisplayLen.Location = new System.Drawing.Point(137, 32);
             this.comboBoxDisplayLen.Name = "comboBoxDisplayLen";
             this.comboBoxDisplayLen.Size = new System.Drawing.Size(121, 29);
             this.comboBoxDisplayLen.TabIndex = 3;
@@ -874,6 +962,7 @@
             this.MaximizeBox = false;
             this.Name = "CL04_center_MainInterface";
             this.Text = "CL02 closed-loop system V1.04";
+            this.Load += new System.EventHandler(this.CL04_center_MainInterface_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -889,6 +978,8 @@
             this.splitContainer3.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_randTrigMax)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_randTrigMin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgCyc)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThresh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgDly)).EndInit();
@@ -963,6 +1054,11 @@
         private System.Windows.Forms.NumericUpDown numericUpDown_DACgain;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.NumericUpDown numericUpDown_randTrigMin;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.CheckBox checkBox_clmode;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.NumericUpDown numericUpDown_randTrigMax;
     }
 }
 

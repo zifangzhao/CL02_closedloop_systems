@@ -152,7 +152,9 @@ typedef struct{
 	ulong system_status;			//288
 	ulong stim_intensity[4];		//304
 	ulong stim_ch[4];						//320
-	ulong unassigned[47];		//unassigned 48*4=192 
+	ulong randtrig_min;
+	ulong randtrig_max;
+	ulong unassigned[45];		//unassigned 48*4=192 
 	ulong Flag;
 }CE32_systemParam;
 

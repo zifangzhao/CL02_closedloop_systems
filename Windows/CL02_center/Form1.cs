@@ -14,6 +14,8 @@ using System.IO;
 
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
+using System.Diagnostics;
 
 namespace CL02_center
 {
@@ -503,10 +505,12 @@ namespace CL02_center
 
         private void UpdParams()
         {
+            uint cl_mode = (uint)(checkBox_clmode.Checked?5:1);
+                
             DeviceParams.SetSysParams(0,1000,(uint) (numericUpDown_TgInt.Value * 10 * sample_rate / 1000),
                 (uint)(numericUpDown_TgDly.Value * 10 * sample_rate / 1000), (uint)(numericUpDown_TgRndDly.Value * 10 * sample_rate / 1000),
                 (uint)(numericUpDown_TgPW.Value * 10 * sample_rate / 1000), (uint)numericUpDown_TgCyc.Value,(float)numericUpDown_TgGain.Value,
-                (uint)numericUpDown_CLSt.Value, (uint)numericUpDown_CLEd.Value,1, Convert.ToUInt16(checkBox2.Checked));
+                (uint)numericUpDown_CLSt.Value, (uint)numericUpDown_CLEd.Value, cl_mode, Convert.ToUInt16(checkBox2.Checked),(uint) numericUpDown_randTrigMin.Value,(uint) numericUpDown_randTrigMax.Value);
             DeviceParams.SetDspParams(0,(uint)comboBox_CL_Arb.SelectedIndex,(uint)comboBox_CL_FilterType.SelectedIndex, (uint) numericUpDown_CL_MAOrd.Value);
         }
 
@@ -993,6 +997,45 @@ namespace CL02_center
             else
                 timer_trigger.Stop();
 
+        }
+
+        private void label9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void numericUpDown_randTrigMax_ValueChanged(object sender, EventArgs e)
+        {
+            if (numericUpDown_randTrigMin.Value > numericUpDown_randTrigMax.Value)
+                numericUpDown_randTrigMin.Value = numericUpDown_randTrigMax.Value;
+            if (checkBox_clmode.Checked == true)
+                SendSettings();
+        }
+
+        private void numericUpDown_randTrigMin_ValueChanged(object sender, EventArgs e)
+        {
+            if (numericUpDown_randTrigMin.Value > numericUpDown_randTrigMax.Value)
+                numericUpDown_randTrigMax.Value = numericUpDown_randTrigMin.Value;
+            if (checkBox_clmode.Checked == true)
+                SendSettings();
+        }
+
+        private void splitContainer2_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            
+        }
+
+        private void CL04_center_MainInterface_Load(object sender, EventArgs e)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+            string version = fileVersionInfo.ProductVersion;
+            this.Text = "CL02 closed-loop system V" + version;
+        }
+
+        private void checkBox_clmode_CheckedChanged(object sender, EventArgs e)
+        {
+            SendSettings();
         }
     }
 }

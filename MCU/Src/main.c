@@ -144,6 +144,7 @@ int CL02_setClParam();
   * @retval None
   */
 int main(void)
+
 {
   /* USER CODE BEGIN 1 */
 

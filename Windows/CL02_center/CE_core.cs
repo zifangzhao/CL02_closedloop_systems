@@ -28,7 +28,8 @@ namespace CL02_center
         public uint[] stim_intensity = new uint[] { 0, 0, 0, 0 };    
         public uint preview_channel_bank;
         public uint LED_pulse_CNT;
-
+        private uint randtrig_min;         //324
+        private uint randtrig_max;         //328
         public CE_core(int ch_num){
             chOrd = new List<uint>(ch_num);
         }
@@ -63,7 +64,9 @@ namespace CL02_center
             public uint system_status;              //288
             public fixed uint stim_intensity[4];    //304
             public fixed uint stim_ch[4];           //320
-            public fixed uint unassigned[48];      //unassigned
+            public uint randtrig_min;         //324
+            public uint randtrig_max;         //328
+            public fixed uint unassigned[46];      //unassigned
         };
 
         unsafe private struct CE32_systemLog
@@ -84,7 +87,7 @@ namespace CL02_center
         };
 
         public void SetSysParams(uint dsp_idx,uint sampling_rate,uint stimulation_interval,uint stimulation_delay,uint stimulation_randomDelay,uint stimulation_pulseWidth, uint stimulation_pulseCyc,
-            float trigger_level,uint trigger_trainStartTime,uint trigger_trainLength,uint closedLoop_mode,uint stimulation_mode)
+            float trigger_level,uint trigger_trainStartTime,uint trigger_trainLength,uint closedLoop_mode,uint stimulation_mode,uint rand_min,uint rand_max)
         {
             fs = sampling_rate;
             stim_interval[dsp_idx] = stimulation_interval;
@@ -97,6 +100,8 @@ namespace CL02_center
             trigger_trainDuration = trigger_trainLength;
             cl_mode = closedLoop_mode;
             stim_mode = stimulation_mode;
+            randtrig_max = rand_max;
+            randtrig_min = rand_min;
         }
 
         public void SetDspParams(int dsp_idx, uint Formula, uint Func1, uint MA_Ord1)
@@ -126,6 +131,8 @@ namespace CL02_center
             sys.stim_mode = stim_mode;
             sys.LED_pulse_CNT = LED_pulse_CNT;
             sys.preview_channel_bank = preview_channel_bank;
+            sys.randtrig_max = randtrig_max;
+            sys.randtrig_min = randtrig_min;
             byte[] Wbuf;
             Wbuf = StructToBytes(sys);
             return Wbuf;
