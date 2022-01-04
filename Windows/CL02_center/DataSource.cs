@@ -46,12 +46,13 @@ namespace CL02_center
 
         public int sampleRate = 1250;
 
-        public DataSource(int channelnum , int max_displaylen, int buff_time_len)//通道数，缓冲区长度，这里用的list，回来应该会改为定长数组
+        public DataSource(int channelnum , int max_displaylen, int buff_time_len, int sample_rate)//通道数，缓冲区长度，这里用的list，回来应该会改为定长数组
         {
             this.channelnum = channelnum;
             this.datalen = max_displaylen* buff_time_len;//buff_time_len是几倍于最大显示时长
             this.buffer = new List<double[]>();
             this.Max_Display_len = max_displaylen;
+            this.sampleRate = sample_rate;
             for(int i=0;i<channelnum;++i)
             {
                 double[] temp = new double[datalen];

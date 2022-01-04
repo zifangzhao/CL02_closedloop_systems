@@ -91,6 +91,8 @@
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.label18 = new System.Windows.Forms.Label();
+            this.comboBoxDoutType = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -300,6 +302,8 @@
             // 
             // splitContainer3.Panel2
             // 
+            this.splitContainer3.Panel2.Controls.Add(this.comboBoxDoutType);
+            this.splitContainer3.Panel2.Controls.Add(this.label18);
             this.splitContainer3.Panel2.Controls.Add(this.numericUpDown_DACgain);
             this.splitContainer3.Panel2.Controls.Add(this.label8);
             this.splitContainer3.Panel2.Controls.Add(this.label1);
@@ -325,14 +329,19 @@
             // numericUpDown_randTrigMax
             // 
             this.numericUpDown_randTrigMax.DecimalPlaces = 1;
+            this.numericUpDown_randTrigMax.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             this.numericUpDown_randTrigMax.Location = new System.Drawing.Point(511, 197);
             this.numericUpDown_randTrigMax.Maximum = new decimal(new int[] {
-            65535,
+            6553500,
             0,
             0,
             0});
             this.numericUpDown_randTrigMax.Minimum = new decimal(new int[] {
-            1,
+            100,
             0,
             0,
             0});
@@ -350,9 +359,14 @@
             // numericUpDown_randTrigMin
             // 
             this.numericUpDown_randTrigMin.DecimalPlaces = 1;
+            this.numericUpDown_randTrigMin.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             this.numericUpDown_randTrigMin.Location = new System.Drawing.Point(400, 197);
             this.numericUpDown_randTrigMin.Maximum = new decimal(new int[] {
-            65535,
+            6553500,
             0,
             0,
             0});
@@ -839,7 +853,7 @@
             0,
             65536});
             this.numericUpDown_DACgain.Name = "numericUpDown_DACgain";
-            this.numericUpDown_DACgain.Size = new System.Drawing.Size(123, 20);
+            this.numericUpDown_DACgain.Size = new System.Drawing.Size(142, 20);
             this.numericUpDown_DACgain.TabIndex = 59;
             this.numericUpDown_DACgain.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numericUpDown_DACgain.Value = new decimal(new int[] {
@@ -863,7 +877,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.Location = new System.Drawing.Point(12, 147);
+            this.label1.Location = new System.Drawing.Point(3, 113);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(107, 12);
             this.label1.TabIndex = 13;
@@ -874,20 +888,21 @@
             this.comboBoxDSPGain.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDSPGain.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.comboBoxDSPGain.FormattingEnabled = true;
-            this.comboBoxDSPGain.Location = new System.Drawing.Point(136, 138);
+            this.comboBoxDSPGain.Location = new System.Drawing.Point(137, 102);
             this.comboBoxDSPGain.Name = "comboBoxDSPGain";
-            this.comboBoxDSPGain.Size = new System.Drawing.Size(121, 29);
+            this.comboBoxDSPGain.Size = new System.Drawing.Size(142, 29);
             this.comboBoxDSPGain.TabIndex = 14;
             // 
             // labelDisplayGain
             // 
             this.labelDisplayGain.AutoSize = true;
             this.labelDisplayGain.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.labelDisplayGain.Location = new System.Drawing.Point(12, 97);
+            this.labelDisplayGain.Location = new System.Drawing.Point(3, 79);
             this.labelDisplayGain.Name = "labelDisplayGain";
             this.labelDisplayGain.Size = new System.Drawing.Size(119, 12);
             this.labelDisplayGain.TabIndex = 11;
             this.labelDisplayGain.Text = "Display gain(Input)";
+            this.labelDisplayGain.Click += new System.EventHandler(this.labelDisplayGain_Click);
             // 
             // cbRemoveDC
             // 
@@ -906,16 +921,17 @@
             this.comboBoxDisplayGain.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDisplayGain.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.comboBoxDisplayGain.FormattingEnabled = true;
-            this.comboBoxDisplayGain.Location = new System.Drawing.Point(137, 89);
+            this.comboBoxDisplayGain.Location = new System.Drawing.Point(137, 67);
             this.comboBoxDisplayGain.Name = "comboBoxDisplayGain";
-            this.comboBoxDisplayGain.Size = new System.Drawing.Size(121, 29);
+            this.comboBoxDisplayGain.Size = new System.Drawing.Size(142, 29);
             this.comboBoxDisplayGain.TabIndex = 12;
+            this.comboBoxDisplayGain.SelectedIndexChanged += new System.EventHandler(this.comboBoxDisplayGain_SelectedIndexChanged);
             // 
             // labelDisplayLen
             // 
             this.labelDisplayLen.AutoSize = true;
             this.labelDisplayLen.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.labelDisplayLen.Location = new System.Drawing.Point(12, 42);
+            this.labelDisplayLen.Location = new System.Drawing.Point(3, 45);
             this.labelDisplayLen.Name = "labelDisplayLen";
             this.labelDisplayLen.Size = new System.Drawing.Size(77, 12);
             this.labelDisplayLen.TabIndex = 2;
@@ -928,7 +944,7 @@
             this.comboBoxDisplayLen.FormattingEnabled = true;
             this.comboBoxDisplayLen.Location = new System.Drawing.Point(137, 32);
             this.comboBoxDisplayLen.Name = "comboBoxDisplayLen";
-            this.comboBoxDisplayLen.Size = new System.Drawing.Size(121, 29);
+            this.comboBoxDisplayLen.Size = new System.Drawing.Size(142, 29);
             this.comboBoxDisplayLen.TabIndex = 3;
             // 
             // timer_painter
@@ -951,6 +967,28 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Filter = "Filter Parameter|*.filter";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label18.Location = new System.Drawing.Point(3, 147);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(125, 12);
+            this.label18.TabIndex = 60;
+            this.label18.Text = "Preview signal(DOUT)";
+            this.label18.Click += new System.EventHandler(this.label18_Click);
+            // 
+            // comboBoxDoutType
+            // 
+            this.comboBoxDoutType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxDoutType.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.comboBoxDoutType.FormattingEnabled = true;
+            this.comboBoxDoutType.Location = new System.Drawing.Point(136, 137);
+            this.comboBoxDoutType.Name = "comboBoxDoutType";
+            this.comboBoxDoutType.Size = new System.Drawing.Size(142, 29);
+            this.comboBoxDoutType.TabIndex = 61;
+            this.comboBoxDoutType.SelectedIndexChanged += new System.EventHandler(this.comboBoxDoutType_SelectedIndexChanged);
             // 
             // CL04_center_MainInterface
             // 
@@ -1059,6 +1097,8 @@
         private System.Windows.Forms.CheckBox checkBox_clmode;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.NumericUpDown numericUpDown_randTrigMax;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.ComboBox comboBoxDoutType;
     }
 }
 

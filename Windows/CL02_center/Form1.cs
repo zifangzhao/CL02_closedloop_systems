@@ -16,9 +16,29 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Diagnostics;
+using ComboboxItem = System.Windows.Controls.ComboBoxItem;
 
 namespace CL02_center
 {
+    enum miscDigisig_t : uint
+    {
+        MISC_SIG_TRIG1 = 0x01,
+        MISC_SIG_STIM1 = 0x02,
+        MISC_SIG_TRIG2 = 0x04,
+        MISC_SIG_STIM2 = 0x08,
+        MISC_SIG_AUX1 = 0x10,
+        MISC_SIG_AUX2 = 0x20,
+        MISC_SIG_AUX3 = 0x40,
+        MISC_SIG_EXT1 = 0x80,
+        MISC_SIG_EXT2 = 0x100,
+        MISC_SIG_EXT3 = 0x200,
+        MISC_SIG_UNDERVOLT = 0x400,
+        MISC_SIG_DSP_WAIT = 0x800,
+        MISC_SIG_DSP_CAL = 0x1000,
+        MISC_SIG_DSP_READY = 0x2000,
+        MISC_SIG_LD1 = 0x4000,
+        MISC_SIG_LD2 = 0x8000
+    }
     public partial class CL04_center_MainInterface : Form
     {
 
@@ -37,6 +57,8 @@ namespace CL02_center
         private int[] DisplayLen = new int[] { 1, 2, 5, 10 };
 
         const double DSP_offset = 0.4;
+
+        private miscDigisig_t dout_type = miscDigisig_t.MISC_SIG_STIM1;
 
         private List<double> Threshs = null;
 
@@ -132,7 +154,7 @@ namespace CL02_center
             comboBoxDSPGain.DataSource = infoList1;
             comboBoxDSPGain.ValueMember = "Value";
             comboBoxDSPGain.DisplayMember = "Name";
-            Rawdata = new DataSource(pannelnum, DisplayLen[3] * sample_rate, 500);//设置的缓冲区初始长度5000s
+            Rawdata = new DataSource(pannelnum, DisplayLen[3] * sample_rate, 500,sample_rate);//设置的缓冲区初始长度5000s
 
             CurveMakers = new List<RealTimeCurveMaker>();
             for (var i = 0; i < pannelnum; ++i)
@@ -757,10 +779,12 @@ namespace CL02_center
                     for (int ii = 0; ii < data_cnt; ii++)
                     {
                         int tmp;
+                        
                         tmp = (BitConverter.ToUInt16(rdBuf, 2 * 6 + ii * 2 * trans_ch));
-                        tmp = tmp & 0x01;
+                        
+                        tmp = tmp & (int)dout_type; //Take the second bit out.
 
-                        double tmp1 = tmp * 1.8 - 0.9;
+                        double tmp1 = tmp * 1.8 - 0.9; //set to the middle of the screen
                         if (tmp1 < -1) tmp1 = -1;
                         if (tmp1 > 1) tmp1 = 1;
                         DTP[3, ii] = tmp1;
@@ -1006,18 +1030,20 @@ namespace CL02_center
 
         private void numericUpDown_randTrigMax_ValueChanged(object sender, EventArgs e)
         {
+            numericUpDown_randTrigMax.Value = ((int)numericUpDown_randTrigMax.Value * 100) / 100;
             if (numericUpDown_randTrigMin.Value > numericUpDown_randTrigMax.Value)
                 numericUpDown_randTrigMin.Value = numericUpDown_randTrigMax.Value;
-            if (checkBox_clmode.Checked == true)
-                SendSettings();
+            //if (checkBox_clmode.Checked == true)
+            //    SendSettings();
         }
 
         private void numericUpDown_randTrigMin_ValueChanged(object sender, EventArgs e)
         {
+            numericUpDown_randTrigMin.Value = ((int)numericUpDown_randTrigMin.Value * 100) / 100;
             if (numericUpDown_randTrigMin.Value > numericUpDown_randTrigMax.Value)
                 numericUpDown_randTrigMax.Value = numericUpDown_randTrigMin.Value;
-            if (checkBox_clmode.Checked == true)
-                SendSettings();
+            //if (checkBox_clmode.Checked == true)
+            //    SendSettings();
         }
 
         private void splitContainer2_SplitterMoved(object sender, SplitterEventArgs e)
@@ -1031,11 +1057,44 @@ namespace CL02_center
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
             string version = fileVersionInfo.ProductVersion;
             this.Text = "CL02 closed-loop system V" + version;
+
+            var dout_signal_type = new BindingList<KeyValuePair<string,miscDigisig_t>>();
+
+            dout_signal_type.Add(new KeyValuePair<string, miscDigisig_t>("Stimulator(output)",miscDigisig_t.MISC_SIG_STIM1));
+            dout_signal_type.Add(new KeyValuePair<string, miscDigisig_t>("Internal Trigger",miscDigisig_t.MISC_SIG_TRIG1));
+
+            comboBoxDoutType.DataSource = dout_signal_type;
+            comboBoxDoutType.ValueMember = "Value";
+            comboBoxDoutType.DisplayMember = "Key";
+            comboBoxDoutType.SelectedIndex = 0;
         }
 
         private void checkBox_clmode_CheckedChanged(object sender, EventArgs e)
         {
             SendSettings();
+        }
+
+        private void labelDisplayGain_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBoxDisplayGain_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label18_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBoxDoutType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(comboBoxDoutType.Text))
+            {
+                dout_type = ((KeyValuePair<string, miscDigisig_t>)comboBoxDoutType.SelectedItem).Value;
+            }
         }
     }
 }

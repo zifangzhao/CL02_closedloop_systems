@@ -6,6 +6,7 @@
 #ifndef __CE32_CL
 #define __CE32_CL
 
+#define CE32_CL_RNDTRIG_SUBSAMPLE 100
 #define SC_STATE_TRIG 			0x00000001U
 #define SC_STATE_STIM			 	0x00000002U
 #define SC_STATE_RNDELAY 		0x00000010U
@@ -32,10 +33,11 @@ typedef struct{
 	long count;
 }CE32_StimControl;
 
+#define CE
 typedef struct{
-	uint32_t min_delay; //in ms
-	uint32_t max_delay; //in ms
-	uint32_t delay_cnt;
+	uint32_t min_delay; //in 100ms
+	uint32_t max_delay; //in 100ms
+	uint64_t delay_cnt;
 	uint8_t state;
 }CE32_CL_RndTrig;
 

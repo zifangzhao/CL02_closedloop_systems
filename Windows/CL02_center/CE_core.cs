@@ -100,8 +100,8 @@ namespace CL02_center
             trigger_trainDuration = trigger_trainLength;
             cl_mode = closedLoop_mode;
             stim_mode = stimulation_mode;
-            randtrig_max = rand_max;
-            randtrig_min = rand_min;
+            randtrig_max = rand_max/100;
+            randtrig_min = rand_min/100;
         }
 
         public void SetDspParams(int dsp_idx, uint Formula, uint Func1, uint MA_Ord1)

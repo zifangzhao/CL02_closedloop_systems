@@ -788,7 +788,7 @@ int CL02_CmdSvr(uint8_t *data_ptr,uint32_t cmd_len)
 	switch(data_ptr[0])
 	{
 		case 0x01:
-			memcpy(((uint8_t*)&sysParam),&data_ptr[1],512);
+			memcpy(((uint8_t*)&sysParam),&data_ptr[1],CE32_SYSPARAM_WR_LEN);
 
 			CE32_CL_Init(&cl,&sysParam,sysDSP,mainFil,maFil,sc); //Initialize Closed-loop unit
 			CE32_STIM_Setup(&STIM_handle[0],sysParam.stim_intensity[0],sysParam.stim_delay[0]+rand()*sysParam.stim_RndDelay[0],sysParam.stim_interval[0],sysParam.pulse_cnt[0],sysParam.pulse_width[0]);

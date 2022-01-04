@@ -182,8 +182,8 @@ void CE32_CL_Random_Update(void* vcl)
 	CE32_CL_RndTrig* rndtrig=&cl->rndTrig;
 	uint64_t temp;
 		temp= (rndtrig->max_delay-rndtrig->min_delay)*((float)(rand())/RAND_MAX);
-		temp+= rndtrig->min_delay; //this unit is in ms
-		rndtrig->delay_cnt = temp*(fs/1000.0); //Set next rand trig time
+		temp+= rndtrig->min_delay; //this unit is in 100ms
+		rndtrig->delay_cnt = temp*(fs/(1000.0/CE32_CL_RNDTRIG_SUBSAMPLE)); //Set next rand trig time
 }
 
 void CE32_CL_Set_TrigLvl(void* vcl,int id,float lvl)

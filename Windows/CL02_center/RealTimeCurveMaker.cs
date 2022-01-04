@@ -14,7 +14,7 @@ namespace CL02_center
         private int DisplayLength;//单位是秒
 
         private int DisplayPointNum;
-        private int DisplayPointGap = 2;//隔几个像素显示
+        private int DisplayPointGap = 0;//隔几个像素显示
         private int DataGap;//现在代表图片中一个点代表了原始数据中多长的数据
 
         private int RawDataCntPerPixel;//数据显示一个点在原始数据上代表多少个点,计算方式和datagap相等
@@ -115,11 +115,12 @@ namespace CL02_center
                     int step = DisplayPointGap + 1;
                     for (var i = splitpoint; i <= data.thisTimeDataLen; i += this.DataGap)
                     {
-                        //FindMaxMin(ref max, ref min, ref mean,data, i, i + this.DataGap);
-                        curve1.yvalues.Add(ConvertRawData2Yval(height, data.Buffer[DataIdx][i]));
-                        curve1.xvalues.Add(pixelx);
-                        //curve1.yvalues.Add(ConvertRawData2Yval(height, min));
+                        FindMaxMin(ref max, ref min, ref mean,data, i, i + this.DataGap-1);
+                        //curve1.yvalues.Add(ConvertRawData2Yval(height, data.Buffer[DataIdx][i]));
                         //curve1.xvalues.Add(pixelx);
+                        curve1.yvalues.Add(ConvertRawData2Yval(height, max));
+                        curve1.yvalues1.Add(ConvertRawData2Yval(height, min));
+                        curve1.xvalues.Add(pixelx);
                         pixelx += step;
                         ++cnt;
                     }
@@ -131,6 +132,7 @@ namespace CL02_center
                             if (LastPoints[i].X > thresh)
                             {
                                 curve1.yvalues.Add(LastPoints[i].Y);
+                                curve1.yvalues1.Add(LastPoints[i].Y);
                                 curve1.xvalues.Add(LastPoints[i].X);
                             }
                         }
@@ -146,11 +148,12 @@ namespace CL02_center
                     int step = DisplayPointGap + 1;
                     for (i = startpos; i < data.thisTimeDataLen; i += this.DataGap)
                     {
-                        //FindMaxMin(ref max, ref min, ref mean, data, i, i + this.DataGap);
-                        curve1.yvalues.Add(ConvertRawData2Yval(height, data.Buffer[DataIdx][i]));
-                        curve1.xvalues.Add(pixelx);
-                        //curve1.yvalues.Add(ConvertRawData2Yval(height, min));
+                        FindMaxMin(ref max, ref min, ref mean, data, i, i + this.DataGap-1);
+                        //curve1.yvalues.Add(ConvertRawData2Yval(height, data.Buffer[DataIdx][i]));
                         //curve1.xvalues.Add(pixelx);
+                        curve1.yvalues.Add(ConvertRawData2Yval(height, max));
+                        curve1.yvalues1.Add(ConvertRawData2Yval(height, min));
+                        curve1.xvalues.Add(pixelx);
                         pixelx += step;
                         ++cnt;
                     }
@@ -163,16 +166,50 @@ namespace CL02_center
                 }
                 
                 List<Point> points = new List<Point>();
-                for (int i = 0; i < curve1.yvalues.Count; i++)
+                List<Point> points1 = new List<Point>();
+
+                for (int i = 1; i < curve1.yvalues.Count; i++) //Connecting lines at different X
                 {
-                    Point pt = new Point(curve1.xvalues[i], curve1.yvalues[i]);
-                    points.Add(pt);
+                    if (curve1.yvalues1[i - 1] < curve1.yvalues[i]) // if max[i-1] < min [i], connect them
+                    {
+                        Point pt_0 = new Point(curve1.xvalues[i - 1], curve1.yvalues1[i - 1]);
+                        Point pt_1 = new Point(curve1.xvalues[i], curve1.yvalues[i]);
+                        g.DrawLine(new Pen(Color.Blue), pt_0, pt_1);
+                    }
+                    else
+                    {
+                        if (curve1.yvalues[i - 1] > curve1.yvalues1[i]) // if min[i-1] > max [i], connect them
+                        {
+                            Point pt_0 = new Point(curve1.xvalues[i - 1], curve1.yvalues[i - 1]);
+                            Point pt_1 = new Point(curve1.xvalues[i], curve1.yvalues1[i]);
+                            g.DrawLine(new Pen(Color.Blue), pt_0, pt_1);
+                        }
+
+                    }
+                    if (curve1.yvalues[i] == curve1.yvalues1[i])
+                    {
+                        Point pt = new Point(curve1.xvalues[i-1], curve1.yvalues[i-1]);
+                        Point pt1 = new Point(curve1.xvalues[i], curve1.yvalues[i]);
+                        g.DrawLine(new Pen(Color.Blue), pt, pt1);
+                    }
+                    else
+                    {
+                        Point pt = new Point(curve1.xvalues[i], curve1.yvalues[i]);
+                        Point pt1 = new Point(curve1.xvalues[i], curve1.yvalues1[i]);
+                        g.DrawLine(new Pen(Color.Blue), pt, pt1);
+                    }
+
+                    //points.Add(pt);
+                    //points.Add(pt1);
                 }
                 this.LastPoints = points;
-                if (points.Count > 1)
-                {
-                    g.DrawLines(new Pen(Color.Blue), points.ToArray());
-                }
+                //if (points.Count > 1)
+                //{
+                //    //Point[] curvePoints = points.ToArray();
+                //    //g.FillPolygon(new SolidBrush(Color.Blue), curvePoints);
+                //    //g.DrawLines(new Pen(Color.Blue), points.ToArray());
+                //    //g.DrawLines(new Pen(Color.Blue), points1.ToArray());
+                //}
                 if (paintinfo.PaintThreshFlag == true && paintinfo.Threshs != null)
                 {
                     PaintThreshs(ref g, paintinfo.Threshs, height, width);
@@ -199,6 +236,7 @@ namespace CL02_center
     class CurveModel
     {
         public List<int> yvalues = new List<int>();
+        public List<int> yvalues1 = new List<int>();
         public List<int> xvalues = new List<int>();
     }
 

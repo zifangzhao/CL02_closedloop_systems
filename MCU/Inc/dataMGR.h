@@ -126,6 +126,7 @@ typedef struct{
 #define CE32_CL_UNIT_NUM  2
 
 #define CE32_SYSPARAM_FLAG_NORESET 0x0001
+#define CE32_SYSPARAM_WR_LEN 328
 typedef struct{
 	ulong fs;							//4 Sampling Rate 
 	ulong AUX_mode;				//8 AUX pin mode, 0 = unused , 1=Timer-controlled, 2=Closed-loop
@@ -152,9 +153,10 @@ typedef struct{
 	ulong system_status;			//288
 	ulong stim_intensity[4];		//304
 	ulong stim_ch[4];						//320
-	ulong randtrig_min;
-	ulong randtrig_max;
-	ulong unassigned[45];		//unassigned 48*4=192 
+	ulong randtrig_min;				//324
+	ulong randtrig_max;				//328
+	ulong unassigned[44];		//unassigned 48*4=192 
+	ulong firm_version;
 	ulong Flag;
 }CE32_systemParam;
 
