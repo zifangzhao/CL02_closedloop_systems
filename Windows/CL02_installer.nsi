@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "CL02 Closed-loop system"
-!define PRODUCT_VERSION "1.0.1.0"
+!define PRODUCT_VERSION "1.0.1.1"
 !define PRODUCT_PUBLISHER "FTL"
 !define PRODUCT_WEB_SITE "https://zifangzhao.notion.site/CL02-Instructions-d0e2a1d6ffdf4666bf22a0d3cb299155"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\CL02_center.exe"
@@ -20,7 +20,7 @@
 ; Welcome page
 !insertmacro MUI_PAGE_WELCOME
 ; License page
-!insertmacro MUI_PAGE_LICENSE "C:\code\github\CL02_opensource\Windows\gpl-3.0.txt"
+!insertmacro MUI_PAGE_LICENSE "gpl-3.0.txt"
 ; Directory page
 !insertmacro MUI_PAGE_DIRECTORY
 ; Instfiles page
