@@ -154,7 +154,7 @@ namespace CL02_center
             comboBoxDSPGain.DataSource = infoList1;
             comboBoxDSPGain.ValueMember = "Value";
             comboBoxDSPGain.DisplayMember = "Name";
-            Rawdata = new DataSource(pannelnum, DisplayLen[3] * sample_rate, 500,sample_rate);//设置的缓冲区初始长度5000s
+            Rawdata = new DataSource(pannelnum, DisplayLen[3] * sample_rate, 100,sample_rate);//设置的缓冲区初始长度5000s
 
             CurveMakers = new List<RealTimeCurveMaker>();
             for (var i = 0; i < pannelnum; ++i)

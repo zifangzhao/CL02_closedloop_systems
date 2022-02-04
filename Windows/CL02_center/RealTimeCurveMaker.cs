@@ -67,6 +67,7 @@ namespace CL02_center
             max = data.Buffer[DataIdx][begin];
             min = data.Buffer[DataIdx][begin];
             double temp = 0;
+            end = end >= data.Datalen ? data.Datalen : end;
             for (int i = begin; i < end; ++i)
             {
                 if (max < data.Buffer[DataIdx][i])
@@ -106,7 +107,7 @@ namespace CL02_center
                 int splitpoint = 0;
                 if (startpos != 0)
                 {
-                    overridearea = (data.thisTimeDataLen+1) % (displaylength * DataFs);
+                    overridearea = (data.thisTimeDataLen) % (displaylength * DataFs);
                     splitpoint = data.thisTimeDataLen - overridearea;
                     double max = 0;
                     double min = 0;

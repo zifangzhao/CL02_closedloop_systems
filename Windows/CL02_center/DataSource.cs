@@ -44,7 +44,7 @@ namespace CL02_center
         private bool overflow_flag = false;
         private int Max_Display_len;
 
-        public int sampleRate = 1250;
+        public int sampleRate = 1000;
 
         public DataSource(int channelnum , int max_displaylen, int buff_time_len, int sample_rate)//通道数，缓冲区长度，这里用的list，回来应该会改为定长数组
         {
@@ -98,17 +98,19 @@ namespace CL02_center
             }
             else
             {
-                int commen_multiple = 10 * sampleRate;//各种显示时长的公倍数
-                int diff = thisTimeDataLen - commen_multiple;
-                for (int i =0;i<channelnum;++i)
-                {
-                    int cnt = 0;
-                    for(int j=thisTimeDataLen-diff+1;j<= thisTimeDataLen; ++j)
-                    {
-                        buffer[i][cnt++] = buffer[i][j];
-                    }
-                }
-                thisTimeDataLen = diff - 1;
+                //full buffer
+                //int commen_multiple = 10 * sampleRate;//各种显示时长的公倍数
+                //int diff = thisTimeDataLen - commen_multiple;
+                //for (int i =0;i<channelnum;++i)
+                //{
+                //    int cnt = 0;
+                //    for(int j=thisTimeDataLen-diff+1;j<= thisTimeDataLen; ++j)
+                //    {
+                //        buffer[i][cnt++] = buffer[i][j];
+                //    }
+                //}
+                //thisTimeDataLen = diff - 1;
+                thisTimeDataLen = -1;
                 int begin = thisTimeDataLen + 1;
                 for (int i = 0; i < channelnum; ++i)
                 {
