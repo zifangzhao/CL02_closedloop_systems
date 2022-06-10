@@ -48,6 +48,8 @@ namespace CL02_center
 
         private DataSource Rawdata;
 
+        const int DSP_count = 2;
+
         private CE_core DeviceParams;
 
         private string[] portname;
@@ -57,6 +59,8 @@ namespace CL02_center
         private int[] DisplayLen = new int[] { 1, 2, 5, 10 };
 
         const double DSP_offset = 0.4;
+
+        private decimal DSP_id_curr = 0;
 
         private miscDigisig_t dout_type = miscDigisig_t.MISC_SIG_STIM1;
 
@@ -112,48 +116,66 @@ namespace CL02_center
             string[] temp = new string[] { "1s", "2s", "5s", "10s" };
             this.comboBoxDisplayLen.DataSource = temp;
             this.comboBoxDisplayLen.SelectedIndex = temp.Length - 1;
-
-            IList<Info> infoList = new List<Info>();
-            Info info = new Info() { Value = 3.3 / 65536 / 5 * 2, Name = "5V" };
-            infoList.Add(info);
-            info = new Info() { Value = 3.3 / 65536 * 2, Name = "1V" };
-            infoList.Add(info);
-            info = new Info() { Value = 3.3 / 65536 * 2 * 2, Name = "500mV" };
-            infoList.Add(info);
-            info = new Info() { Value = 3.3 / 65536 * 10 * 2, Name = "100mV" };
-            infoList.Add(info);
-            info = new Info() { Value = 3.3 / 65536 * 20 * 2, Name = "50mV" };
-            infoList.Add(info);
-            info = new Info() { Value = 3.3 / 65536 * 100 * 2, Name = "10mV" };
-            infoList.Add(info);
-            info = new Info() { Value = 3.3 / 65536 * 200 * 2, Name = "5mV" };
-            infoList.Add(info);
-            info = new Info() { Value = 3.3 / 65536 * 1000 * 2, Name = "1mV" };
-            infoList.Add(info);
-            comboBoxDisplayGain.DataSource = infoList;
-            comboBoxDisplayGain.ValueMember = "Value";
-            comboBoxDisplayGain.DisplayMember = "Name";
-
-            IList<Info> infoList1 = new List<Info>();
-            Info info1 = new Info() { Value = 3.3 / 65536 / 5 * 2, Name = "5V" };
-            infoList1.Add(info1);
-            info1 = new Info() { Value = 3.3 / 65536 * 2, Name = "1V" };
-            infoList1.Add(info1);
-            info1 = new Info() { Value = 3.3 / 65536 * 2 * 2, Name = "500mV" };
-            infoList1.Add(info1);
-            info1 = new Info() { Value = 3.3 / 65536 * 10 * 2, Name = "100mV" };
-            infoList1.Add(info1);
-            info1 = new Info() { Value = 3.3 / 65536 * 20 * 2, Name = "50mV" };
-            infoList1.Add(info1);
-            info1 = new Info() { Value = 3.3 / 65536 * 100 * 2, Name = "10mV" };
-            infoList1.Add(info1);
-            info1 = new Info() { Value = 3.3 / 65536 * 200 * 2, Name = "5mV" };
-            infoList1.Add(info1);
-            info1 = new Info() { Value = 3.3 / 65536 * 1000 * 2, Name = "1mV" };
-            infoList1.Add(info1);
-            comboBoxDSPGain.DataSource = infoList1;
-            comboBoxDSPGain.ValueMember = "Value";
-            comboBoxDSPGain.DisplayMember = "Name";
+            {
+                IList<Info> infoList = new List<Info>();
+                Info info = new Info() { Value = 3.3 / 65536 / 5 * 2, Name = "5V" };
+                infoList.Add(info);
+                info = new Info() { Value = 3.3 / 65536 * 2, Name = "1V" };
+                infoList.Add(info);
+                info = new Info() { Value = 3.3 / 65536 * 2 * 2, Name = "500mV" };
+                infoList.Add(info);
+                info = new Info() { Value = 3.3 / 65536 * 10 * 2, Name = "100mV" };
+                infoList.Add(info);
+                info = new Info() { Value = 3.3 / 65536 * 20 * 2, Name = "50mV" };
+                infoList.Add(info);
+                info = new Info() { Value = 3.3 / 65536 * 100 * 2, Name = "10mV" };
+                infoList.Add(info);
+                info = new Info() { Value = 3.3 / 65536 * 200 * 2, Name = "5mV" };
+                infoList.Add(info);
+                info = new Info() { Value = 3.3 / 65536 * 1000 * 2, Name = "1mV" };
+                infoList.Add(info);
+                comboBoxDisplayGain.DataSource = infoList;
+                comboBoxDisplayGain.ValueMember = "Value";
+                comboBoxDisplayGain.DisplayMember = "Name";
+            }
+            {
+                IList<Info> infoList1 = new List<Info>();
+                Info info1 = new Info() { Value = 3.3 / 65536 / 5 * 2, Name = "5V" };
+                infoList1.Add(info1);
+                info1 = new Info() { Value = 3.3 / 65536 * 2, Name = "1V" };
+                infoList1.Add(info1);
+                info1 = new Info() { Value = 3.3 / 65536 * 2 * 2, Name = "500mV" };
+                infoList1.Add(info1);
+                info1 = new Info() { Value = 3.3 / 65536 * 10 * 2, Name = "100mV" };
+                infoList1.Add(info1);
+                info1 = new Info() { Value = 3.3 / 65536 * 20 * 2, Name = "50mV" };
+                infoList1.Add(info1);
+                info1 = new Info() { Value = 3.3 / 65536 * 100 * 2, Name = "10mV" };
+                infoList1.Add(info1);
+                info1 = new Info() { Value = 3.3 / 65536 * 200 * 2, Name = "5mV" };
+                infoList1.Add(info1);
+                info1 = new Info() { Value = 3.3 / 65536 * 1000 * 2, Name = "1mV" };
+                infoList1.Add(info1);
+                comboBoxDSPGain.DataSource = infoList1;
+                comboBoxDSPGain.ValueMember = "Value";
+                comboBoxDSPGain.DisplayMember = "Name";
+            }
+            {
+                IList<Info> infoList = new List<Info>();
+                Info info = new Info() { Value = 0, Name = "Disabled" };
+                infoList.Add(info);
+                info = new Info() { Value = 1, Name = "Single A" };
+                infoList.Add(info);
+                info = new Info() { Value = 3, Name = "Cascade A->B" };
+                infoList.Add(info);
+                info = new Info() { Value = 4, Name = "Gated A & B" };
+                infoList.Add(info);
+                info = new Info() { Value = 5, Name = "Random" };
+                infoList.Add(info);
+                comboBoxDSPmode.DataSource = infoList;
+                comboBoxDSPmode.ValueMember = "Value";
+                comboBoxDSPmode.DisplayMember = "Name";
+            }
             Rawdata = new DataSource(pannelnum, DisplayLen[3] * sample_rate, 100,sample_rate);//设置的缓冲区初始长度5000s
 
             CurveMakers = new List<RealTimeCurveMaker>();
@@ -163,9 +185,15 @@ namespace CL02_center
             }
 
             DeviceParams = new CE_core(2);
+
             comboBox_CL_FilterType.SelectedIndex = 1;
             comboBox_CL_Arb.SelectedIndex = 0;
-
+            comboBoxDSPmode.SelectedIndex = 1;
+            for (int i = 0; i < DSP_count; i++)
+            {
+                DSP_id_curr = DSP_count - i -1;
+                UpdParams();
+            }
 
             //InitSocket();
             InitTimer();
@@ -186,7 +214,7 @@ namespace CL02_center
                 //panelgap *= 2;
             }
 
-            string[] names = { "CH1", "CH2", "DSP(1X)", "DOUT" };
+            string[] names = { "CH1", "CH2", "DSP", "DOUT" };
 
             for (int i = 0; i < panelnum; i++)
             {
@@ -527,15 +555,32 @@ namespace CL02_center
 
         private void UpdParams()
         {
-            uint cl_mode = (uint)(checkBox_clmode.Checked?5:1);
-                
-            DeviceParams.SetSysParams(0,1000,(uint) (numericUpDown_TgInt.Value * 10 * sample_rate / 1000),
-                (uint)(numericUpDown_TgDly.Value * 10 * sample_rate / 1000), (uint)(numericUpDown_TgRndDly.Value * 10 * sample_rate / 1000),
-                (uint)(numericUpDown_TgPW.Value * 10 * sample_rate / 1000), (uint)numericUpDown_TgCyc.Value,(float)numericUpDown_TgGain.Value,
+            uint cl_mode = Convert.ToUInt32(comboBoxDSPmode.SelectedValue);
+            uint DSP_id = (uint)DSP_id_curr;
+            int ratio = 10 * sample_rate / 1000;
+            DeviceParams.SetSysParams(DSP_id, 1000,(uint) (numericUpDown_TgInt.Value * ratio),
+                (uint)(numericUpDown_TgDly.Value * ratio), (uint)(numericUpDown_TgRndDly.Value * ratio),
+                (uint)(numericUpDown_TgPW.Value * ratio), (uint)numericUpDown_TgCyc.Value,(float)numericUpDown_TgGain.Value,
                 (uint)numericUpDown_CLSt.Value, (uint)numericUpDown_CLEd.Value, cl_mode, Convert.ToUInt16(checkBox2.Checked),(uint) numericUpDown_randTrigMin.Value,(uint) numericUpDown_randTrigMax.Value);
-            DeviceParams.SetDspParams(0,(uint)comboBox_CL_Arb.SelectedIndex,(uint)comboBox_CL_FilterType.SelectedIndex, (uint) numericUpDown_CL_MAOrd.Value);
+            DeviceParams.SetDspParams(DSP_id,(uint)comboBox_CL_Arb.SelectedIndex,(uint)comboBox_CL_FilterType.SelectedIndex, (uint) numericUpDown_CL_MAOrd.Value);
         }
 
+        private void LoadParams()
+        {
+            uint DSP_id = (uint)DSP_id_curr;
+            int ratio = 10 * sample_rate / 1000;
+            int cl_id = (int)DeviceParams.cl_mode;
+            comboBoxDSPmode.SelectedIndex = cl_id > 1 ? cl_id - 1 : cl_id;
+            numericUpDown_TgInt.Value = DeviceParams.stim_interval[DSP_id] / ratio;
+            numericUpDown_TgDly.Value = DeviceParams.stim_delay[DSP_id] / ratio;
+            numericUpDown_TgRndDly.Value = DeviceParams.stim_RndDelay[DSP_id] / ratio;
+            numericUpDown_TgPW.Value = DeviceParams.pulse_width[DSP_id] / ratio;
+            numericUpDown_TgCyc.Value = DeviceParams.pulse_cyc[DSP_id];
+            numericUpDown_TgGain.Value = (decimal)DeviceParams.trigger_gain[DSP_id];
+            comboBox_CL_Arb.SelectedIndex = (int)DeviceParams.formula[DSP_id];
+            comboBox_CL_FilterType.SelectedIndex = (int)DeviceParams.func[DSP_id];
+            numericUpDown_CL_MAOrd.Value = (decimal)DeviceParams.MAOrd[DSP_id];
+        }
         private void SetGain(float g)
         {
             byte[] src=BitConverter.GetBytes(g);
@@ -583,40 +628,52 @@ namespace CL02_center
         private void SetStimParam()
         {
             //delay,rnd_delay,duration,interval int32
-            UInt32 delay, rnd_delay, duration, interval,cycle;
-            delay = (UInt32)(numericUpDown_TgDly.Value*10*sample_rate/1000);
-            rnd_delay = (UInt32)(numericUpDown_TgRndDly.Value * 10 * sample_rate /1000);
-            duration = (UInt32)(numericUpDown_TgPW.Value * 10 * sample_rate /1000);
-            interval = (UInt32)(numericUpDown_TgInt.Value * 10 * sample_rate /1000);
-            cycle = (UInt32) numericUpDown_TgCyc.Value;
-            UInt32[] src = new UInt32[5] { delay,rnd_delay,duration,interval,cycle};
-        
-            byte[] wrBuf = new byte[23];
-            wrBuf[0] = 0x3c;
-            wrBuf[1] = 0x20;
-            wrBuf[22] = 0x3e;
-            Buffer.BlockCopy(src, 0, wrBuf, 2, 20);
-            if (serialPort1.IsOpen)
+            UpdParams();
+            for (uint DSP_id = 0; DSP_id < DSP_count; DSP_id++)
             {
-                serialPort1.Write(wrBuf, 0, 23);
+                UInt32 delay, rnd_delay, duration, interval, cycle;
+                delay = DeviceParams.stim_delay[DSP_id];
+                rnd_delay = DeviceParams.stim_RndDelay[DSP_id];
+                duration = DeviceParams.pulse_width[DSP_id];
+                interval = DeviceParams.stim_interval[DSP_id];
+                cycle = DeviceParams.pulse_cyc[DSP_id];
+                UInt32[] src = new UInt32[5] { delay, rnd_delay, duration, interval, cycle };
+                byte id = (byte)numericUpDown_DSPCH.Value;
+                byte[] wrBuf = new byte[24];
+                wrBuf[0] = 0x3c;
+                wrBuf[1] = 0x20;
+                wrBuf[2] = (byte)DSP_id;
+                wrBuf[23] = 0x3e;
+                Buffer.BlockCopy(src, 0, wrBuf, 3, 20);
+                if (serialPort1.IsOpen)
+                {
+                    serialPort1.Write(wrBuf, 0, 24);
+                }
+                Thread.Sleep(50);
             }
         }
 
         private void SetDSPParam()
         {
-            UInt32 MA_ord, Filter_type, Formula;
-            MA_ord = (UInt32)numericUpDown_CL_MAOrd.Value;
-            Filter_type = (UInt32)comboBox_CL_FilterType.SelectedIndex;
-            Formula = (UInt32)comboBox_CL_Arb.SelectedIndex;
-            UInt32[] src = new UInt32[3] { MA_ord, Filter_type, Formula };
-            if (serialPort1.IsOpen)
+            UpdParams();
+            for (uint DSP_id = 0; DSP_id < DSP_count; DSP_id++)
             {
-                byte[] wrBuf = new byte[15];
-                wrBuf[0] = 0x3c;
-                wrBuf[1] = 0x21;
-                wrBuf[14] = 0x3e;
-                Buffer.BlockCopy(src, 0, wrBuf, 2, 12);
-                serialPort1.Write(wrBuf, 0, 15);
+                UInt32 MA_ord, Filter_type, Formula;
+                MA_ord = (UInt32)DeviceParams.MAOrd[DSP_id];
+                Filter_type = (UInt32)DeviceParams.func[DSP_id];
+                Formula = (UInt32)DeviceParams.formula[DSP_id];
+                UInt32[] src = new UInt32[3] { MA_ord, Filter_type, Formula };
+                if (serialPort1.IsOpen)
+                {
+                    byte[] wrBuf = new byte[16];
+                    wrBuf[0] = 0x3c;
+                    wrBuf[1] = 0x21;
+                    wrBuf[2] = (byte)DSP_id;
+                    wrBuf[15] = 0x3e;
+                    Buffer.BlockCopy(src, 0, wrBuf, 3, 12);
+                    serialPort1.Write(wrBuf, 0, 16);
+                    Thread.Sleep(50);
+                }
             }
         }
 
@@ -748,7 +805,8 @@ namespace CL02_center
                     
                     double gain = (double)comboBoxDisplayGain.SelectedValue;
                     double DSPgain = (double)comboBoxDSPGain.SelectedValue;
-                    int[] disp_list = { 0, 1, 4, };
+                    int DSP_ch = (int)numericUpDown_DSPCH.Value +4 ;
+                    int[] disp_list = { 0, 1, DSP_ch, };
                     for (int i = 0; i < 2; i++)
                     {
                         for (int ii = 0; ii < data_cnt; ii++)
@@ -1060,9 +1118,10 @@ namespace CL02_center
 
             var dout_signal_type = new BindingList<KeyValuePair<string,miscDigisig_t>>();
 
-            dout_signal_type.Add(new KeyValuePair<string, miscDigisig_t>("Stimulator(output)",miscDigisig_t.MISC_SIG_STIM1));
-            dout_signal_type.Add(new KeyValuePair<string, miscDigisig_t>("Internal Trigger",miscDigisig_t.MISC_SIG_TRIG1));
-
+            dout_signal_type.Add(new KeyValuePair<string, miscDigisig_t>("Stimulator1(output)",miscDigisig_t.MISC_SIG_STIM1));
+            dout_signal_type.Add(new KeyValuePair<string, miscDigisig_t>("Stimulator2(output)", miscDigisig_t.MISC_SIG_STIM2));
+            dout_signal_type.Add(new KeyValuePair<string, miscDigisig_t>("Internal Trigger1",miscDigisig_t.MISC_SIG_TRIG1));
+            dout_signal_type.Add(new KeyValuePair<string, miscDigisig_t>("Internal Trigger2", miscDigisig_t.MISC_SIG_TRIG2));
             comboBoxDoutType.DataSource = dout_signal_type;
             comboBoxDoutType.ValueMember = "Value";
             comboBoxDoutType.DisplayMember = "Key";
@@ -1095,6 +1154,18 @@ namespace CL02_center
             {
                 dout_type = ((KeyValuePair<string, miscDigisig_t>)comboBoxDoutType.SelectedItem).Value;
             }
+        }
+
+        private void numericUpDown_DSPCH_ValueChanged(object sender, EventArgs e)
+        {
+            UpdParams(); //Save current setting
+            DSP_id_curr = numericUpDown_DSPCH.Value;
+            LoadParams();
+        }
+
+        private void comboBoxDSPmode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

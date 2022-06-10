@@ -44,7 +44,6 @@
             this.numericUpDown_randTrigMax = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown_randTrigMin = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
-            this.checkBox_clmode = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.label_AbsThresh = new System.Windows.Forms.Label();
             this.button_forceTrig = new System.Windows.Forms.Button();
@@ -78,6 +77,8 @@
             this.label24 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.numericUpDown_TgPW = new System.Windows.Forms.NumericUpDown();
+            this.comboBoxDoutType = new System.Windows.Forms.ComboBox();
+            this.label18 = new System.Windows.Forms.Label();
             this.numericUpDown_DACgain = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -91,8 +92,10 @@
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.label18 = new System.Windows.Forms.Label();
-            this.comboBoxDoutType = new System.Windows.Forms.ComboBox();
+            this.numericUpDown_DSPCH = new System.Windows.Forms.NumericUpDown();
+            this.label_DSPCH = new System.Windows.Forms.Label();
+            this.comboBoxDSPmode = new System.Windows.Forms.ComboBox();
+            this.label20 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -118,6 +121,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgInt)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgPW)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DACgain)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DSPCH)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -260,11 +264,14 @@
             // 
             // splitContainer3.Panel1
             // 
+            this.splitContainer3.Panel1.Controls.Add(this.label20);
+            this.splitContainer3.Panel1.Controls.Add(this.comboBoxDSPmode);
+            this.splitContainer3.Panel1.Controls.Add(this.label_DSPCH);
+            this.splitContainer3.Panel1.Controls.Add(this.numericUpDown_DSPCH);
             this.splitContainer3.Panel1.Controls.Add(this.label17);
             this.splitContainer3.Panel1.Controls.Add(this.numericUpDown_randTrigMax);
             this.splitContainer3.Panel1.Controls.Add(this.numericUpDown_randTrigMin);
             this.splitContainer3.Panel1.Controls.Add(this.label9);
-            this.splitContainer3.Panel1.Controls.Add(this.checkBox_clmode);
             this.splitContainer3.Panel1.Controls.Add(this.checkBox1);
             this.splitContainer3.Panel1.Controls.Add(this.label_AbsThresh);
             this.splitContainer3.Panel1.Controls.Add(this.button_forceTrig);
@@ -391,17 +398,6 @@
             this.label9.Text = "Random Trigger Range(ms)";
             this.label9.Click += new System.EventHandler(this.label9_Click);
             // 
-            // checkBox_clmode
-            // 
-            this.checkBox_clmode.AutoSize = true;
-            this.checkBox_clmode.Location = new System.Drawing.Point(309, 10);
-            this.checkBox_clmode.Name = "checkBox_clmode";
-            this.checkBox_clmode.Size = new System.Drawing.Size(132, 17);
-            this.checkBox_clmode.TabIndex = 60;
-            this.checkBox_clmode.Text = "Random Trigger Mode";
-            this.checkBox_clmode.UseVisualStyleBackColor = true;
-            this.checkBox_clmode.CheckedChanged += new System.EventHandler(this.checkBox_clmode_CheckedChanged);
-            // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
@@ -425,7 +421,7 @@
             // 
             this.button_forceTrig.Location = new System.Drawing.Point(382, 234);
             this.button_forceTrig.Name = "button_forceTrig";
-            this.button_forceTrig.Size = new System.Drawing.Size(117, 25);
+            this.button_forceTrig.Size = new System.Drawing.Size(117, 40);
             this.button_forceTrig.TabIndex = 57;
             this.button_forceTrig.Text = "Force Trigger";
             this.button_forceTrig.UseVisualStyleBackColor = true;
@@ -535,9 +531,9 @@
             // 
             this.button_sendparams.Location = new System.Drawing.Point(255, 233);
             this.button_sendparams.Name = "button_sendparams";
-            this.button_sendparams.Size = new System.Drawing.Size(110, 25);
+            this.button_sendparams.Size = new System.Drawing.Size(110, 41);
             this.button_sendparams.TabIndex = 50;
-            this.button_sendparams.Text = "Restart DSP";
+            this.button_sendparams.Text = "Download Parameters";
             this.button_sendparams.UseVisualStyleBackColor = true;
             this.button_sendparams.Click += new System.EventHandler(this.button_sendparams_Click);
             // 
@@ -833,6 +829,28 @@
             0});
             this.numericUpDown_TgPW.ValueChanged += new System.EventHandler(this.numericUpDown_TgPW_ValueChanged);
             // 
+            // comboBoxDoutType
+            // 
+            this.comboBoxDoutType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxDoutType.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.comboBoxDoutType.FormattingEnabled = true;
+            this.comboBoxDoutType.Location = new System.Drawing.Point(136, 137);
+            this.comboBoxDoutType.Name = "comboBoxDoutType";
+            this.comboBoxDoutType.Size = new System.Drawing.Size(142, 29);
+            this.comboBoxDoutType.TabIndex = 61;
+            this.comboBoxDoutType.SelectedIndexChanged += new System.EventHandler(this.comboBoxDoutType_SelectedIndexChanged);
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label18.Location = new System.Drawing.Point(3, 147);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(125, 12);
+            this.label18.TabIndex = 60;
+            this.label18.Text = "Preview signal(DOUT)";
+            this.label18.Click += new System.EventHandler(this.label18_Click);
+            // 
             // numericUpDown_DACgain
             // 
             this.numericUpDown_DACgain.DecimalPlaces = 1;
@@ -968,27 +986,45 @@
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Filter = "Filter Parameter|*.filter";
             // 
-            // label18
+            // numericUpDown_DSPCH
             // 
-            this.label18.AutoSize = true;
-            this.label18.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label18.Location = new System.Drawing.Point(3, 147);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(125, 12);
-            this.label18.TabIndex = 60;
-            this.label18.Text = "Preview signal(DOUT)";
-            this.label18.Click += new System.EventHandler(this.label18_Click);
+            this.numericUpDown_DSPCH.Location = new System.Drawing.Point(586, 7);
+            this.numericUpDown_DSPCH.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown_DSPCH.Name = "numericUpDown_DSPCH";
+            this.numericUpDown_DSPCH.Size = new System.Drawing.Size(40, 20);
+            this.numericUpDown_DSPCH.TabIndex = 65;
+            this.numericUpDown_DSPCH.ValueChanged += new System.EventHandler(this.numericUpDown_DSPCH_ValueChanged);
             // 
-            // comboBoxDoutType
+            // label_DSPCH
             // 
-            this.comboBoxDoutType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxDoutType.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.comboBoxDoutType.FormattingEnabled = true;
-            this.comboBoxDoutType.Location = new System.Drawing.Point(136, 137);
-            this.comboBoxDoutType.Name = "comboBoxDoutType";
-            this.comboBoxDoutType.Size = new System.Drawing.Size(142, 29);
-            this.comboBoxDoutType.TabIndex = 61;
-            this.comboBoxDoutType.SelectedIndexChanged += new System.EventHandler(this.comboBoxDoutType_SelectedIndexChanged);
+            this.label_DSPCH.AutoSize = true;
+            this.label_DSPCH.Location = new System.Drawing.Point(537, 10);
+            this.label_DSPCH.Name = "label_DSPCH";
+            this.label_DSPCH.Size = new System.Drawing.Size(43, 13);
+            this.label_DSPCH.TabIndex = 66;
+            this.label_DSPCH.Text = "DSP ID";
+            // 
+            // comboBoxDSPmode
+            // 
+            this.comboBoxDSPmode.FormattingEnabled = true;
+            this.comboBoxDSPmode.Location = new System.Drawing.Point(371, 7);
+            this.comboBoxDSPmode.Name = "comboBoxDSPmode";
+            this.comboBoxDSPmode.Size = new System.Drawing.Size(128, 21);
+            this.comboBoxDSPmode.TabIndex = 67;
+            this.comboBoxDSPmode.SelectedIndexChanged += new System.EventHandler(this.comboBoxDSPmode_SelectedIndexChanged);
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(308, 11);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(58, 13);
+            this.label20.TabIndex = 68;
+            this.label20.Text = "DSP mode";
             // 
             // CL04_center_MainInterface
             // 
@@ -1029,6 +1065,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgInt)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgPW)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DACgain)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DSPCH)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1094,11 +1131,14 @@
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.NumericUpDown numericUpDown_randTrigMin;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.CheckBox checkBox_clmode;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.NumericUpDown numericUpDown_randTrigMax;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.ComboBox comboBoxDoutType;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.ComboBox comboBoxDSPmode;
+        private System.Windows.Forms.Label label_DSPCH;
+        private System.Windows.Forms.NumericUpDown numericUpDown_DSPCH;
     }
 }
 

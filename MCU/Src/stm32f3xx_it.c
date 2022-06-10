@@ -228,7 +228,7 @@ void TIM16_IRQHandler(void)
 	__HAL_TIM_MOE_DISABLE(STIM_handle[0].htim); //Shutdown PWM immediately to avoid giving extra pulse
 	CE32_STIM_IT(&STIM_handle[0]);
   /* USER CODE END TIM16_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim16);
+  //HAL_TIM_IRQHandler(&htim16);
   /* USER CODE BEGIN TIM16_IRQn 1 */
 
   /* USER CODE END TIM16_IRQn 1 */
@@ -243,7 +243,7 @@ void TIM17_IRQHandler(void)
 	__HAL_TIM_MOE_DISABLE(STIM_handle[1].htim); //Shutdown PWM immediately to avoid giving extra pulse
 	CE32_STIM_IT(&STIM_handle[1]);
   /* USER CODE END TIM17_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim17);
+  //HAL_TIM_IRQHandler(&htim17);
   /* USER CODE BEGIN TIM17_IRQn 1 */
 
   /* USER CODE END TIM17_IRQn 1 */
@@ -257,17 +257,27 @@ void TIM18_DAC2_IRQHandler(void)
   /* USER CODE BEGIN TIM18_DAC2_IRQn 0 */
 	__HAL_TIM_CLEAR_IT(&htim18, TIM_IT_UPDATE);	
   /* USER CODE END TIM18_DAC2_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim18);
+  //HAL_TIM_IRQHandler(&htim18);
   /* USER CODE BEGIN TIM18_DAC2_IRQn 1 */
+	float ch1,ch2;
 	if(sysDSP[0].formula==0)
 	{
-		cl.CL_func((void*)&cl,adc_buf[0],adc_buf[1]);
+		ch1=adc_buf[0];
 	}
 	else
 	{
-		int32_t temp=adc_buf[0]-adc_buf[1];
-		cl.CL_func((void*)&cl,temp,adc_buf[1]);
+		ch1=adc_buf[0]-adc_buf[1];
 	}
+	if(sysDSP[1].formula==0)
+	{
+		ch2=adc_buf[1];
+	}
+	else
+	{
+		ch2=adc_buf[1]-adc_buf[0];
+	}
+	cl.CL_func((void*)&cl,ch1,ch2);
+	
 //	misc_DigiSig|=(sc[0].Trig_state&((SC_STATE_TRIG|SC_STATE_STIM|SC_STATE_ON|SC_STATE_TRAINING|SC_STATE_TRAINED)))|\
 //								((sc[1].Trig_state&(SC_STATE_TRIG|SC_STATE_STIM)<<2));
 	//Enqueue data to preview buffer

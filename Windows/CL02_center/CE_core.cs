@@ -104,7 +104,7 @@ namespace CL02_center
             randtrig_min = rand_min/100;
         }
 
-        public void SetDspParams(int dsp_idx, uint Formula, uint Func1, uint MA_Ord1)
+        public void SetDspParams(uint dsp_idx, uint Formula, uint Func1, uint MA_Ord1)
         {
             formula[dsp_idx] = Formula;
             func[dsp_idx] = Func1;

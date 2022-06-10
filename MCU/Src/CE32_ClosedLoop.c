@@ -103,7 +103,7 @@ void CE32_CL_Single(void* vcl, float input1,float input2)
 	
 	if((cl->sc[0]->Trig_state&SC_STATE_TRIG)!=0)
 	{
-		CE32_CL_TrigAct(0x01);
+		CE32_CL_TrigAct(0x00);
 	}
 }
 void CE32_CL_Double(void* vcl, float input1,float input2)
@@ -121,11 +121,11 @@ void CE32_CL_Double(void* vcl, float input1,float input2)
 	
 	if((cl->sc[0]->Trig_state&SC_STATE_TRIG)!=0)
 	{
-		CE32_CL_TrigAct(0x01);
+		CE32_CL_TrigAct(0x00);
 	}
 	if((cl->sc[1]->Trig_state&SC_STATE_TRIG)!=0)
 	{
-		CE32_CL_TrigAct(0x02);
+		CE32_CL_TrigAct(0x01);
 	}
 }
 void CE32_CL_Cascade(void* vcl, float input1,float input2)
@@ -138,10 +138,10 @@ void CE32_CL_Cascade(void* vcl, float input1,float input2)
 	DSP_output[1]=DF_MA_inputData(cl->MA_fil[1],fabsf(DSP_temp2));	// Process main moving average filter
 	cl->DSP_temp[0]=DSP_temp1;
 	cl->DSP_temp[1]=DSP_temp2;
-	int rst=DF_StimControl_inputdata(cl->sc[1],DSP_output[1],1);
-	if((cl->sc[1]->Trig_state&SC_STATE_TRIG)!=0)
+	int rst=DF_StimControl_inputdata(cl->sc[0],DSP_output[1],0);
+	if((cl->sc[0]->Trig_state&SC_STATE_TRIG)!=0)
 	{
-		CE32_CL_TrigAct(0x01);
+		CE32_CL_TrigAct(0x00);
 	}
 }
 void CE32_CL_Gated(void* vcl, float input1,float input2)
@@ -159,7 +159,7 @@ void CE32_CL_Gated(void* vcl, float input1,float input2)
 	
 	if(((cl->sc[0]->Trig_state&SC_STATE_TRIG)!=0)&&(cl->sc[1]->Trig_state&SC_STATE_TRIG)!=0)
 	{
-		CE32_CL_TrigAct(0x01);
+		CE32_CL_TrigAct(0x00);
 	}
 }
 
@@ -170,7 +170,7 @@ void CE32_CL_Random(void* vcl, float input1,float input2)
 	if(rndtrig->delay_cnt--==0)
 	{
 		CE32_CL_Random_Update(vcl); //Update next trig time
-		CE32_CL_TrigAct(0x01);
+		CE32_CL_TrigAct(0x00);
 	}
 }
 

@@ -116,10 +116,10 @@ int CE32_INTERCOM_Incoming_CMD_Len(int index)
 		resp=5;
 		break;
 	case 0x20:
-		resp=21;
+		resp=22;
 		break;
 	case 0x21:
-		resp=13;
+		resp=14;
 		break;
 	case 0x40:
 		resp=1;

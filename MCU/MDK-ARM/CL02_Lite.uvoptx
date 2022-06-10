@@ -200,6 +200,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>cl</ItemText>
         </Ww>
+        <Ww>
+          <count>10</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>misc_DigiSig</ItemText>
+        </Ww>
       </WatchWindow1>
       <MemoryWindow1>
         <Mm>

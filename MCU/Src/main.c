@@ -858,21 +858,23 @@ int CL02_CmdSvr(uint8_t *data_ptr,uint32_t cmd_len)
 		}
 		case 0x20:
 		{
-			uint32_t* ptr=(uint32_t*)(&data_ptr[1]);
-			STIM_handle[0].delay=ptr[0];
-			STIM_handle[0].random_delay=ptr[1];
-			STIM_handle[0].duration=ptr[2];
-			STIM_handle[0].interval=ptr[3];
-			STIM_handle[0].cycle=ptr[4];
+			uint32_t* ptr=(uint32_t*)(&data_ptr[2]);
+			uint8_t id=data_ptr[1];
+			STIM_handle[id].delay=ptr[0];
+			STIM_handle[id].random_delay=ptr[1];
+			STIM_handle[id].duration=ptr[2];
+			STIM_handle[id].interval=ptr[3];
+			STIM_handle[id].cycle=ptr[4];
 			break;
 		}
 		case 0x21:
 		{
-			uint32_t * ptr=(uint32_t*)(&data_ptr[1]);
-			sysDSP[0].MAOrd=ptr[0];
-			sysDSP[0].func1=ptr[1];
-			sysDSP[0].formula=ptr[2];
-			CE32_InitFilter(mainFil,maFil,&sysDSP[0]);
+			uint32_t * ptr=(uint32_t*)(&data_ptr[2]);
+			uint8_t id=data_ptr[1];
+			sysDSP[id].MAOrd=ptr[0];
+			sysDSP[id].func1=ptr[1];
+			sysDSP[id].formula=ptr[2];
+			CE32_InitFilter(&mainFil[id],&maFil[id],&sysDSP[id]);
 			break;
 		}
 		case 0x40:
@@ -900,41 +902,57 @@ int CL02_CmdSvr(uint8_t *data_ptr,uint32_t cmd_len)
 	return 0;
 }
 
-void CE32_CL_TrigAct(int trigSig) //Triggers when Closed-loop detect a event
+void CE32_CL_TrigAct(int id) //Triggers when Closed-loop detect a event
 {
-	CE32_STIM_Trig(&STIM_handle[0]);
+	CE32_STIM_Trig(&STIM_handle[id]);
 }
 
 void CE32_CL_WaitAct(int id)
 {
-	htim2.Instance->ARR=9999;
-	htim2.Instance->CCR4=4999;
-	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4);
-	misc_DigiSig|=MISC_SIG_DSP_WAIT;
-	misc_DigiSig&=~(MISC_SIG_DSP_CAL|MISC_SIG_DSP_READY);
+	if(id==0)
+	{
+		htim2.Instance->ARR=9999;
+		htim2.Instance->CCR4=4999;
+		HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4);
+		misc_DigiSig|=MISC_SIG_DSP_WAIT;
+		misc_DigiSig&=~(MISC_SIG_DSP_CAL|MISC_SIG_DSP_READY);
+	}
 }
 
 void CE32_CL_TrainAct(int id) //Triggers when traning starting
 {
-	htim2.Instance->ARR=4999;
-	htim2.Instance->CCR4=2499;
-	misc_DigiSig|=MISC_SIG_DSP_CAL;
-	misc_DigiSig&=~(MISC_SIG_DSP_WAIT|MISC_SIG_DSP_READY);
+	if(id==0)
+	{
+		htim2.Instance->ARR=4999;
+		htim2.Instance->CCR4=2499;
+		misc_DigiSig|=MISC_SIG_DSP_CAL;
+		misc_DigiSig&=~(MISC_SIG_DSP_WAIT|MISC_SIG_DSP_READY);
+	}
 }
 
 void CE32_CL_ReadyAct(int id) //Triggers when traning is done
 {
-	htim2.Instance->ARR=4999;
-	htim2.Instance->CCR4=4999;
-	misc_DigiSig|=MISC_SIG_DSP_READY;
-	misc_DigiSig&=~(MISC_SIG_DSP_CAL|MISC_SIG_DSP_WAIT);
+	if(id==0)
+	{
+		htim2.Instance->ARR=4999;
+		htim2.Instance->CCR4=4999;
+		misc_DigiSig|=MISC_SIG_DSP_READY;
+		misc_DigiSig&=~(MISC_SIG_DSP_CAL|MISC_SIG_DSP_WAIT);
+	}
 }
 
 
 void CE32_STIM_TrigAct(CE32_stimulator* handle)//Trigger Onset action, Define this action in IT
 {
 	PIN_SET(LED1);
-	misc_DigiSig|=MISC_SIG_TRIG1;
+	switch(handle->id){
+		case 0:
+			misc_DigiSig|=MISC_SIG_TRIG1;
+			break;
+		case 1:
+			misc_DigiSig|=MISC_SIG_TRIG2;
+			break;
+	}
 }
 void CE32_STIM_StimAct(CE32_stimulator* handle)//Stimulation Onset action, Define this action in IT
 {
@@ -946,6 +964,7 @@ void CE32_STIM_StimAct(CE32_stimulator* handle)//Stimulation Onset action, Defin
 			break;
 		case 1:
 			misc_DigiSig|=MISC_SIG_STIM2;
+			PIN_SET(DOUT);
 			break;
 	}
 }
@@ -953,7 +972,14 @@ void CE32_STIM_StimAct(CE32_stimulator* handle)//Stimulation Onset action, Defin
 void CE32_STIM_TrigStopAct(CE32_stimulator* handle)
 {
 	PIN_RESET(LED1);
-	misc_DigiSig&=~(MISC_SIG_TRIG1);
+	switch(handle->id){
+		case 0:
+			misc_DigiSig&=~(MISC_SIG_TRIG1);
+			break;
+		case 1:
+			misc_DigiSig&=~(MISC_SIG_TRIG2);
+			break;
+	}
 }
 
 void CE32_STIM_StimOffAct(CE32_stimulator* handle)
@@ -965,6 +991,7 @@ void CE32_STIM_StimOffAct(CE32_stimulator* handle)
 			misc_DigiSig&=~MISC_SIG_STIM1;
 			break;
 		case 1:
+			PIN_RESET(DOUT);
 			misc_DigiSig&=~MISC_SIG_STIM2;
 			break;
 	}
@@ -973,15 +1000,23 @@ void CE32_STIM_StimOffAct(CE32_stimulator* handle)
 void CE32_STIM_StimStopAct(CE32_stimulator* handle)
 {
 	PIN_RESET(LED0);
-	misc_DigiSig&=~MISC_SIG_STIM1;
-
+	switch(handle->id){
+		case 0:
+			PIN_RESET(DOUT);
+			misc_DigiSig&=~MISC_SIG_STIM1;
+			break;
+		case 1:
+			PIN_RESET(DOUT);
+			misc_DigiSig&=~MISC_SIG_STIM2;
+			break;
+	}
 }
 
 void CE32_STIM_StimAbortAct(CE32_stimulator* handle)
 {
 	PIN_RESET(LED0);
 	PIN_RESET(LED1);
-	misc_DigiSig&=~(MISC_SIG_TRIG1|MISC_SIG_STIM1);
+	misc_DigiSig&=~(MISC_SIG_TRIG1|MISC_SIG_STIM1|MISC_SIG_TRIG2|MISC_SIG_STIM2);
 }
 
 
@@ -1025,9 +1060,11 @@ int CL02_setClParam()
 {
 	if(sysParam.stim_mode==0){
 		CE32_STIM_DISABLE(&STIM_handle[0]);
+		CE32_STIM_DISABLE(&STIM_handle[1]);
 	}
 	else{
 		CE32_STIM_ENABLE(&STIM_handle[0]);
+		CE32_STIM_ENABLE(&STIM_handle[1]);
 	}
 }
 
