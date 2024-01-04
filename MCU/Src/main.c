@@ -98,7 +98,7 @@ uint16_t test;
 float dsp_gain=10;
 extern HD32_filter_coeff filter_custom_coeff;
 
-uint8_t TX_buf[6]; //TX buffer, with extra bytes as reserve
+uint8_t TX_buf[8]; //TX buffer, with extra bytes as reserve
 uint8_t TX_buf_state=0;
 
 void (*arbitarCal_CH1)(uchar* ch_ord,short* data,float* output);
@@ -823,12 +823,13 @@ int CL02_CmdSvr(uint8_t *data_ptr,uint32_t cmd_len)
 		{
 			float v;
 			uint8_t *ptr;
+			uint8_t id = data_ptr[1];
 			ptr=(uint8_t*)&v;
 			for(int i=0;i<4;i++){
-				*(ptr+i)=data_ptr[i+1];
+				*(ptr+i)=data_ptr[i+2];
 			}
-			sc->Trig_gain=v;
-			sc->Trig_level=sc->Trig_gain*sc->Trig_mean;
+			sc[id].Trig_gain=v;
+			sc[id].Trig_level=sc[id].Trig_gain*sc[id].Trig_mean;
 			break;
 		}
 		case 0x11://STIM on/off
@@ -849,11 +850,12 @@ int CL02_CmdSvr(uint8_t *data_ptr,uint32_t cmd_len)
 		{
 			float v;
 			uint8_t *ptr;
+			uint8_t id = data_ptr[1];
 			ptr=(uint8_t*)&v;
 			for(int i=0;i<4;i++){
-				*(ptr+i)=data_ptr[i+1];
+				*(ptr+i)=data_ptr[i+2];
 			}
-			sc->Trig_level=v;
+			sc[id].Trig_level=v;
 			break;
 		}
 		case 0x20:
@@ -941,6 +943,18 @@ void CE32_CL_ReadyAct(int id) //Triggers when traning is done
 	}
 }
 
+void CE32_CL_TrigInitAct(int id)
+{
+	MX_TIM16_Init();
+	MX_TIM17_Init();
+	CE32_STIM_StimOffAct(&STIM_handle[0]);
+	CE32_STIM_StimOffAct(&STIM_handle[1]);
+	CE32_STIM_Init(&STIM_handle[0],&htim16,0,0);
+	CE32_STIM_Init(&STIM_handle[1],&htim17,0,1);
+	CE32_STIM_Setup(&STIM_handle[0],sysParam.stim_intensity[0],sysParam.stim_delay[0]+rand()*sysParam.stim_RndDelay[0],sysParam.stim_interval[0],sysParam.pulse_cnt[0],sysParam.pulse_width[0]);
+	CE32_STIM_Setup(&STIM_handle[1],sysParam.stim_intensity[1],sysParam.stim_delay[1]+rand()*sysParam.stim_RndDelay[1],sysParam.stim_interval[1],sysParam.pulse_cnt[1],sysParam.pulse_width[1]);
+
+}
 
 void CE32_STIM_TrigAct(CE32_stimulator* handle)//Trigger Onset action, Define this action in IT
 {
@@ -1025,12 +1039,16 @@ int CL02_sendDataPackage(){
 		case 0:	{ //Send header
 			TX_buf[0]=0x3c;
 			TX_buf[1]=0xAD;
-			TX_buf[4]=0x3e;
+		
 			float temp=cl.sc[0]->Trig_level;
 			temp=temp>INT16_MAX?INT16_MAX:temp;			//Make sure temp is not saturated 
 			temp=temp<INT16_MIN?INT16_MIN:temp;			//Make sure temp is not saturated 
 			*((int16_t*)&TX_buf[2])=temp;
-			if(CDC_Transmit_FS(TX_buf,4)==USBD_OK){
+			temp=cl.sc[1]->Trig_level;
+			temp=temp>INT16_MAX?INT16_MAX:temp;			//Make sure temp is not saturated 
+			temp=temp<INT16_MIN?INT16_MIN:temp;			//Make sure temp is not saturated 
+			*((int16_t*)&TX_buf[4])=temp;
+			if(CDC_Transmit_FS(TX_buf,6)==USBD_OK){
 				TX_buf_state=1;
 			}
 			break;
@@ -1043,7 +1061,8 @@ int CL02_sendDataPackage(){
 			break;
 		}
 		case 2:{//Send tail
-			if(CDC_Transmit_FS(&TX_buf[4],1)==USBD_OK){
+			uint8_t TX_tail = 0x3e;
+			if(CDC_Transmit_FS(&TX_tail,1)==USBD_OK){
 				TX_buf_state=0;
 			}
 			break;

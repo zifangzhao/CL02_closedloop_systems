@@ -74,6 +74,7 @@ void CE32_CL_WaitAct(int id);
 void CE32_CL_TrainAct(int id);
 void CE32_CL_ReadyAct(int id);
 
+void CE32_CL_TrigInitAct(int id);
 void CE32_CL_TrigAct(int id);
 void CE32_CL_TrigStopAct(int id);
 

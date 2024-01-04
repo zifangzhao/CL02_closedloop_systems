@@ -19,8 +19,11 @@ void CE32_CL_Random_Update(void* cl);
 
 void CE32_CL_Init(CE32_CL* cl, CE32_systemParam* sysParam,CE32_dspParam* sysDSP, CE32_Filter* main_Fil, CE32_MA_Filter* MA_fil, CE32_StimControl* sc)
 {
+	
 	for(int i=0;i<CE32_CL_UNIT_NUM;i++)
 	{
+		cl->trig_state[i]&=~SC_STATE_ON; //reset everything except state_on
+		CE32_CL_TrigInitAct(i);
 		cl->main_fil[i]=&main_Fil[i];
 		cl->MA_fil[i]=&MA_fil[i];
 		cl->sc[i]=&sc[i];
@@ -319,6 +322,10 @@ __weak void CE32_CL_ReadyAct(int id)
 	__nop();
 }
 
+__weak void CE32_CL_TrigInitAct(int id)
+{
+	__nop();
+}
 
 __weak void CE32_CL_TrigAct(int id)
 {

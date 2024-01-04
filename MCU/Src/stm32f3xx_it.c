@@ -260,22 +260,31 @@ void TIM18_DAC2_IRQHandler(void)
   //HAL_TIM_IRQHandler(&htim18);
   /* USER CODE BEGIN TIM18_DAC2_IRQn 1 */
 	float ch1,ch2;
-	if(sysDSP[0].formula==0)
+	switch(sysDSP[0].formula)
 	{
-		ch1=adc_buf[0];
+		case 0:
+			ch1 = adc_buf[0];
+			break;
+		case 1:
+			ch1 = adc_buf[1];
+			break;
+		case 2:
+			ch1 = adc_buf[0]-adc_buf[1];
+			break;
 	}
-	else
+	switch(sysDSP[1].formula)
 	{
-		ch1=adc_buf[0]-adc_buf[1];
+		case 0:
+			ch2 = adc_buf[0];
+			break;
+		case 1:
+			ch2 = adc_buf[1];
+			break;
+		case 2:
+			ch2 = adc_buf[0]-adc_buf[1];
+			break;
 	}
-	if(sysDSP[1].formula==0)
-	{
-		ch2=adc_buf[1];
-	}
-	else
-	{
-		ch2=adc_buf[1]-adc_buf[0];
-	}
+
 	cl.CL_func((void*)&cl,ch1,ch2);
 	
 //	misc_DigiSig|=(sc[0].Trig_state&((SC_STATE_TRIG|SC_STATE_STIM|SC_STATE_ON|SC_STATE_TRAINING|SC_STATE_TRAINED)))|\

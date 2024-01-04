@@ -186,7 +186,7 @@ namespace CL02_center
 
             DeviceParams = new CE_core(2);
 
-            comboBox_CL_FilterType.SelectedIndex = 1;
+            comboBox_CL_FilterType.SelectedIndex = 6;
             comboBox_CL_Arb.SelectedIndex = 0;
             comboBoxDSPmode.SelectedIndex = 1;
             for (int i = 0; i < DSP_count; i++)
@@ -558,24 +558,31 @@ namespace CL02_center
             uint cl_mode = Convert.ToUInt32(comboBoxDSPmode.SelectedValue);
             uint DSP_id = (uint)DSP_id_curr;
             int ratio = 10 * sample_rate / 1000;
-            DeviceParams.SetSysParams(DSP_id, 1000,(uint) (numericUpDown_TgInt.Value * ratio),
-                (uint)(numericUpDown_TgDly.Value * ratio), (uint)(numericUpDown_TgRndDly.Value * ratio),
-                (uint)(numericUpDown_TgPW.Value * ratio), (uint)numericUpDown_TgCyc.Value,(float)numericUpDown_TgGain.Value,
-                (uint)numericUpDown_CLSt.Value, (uint)numericUpDown_CLEd.Value, cl_mode, Convert.ToUInt16(checkBox2.Checked),(uint) numericUpDown_randTrigMin.Value,(uint) numericUpDown_randTrigMax.Value);
+            //override ch0 for stim control
+            DeviceParams.SetSysParams(0, 1000, (uint)(numericUpDown_TgInt.Value * ratio),
+                   (uint)(numericUpDown_TgDly.Value * ratio), (uint)(numericUpDown_TgRndDly.Value * ratio),
+                   (uint)(numericUpDown_TgPW.Value * ratio), (uint)numericUpDown_TgCyc.Value, DeviceParams.trigger_gain[0],
+                   (uint)numericUpDown_CLSt.Value, (uint)numericUpDown_CLEd.Value, cl_mode, Convert.ToUInt16(checkBox2.Checked), (uint)numericUpDown_randTrigMin.Value, (uint)numericUpDown_randTrigMax.Value);
+
+            DeviceParams.SetSysParams(DSP_id, 1000, (uint)(numericUpDown_TgInt.Value * ratio),
+                    (uint)(numericUpDown_TgDly.Value * ratio), (uint)(numericUpDown_TgRndDly.Value * ratio),
+                    (uint)(numericUpDown_TgPW.Value * ratio), (uint)numericUpDown_TgCyc.Value, (float)numericUpDown_TgGain.Value,
+                    (uint)numericUpDown_CLSt.Value, (uint)numericUpDown_CLEd.Value, cl_mode, Convert.ToUInt16(checkBox2.Checked), (uint)numericUpDown_randTrigMin.Value, (uint)numericUpDown_randTrigMax.Value);
             DeviceParams.SetDspParams(DSP_id,(uint)comboBox_CL_Arb.SelectedIndex,(uint)comboBox_CL_FilterType.SelectedIndex, (uint) numericUpDown_CL_MAOrd.Value);
         }
 
         private void LoadParams()
         {
             uint DSP_id = (uint)DSP_id_curr;
+            uint Stim_id = 0;
             int ratio = 10 * sample_rate / 1000;
             int cl_id = (int)DeviceParams.cl_mode;
             comboBoxDSPmode.SelectedIndex = cl_id > 1 ? cl_id - 1 : cl_id;
-            numericUpDown_TgInt.Value = DeviceParams.stim_interval[DSP_id] / ratio;
-            numericUpDown_TgDly.Value = DeviceParams.stim_delay[DSP_id] / ratio;
-            numericUpDown_TgRndDly.Value = DeviceParams.stim_RndDelay[DSP_id] / ratio;
-            numericUpDown_TgPW.Value = DeviceParams.pulse_width[DSP_id] / ratio;
-            numericUpDown_TgCyc.Value = DeviceParams.pulse_cyc[DSP_id];
+            numericUpDown_TgInt.Value = DeviceParams.stim_interval[Stim_id] / ratio;
+            numericUpDown_TgDly.Value = DeviceParams.stim_delay[Stim_id] / ratio;
+            numericUpDown_TgRndDly.Value = DeviceParams.stim_RndDelay[Stim_id] / ratio;
+            numericUpDown_TgPW.Value = DeviceParams.pulse_width[Stim_id] / ratio;
+            numericUpDown_TgCyc.Value = DeviceParams.pulse_cyc[Stim_id];
             numericUpDown_TgGain.Value = (decimal)DeviceParams.trigger_gain[DSP_id];
             comboBox_CL_Arb.SelectedIndex = (int)DeviceParams.formula[DSP_id];
             comboBox_CL_FilterType.SelectedIndex = (int)DeviceParams.func[DSP_id];
@@ -585,14 +592,15 @@ namespace CL02_center
         {
             byte[] src=BitConverter.GetBytes(g);
             //Array.Reverse(src);
-            byte[] wrBuf = new byte[7];
+            byte[] wrBuf = new byte[8];
             wrBuf[0] = 0x3c;
             wrBuf[1] = 0x10;
-            wrBuf[6] = 0x3e;
-            Buffer.BlockCopy(src, 0, wrBuf, 2, 4);
+            wrBuf[2] = (byte)numericUpDown_DSPCH.Value;
+            wrBuf[7] = 0x3e;
+            Buffer.BlockCopy(src, 0, wrBuf, 3, 4);
             if (serialPort1.IsOpen)
             {
-                serialPort1.Write(wrBuf, 0, 7);
+                serialPort1.Write(wrBuf, 0, wrBuf.Length);
             }
         }
 
@@ -600,14 +608,15 @@ namespace CL02_center
         {
             byte[] src = BitConverter.GetBytes(g);
             //Array.Reverse(src);
-            byte[] wrBuf = new byte[7];
+            byte[] wrBuf = new byte[8];
             wrBuf[0] = 0x3c;
             wrBuf[1] = 0x14;
-            wrBuf[6] = 0x3e;
-            Buffer.BlockCopy(src, 0, wrBuf, 2, 4);
+            wrBuf[2] = (byte)numericUpDown_DSPCH.Value;
+            wrBuf[7] = 0x3e;
+            Buffer.BlockCopy(src, 0, wrBuf, 3, 4);
             if (serialPort1.IsOpen)
             {
-                serialPort1.Write(wrBuf, 0, 7);
+                serialPort1.Write(wrBuf, 0, wrBuf.Length);
             }
         }
         private void SetStim(bool on)
@@ -737,12 +746,13 @@ namespace CL02_center
             const int package_size= 256;
             int cnt = 0;
             int buf_size = package_size * 16;
-            int thresh=0;
+            int[] threshs =  new int[2];
+            int thresh = 0;
             byte[] rdBuf = new byte[buf_size];
             byte[] rdTemp = new byte[1];
             if (serialPort1.IsOpen)
             {
-                while (serialPort1.BytesToRead > package_size+3) //+3 for head and tail
+                while (serialPort1.BytesToRead > package_size + 3) //+3 for head and tail
                 {
                     int temp = 0;
                     while (temp != 0x3C)
@@ -765,7 +775,7 @@ namespace CL02_center
                     temp = 0;
                     while (temp != 0xAD)
                     {
- 
+
                         if (serialPort1.IsOpen == false)
                         {
                             return;
@@ -779,10 +789,13 @@ namespace CL02_center
                             temp = serialPort1.ReadByte();
                         }
                     }
-                    
-                    byte[] infoBuf = new byte[2];
-                    serialPort1.Read(infoBuf, 0, infoBuf.Length);
-                    thresh = BitConverter.ToInt16(infoBuf, 0);
+                    for (int tidx = 0; tidx<2; tidx++)
+                    { 
+                        byte[] infoBuf = new byte[2];
+                        serialPort1.Read(infoBuf, 0, infoBuf.Length);
+                        threshs[tidx] = BitConverter.ToInt16(infoBuf, 0);
+                    }
+                    thresh = threshs[(int)numericUpDown_DSPCH.Value];
                     int x = serialPort1.Read(rdBuf, cnt, package_size);
                     serialPort1.Read(rdTemp, 0, 1); //Discard the 0x3e trail
                     cnt += package_size;

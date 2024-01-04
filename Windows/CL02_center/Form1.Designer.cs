@@ -40,6 +40,10 @@
             this.buttonStopCollection = new System.Windows.Forms.Button();
             this.labelPort = new System.Windows.Forms.Label();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.label20 = new System.Windows.Forms.Label();
+            this.comboBoxDSPmode = new System.Windows.Forms.ComboBox();
+            this.label_DSPCH = new System.Windows.Forms.Label();
+            this.numericUpDown_DSPCH = new System.Windows.Forms.NumericUpDown();
             this.label17 = new System.Windows.Forms.Label();
             this.numericUpDown_randTrigMax = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown_randTrigMin = new System.Windows.Forms.NumericUpDown();
@@ -92,10 +96,6 @@
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.numericUpDown_DSPCH = new System.Windows.Forms.NumericUpDown();
-            this.label_DSPCH = new System.Windows.Forms.Label();
-            this.comboBoxDSPmode = new System.Windows.Forms.ComboBox();
-            this.label20 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -108,6 +108,7 @@
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DSPCH)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_randTrigMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_randTrigMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgCyc)).BeginInit();
@@ -121,7 +122,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgInt)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgPW)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DACgain)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DSPCH)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -140,8 +140,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel2_Paint);
-            this.splitContainer1.Size = new System.Drawing.Size(1186, 795);
-            this.splitContainer1.SplitterDistance = 512;
+            this.splitContainer1.Size = new System.Drawing.Size(1186, 814);
+            this.splitContainer1.SplitterDistance = 523;
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
             // 
@@ -151,7 +151,7 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1186, 512);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1186, 523);
             this.flowLayoutPanel1.TabIndex = 0;
             this.flowLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.flowLayoutPanel1_Paint);
             // 
@@ -176,7 +176,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer2.Size = new System.Drawing.Size(1186, 279);
+            this.splitContainer2.Size = new System.Drawing.Size(1186, 287);
             this.splitContainer2.SplitterDistance = 244;
             this.splitContainer2.TabIndex = 11;
             this.splitContainer2.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer2_SplitterMoved);
@@ -320,9 +320,49 @@
             this.splitContainer3.Panel2.Controls.Add(this.comboBoxDisplayGain);
             this.splitContainer3.Panel2.Controls.Add(this.labelDisplayLen);
             this.splitContainer3.Panel2.Controls.Add(this.comboBoxDisplayLen);
-            this.splitContainer3.Size = new System.Drawing.Size(938, 279);
-            this.splitContainer3.SplitterDistance = 642;
+            this.splitContainer3.Size = new System.Drawing.Size(938, 287);
+            this.splitContainer3.SplitterDistance = 641;
             this.splitContainer3.TabIndex = 51;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(308, 11);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(58, 13);
+            this.label20.TabIndex = 68;
+            this.label20.Text = "DSP mode";
+            // 
+            // comboBoxDSPmode
+            // 
+            this.comboBoxDSPmode.FormattingEnabled = true;
+            this.comboBoxDSPmode.Location = new System.Drawing.Point(371, 7);
+            this.comboBoxDSPmode.Name = "comboBoxDSPmode";
+            this.comboBoxDSPmode.Size = new System.Drawing.Size(128, 21);
+            this.comboBoxDSPmode.TabIndex = 67;
+            this.comboBoxDSPmode.SelectedIndexChanged += new System.EventHandler(this.comboBoxDSPmode_SelectedIndexChanged);
+            // 
+            // label_DSPCH
+            // 
+            this.label_DSPCH.AutoSize = true;
+            this.label_DSPCH.Location = new System.Drawing.Point(537, 10);
+            this.label_DSPCH.Name = "label_DSPCH";
+            this.label_DSPCH.Size = new System.Drawing.Size(43, 13);
+            this.label_DSPCH.TabIndex = 66;
+            this.label_DSPCH.Text = "DSP ID";
+            // 
+            // numericUpDown_DSPCH
+            // 
+            this.numericUpDown_DSPCH.Location = new System.Drawing.Point(586, 7);
+            this.numericUpDown_DSPCH.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown_DSPCH.Name = "numericUpDown_DSPCH";
+            this.numericUpDown_DSPCH.Size = new System.Drawing.Size(40, 20);
+            this.numericUpDown_DSPCH.TabIndex = 65;
+            this.numericUpDown_DSPCH.ValueChanged += new System.EventHandler(this.numericUpDown_DSPCH_ValueChanged);
             // 
             // label17
             // 
@@ -575,6 +615,7 @@
             this.comboBox_CL_Arb.FormattingEnabled = true;
             this.comboBox_CL_Arb.Items.AddRange(new object[] {
             "Direct(x=CH1)",
+            "Direct(x=CH2)",
             "Differential(x=CH1-CH2)"});
             this.comboBox_CL_Arb.Location = new System.Drawing.Point(343, 161);
             this.comboBox_CL_Arb.Name = "comboBox_CL_Arb";
@@ -623,11 +664,6 @@
             this.numericUpDown_CLSt.Size = new System.Drawing.Size(71, 20);
             this.numericUpDown_CLSt.TabIndex = 25;
             this.numericUpDown_CLSt.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numericUpDown_CLSt.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
             // 
             // label16
             // 
@@ -986,56 +1022,16 @@
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Filter = "Filter Parameter|*.filter";
             // 
-            // numericUpDown_DSPCH
-            // 
-            this.numericUpDown_DSPCH.Location = new System.Drawing.Point(586, 7);
-            this.numericUpDown_DSPCH.Maximum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDown_DSPCH.Name = "numericUpDown_DSPCH";
-            this.numericUpDown_DSPCH.Size = new System.Drawing.Size(40, 20);
-            this.numericUpDown_DSPCH.TabIndex = 65;
-            this.numericUpDown_DSPCH.ValueChanged += new System.EventHandler(this.numericUpDown_DSPCH_ValueChanged);
-            // 
-            // label_DSPCH
-            // 
-            this.label_DSPCH.AutoSize = true;
-            this.label_DSPCH.Location = new System.Drawing.Point(537, 10);
-            this.label_DSPCH.Name = "label_DSPCH";
-            this.label_DSPCH.Size = new System.Drawing.Size(43, 13);
-            this.label_DSPCH.TabIndex = 66;
-            this.label_DSPCH.Text = "DSP ID";
-            // 
-            // comboBoxDSPmode
-            // 
-            this.comboBoxDSPmode.FormattingEnabled = true;
-            this.comboBoxDSPmode.Location = new System.Drawing.Point(371, 7);
-            this.comboBoxDSPmode.Name = "comboBoxDSPmode";
-            this.comboBoxDSPmode.Size = new System.Drawing.Size(128, 21);
-            this.comboBoxDSPmode.TabIndex = 67;
-            this.comboBoxDSPmode.SelectedIndexChanged += new System.EventHandler(this.comboBoxDSPmode_SelectedIndexChanged);
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(308, 11);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(58, 13);
-            this.label20.TabIndex = 68;
-            this.label20.Text = "DSP mode";
-            // 
             // CL04_center_MainInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1186, 795);
+            this.ClientSize = new System.Drawing.Size(1186, 814);
             this.Controls.Add(this.splitContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "CL04_center_MainInterface";
-            this.Text = "CL02 closed-loop system V1.04";
+            this.Text = "CL02 closed-loop system V1.05";
             this.Load += new System.EventHandler(this.CL04_center_MainInterface_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -1052,6 +1048,7 @@
             this.splitContainer3.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DSPCH)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_randTrigMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_randTrigMin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgCyc)).EndInit();
@@ -1065,7 +1062,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgInt)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgPW)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DACgain)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DSPCH)).EndInit();
             this.ResumeLayout(false);
 
         }
