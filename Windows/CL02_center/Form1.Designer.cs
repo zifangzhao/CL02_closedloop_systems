@@ -757,7 +757,9 @@
             "Epsilon\t(80-120)",
             "Ripple\t(110-250)",
             "IED          (60-80)",
-            "CUSTOM"});
+            "Ripple\t(100-200)",
+            "SPW\t(8-40)",
+            "Custom"});
             this.comboBox_CL_FilterType.Location = new System.Drawing.Point(343, 32);
             this.comboBox_CL_FilterType.Name = "comboBox_CL_FilterType";
             this.comboBox_CL_FilterType.Size = new System.Drawing.Size(155, 21);
@@ -1031,7 +1033,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "CL04_center_MainInterface";
-            this.Text = "CL02 closed-loop system V1.05";
+            this.Text = "CL02 closed-loop system V1.06";
             this.Load += new System.EventHandler(this.CL04_center_MainInterface_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);

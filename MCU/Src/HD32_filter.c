@@ -20,6 +20,8 @@
 #include "fdacoefs_BPF_E_80_120Hz@1000_ord4_SOS.h"
 #include "fdacoefs_BPF_R_110_250Hz@1000_ord4_SOS.h"
 #include "fdacoefs_BPF_I_60_80Hz@1000_ord4_SOS.h"
+#include "fdacoefs_BPF_R1_100_200Hz@1000_ord4_SOS.h"
+#include "fdacoefs_BPF_SPW_8_40Hz@1000_ord4_SOS.h"
 
 HD32_filter_coeff filter_custom_coeff;
 #endif
@@ -147,6 +149,12 @@ void CE32_InitFilter(CE32_Filter* fil,CE32_MA_Filter* MA_fil, CE32_dspParam* dsp
 			break;
 		case CE32_FILTER_IED:
 			DF_InitFilter(fil,(float(*)[3])NUM_I,(float(*)[3])DEN_I,MWSPT_NSEC,(int*)NL_I);
+			break;
+		case CE32_FILTER_SPW_RIPPLE:
+			DF_InitFilter(fil,(float(*)[3])NUM_R1,(float(*)[3])DEN_R1,MWSPT_NSEC,(int*)NL_R1);
+			break;
+		case CE32_FILTER_SPW:
+			DF_InitFilter(fil,(float(*)[3])NUM_SPW,(float(*)[3])DEN_SPW,MWSPT_NSEC,(int*)NL_SPW);
 			break;
 		case CE32_FILTER_CUSTOM:
 			if(filter_custom_coeff.ord!=0)//Check if initialized

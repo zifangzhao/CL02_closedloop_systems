@@ -27,7 +27,9 @@
 #define CE32_FILTER_EPSILON 5
 #define CE32_FILTER_RIPPLE 6
 #define CE32_FILTER_IED 7
-#define CE32_FILTER_CUSTOM 8
+#define CE32_FILTER_SPW_RIPPLE 8
+#define CE32_FILTER_SPW 9
+#define CE32_FILTER_CUSTOM 10
 
 typedef struct{
 	int16_t state_x[MAX_FIL_ORD];

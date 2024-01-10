@@ -952,12 +952,12 @@ namespace CL02_center
 
         private void comboBox_CL_FilterType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int[] freq= new int[] { 4, 8, 13, 30, 80, 110, 250, 60,100};
+            int[] freq= new int[] { 4, 8, 13, 30, 80, 110, 250, 60, 200, 40 ,100};
             decimal v= (decimal)(int)(1.0 / freq[comboBox_CL_FilterType.SelectedIndex] * sample_rate * 3);
             v = v > numericUpDown_CL_MAOrd.Maximum ? numericUpDown_CL_MAOrd.Maximum : v;
             numericUpDown_CL_MAOrd.Value = v;
 
-            if (comboBox_CL_FilterType.SelectedIndex == 8)
+            if (comboBox_CL_FilterType.SelectedIndex == (freq.Length-1))
             {
                 if (custom_filter_loaded==false)
                 {
