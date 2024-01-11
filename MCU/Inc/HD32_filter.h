@@ -30,7 +30,7 @@
 #define CE32_FILTER_SPW_RIPPLE 8
 #define CE32_FILTER_SPW 9
 #define CE32_FILTER_CUSTOM 10
-
+#define CE32_FILTER_CUSTOM1 11
 typedef struct{
 	int16_t state_x[MAX_FIL_ORD];
 	int16_t state_y[MAX_FIL_ORD];

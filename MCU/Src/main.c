@@ -96,7 +96,7 @@ const int trans_size=256;
 uint16_t misc_DigiSig;
 uint16_t test;
 float dsp_gain=10;
-extern HD32_filter_coeff filter_custom_coeff;
+extern HD32_filter_coeff filter_custom_coeff[2];
 
 uint8_t TX_buf[8]; //TX buffer, with extra bytes as reserve
 uint8_t TX_buf_state=0;
@@ -206,8 +206,9 @@ int main(void)
 	CE32_STIM_Init(&STIM_handle[0],&htim16,0,0);
 	CE32_STIM_Init(&STIM_handle[1],&htim17,0,1);
 	CE32_STIM_Setup(&STIM_handle[0],sysParam.stim_intensity[0],sysParam.stim_delay[0]+rand()*sysParam.stim_RndDelay[0],sysParam.stim_interval[0],sysParam.pulse_cnt[0],sysParam.pulse_width[0]);
-	CE32_STIM_Setup(&STIM_handle[1],sysParam.stim_intensity[1],sysParam.stim_delay[1]+rand()*sysParam.stim_RndDelay[1],sysParam.stim_interval[1],sysParam.pulse_cnt[1],sysParam.pulse_width[1]);
-	
+	CE32_STIM_Setup(&STIM_handle[1],sysParam.stim_intensity[0],sysParam.stim_delay[0]+rand()*sysParam.stim_RndDelay[0],sysParam.stim_interval[0],sysParam.pulse_cnt[0],sysParam.pulse_width[0]);
+	//CE32_STIM_Setup(&STIM_handle[1],sysParam.stim_intensity[1],sysParam.stim_delay[1]+rand()*sysParam.stim_RndDelay[1],sysParam.stim_interval[1],sysParam.pulse_cnt[1],sysParam.pulse_width[1]);
+
 	HAL_DAC_Start(&hdac1,DAC_CHANNEL_1);
 	//start ticking timer
 	HAL_TIM_Base_Start_IT(&htim18);
@@ -806,17 +807,18 @@ int CL02_CmdSvr(uint8_t *data_ptr,uint32_t cmd_len)
 			break;
 		case 0x06: //Load custom filter
 		{
-			uint8_t type=*(uint8_t*)&data_ptr[1]; //first data is uint8,type(01=DF1,02=SOS)
-			uint16_t ord=*(uint16_t*)&data_ptr[2]; //2nd data is uint16
-			filter_custom_coeff.ord=ord;
-			int* ptr=(int*)&data_ptr[4];
-			memcpy(&filter_custom_coeff.NL,ptr,ord*sizeof(int));
-			float* fptr=(float*)&data_ptr[4+ord*sizeof(int)];
-			memcpy(&filter_custom_coeff.Num,&fptr[0],3*ord*sizeof(float));
-			memcpy(&filter_custom_coeff.Den,&fptr[3*ord],3*ord*sizeof(float));
-			sysDSP[0].func1=CE32_FILTER_CUSTOM;
-			CE32_CL_Init(&cl,&sysParam,sysDSP,mainFil,maFil,sc); //Initialize Closed-loop unit
-			CE32_CL_Start(&cl);
+			uint8_t id = *(uint8_t*)&data_ptr[1]; //index of custom filter
+			uint8_t type=*(uint8_t*)&data_ptr[2]; //first data is uint8,type(01=DF1,02=SOS)
+			uint16_t ord=*(uint16_t*)&data_ptr[3]; //2nd data is uint16
+			filter_custom_coeff[id].ord=ord;
+			int* ptr=(int*)&data_ptr[5];
+			memcpy(&filter_custom_coeff[id].NL,ptr,ord*sizeof(int));
+			float* fptr=(float*)&data_ptr[5+ord*sizeof(int)];
+			memcpy(&filter_custom_coeff[id].Num,&fptr[0],3*ord*sizeof(float));
+			memcpy(&filter_custom_coeff[id].Den,&fptr[3*ord],3*ord*sizeof(float));
+//			sysDSP[id].func1=CE32_FILTER_CUSTOM;
+//			CE32_CL_Init(&cl,&sysParam,sysDSP,mainFil,maFil,sc); //Initialize Closed-loop unit
+//			CE32_CL_Start(&cl);
 			break;
 		}
 		case 0x10://Gain setting realtime

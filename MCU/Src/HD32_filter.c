@@ -23,7 +23,7 @@
 #include "fdacoefs_BPF_R1_100_200Hz@1000_ord4_SOS.h"
 #include "fdacoefs_BPF_SPW_8_40Hz@1000_ord4_SOS.h"
 
-HD32_filter_coeff filter_custom_coeff;
+HD32_filter_coeff filter_custom_coeff[2];
 #endif
 #include "fdacoefs_dispLPF_500Hz@20K_ord1.h"
 
@@ -157,11 +157,23 @@ void CE32_InitFilter(CE32_Filter* fil,CE32_MA_Filter* MA_fil, CE32_dspParam* dsp
 			DF_InitFilter(fil,(float(*)[3])NUM_SPW,(float(*)[3])DEN_SPW,MWSPT_NSEC,(int*)NL_SPW);
 			break;
 		case CE32_FILTER_CUSTOM:
-			if(filter_custom_coeff.ord!=0)//Check if initialized
 			{
-				DF_InitFilter(fil,filter_custom_coeff.Num,filter_custom_coeff.Den,filter_custom_coeff.ord,filter_custom_coeff.NL);
+				uint8_t fil_id=0;
+				if(filter_custom_coeff[fil_id].ord!=0)//Check if initialized
+				{
+					DF_InitFilter(fil,filter_custom_coeff[fil_id].Num,filter_custom_coeff[fil_id].Den,filter_custom_coeff[fil_id].ord,filter_custom_coeff[fil_id].NL);
+				}
+				break;
 			}
-			break;
+		case CE32_FILTER_CUSTOM1:
+			{
+				uint8_t fil_id=1;
+				if(filter_custom_coeff[fil_id].ord!=0)//Check if initialized
+				{
+					DF_InitFilter(fil,filter_custom_coeff[fil_id].Num,filter_custom_coeff[fil_id].Den,filter_custom_coeff[fil_id].ord,filter_custom_coeff[fil_id].NL);
+				}
+				break;
+			}
 	}
 	DF_InitMAFilter(MA_fil,dsp->MAOrd);
 }

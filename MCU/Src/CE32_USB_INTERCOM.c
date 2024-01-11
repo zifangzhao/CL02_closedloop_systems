@@ -104,7 +104,7 @@ int CE32_INTERCOM_Incoming_CMD_Len(int index)
 		resp=1;
 		break;		
 	case 0x06: //filter parameter
-		resp=513;
+		resp=514;
 		break;
 	case 0x10:
 		resp=6;

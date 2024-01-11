@@ -1,6 +1,6 @@
 ﻿namespace CL02_center
 {
-    partial class CL04_center_MainInterface
+    partial class CL02_center_MainInterface
     {
         /// <summary>
         /// 必需的设计器变量。
@@ -40,6 +40,7 @@
             this.buttonStopCollection = new System.Windows.Forms.Button();
             this.labelPort = new System.Windows.Forms.Label();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.button2 = new System.Windows.Forms.Button();
             this.label20 = new System.Windows.Forms.Label();
             this.comboBoxDSPmode = new System.Windows.Forms.ComboBox();
             this.label_DSPCH = new System.Windows.Forms.Label();
@@ -140,8 +141,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel2_Paint);
-            this.splitContainer1.Size = new System.Drawing.Size(1186, 814);
-            this.splitContainer1.SplitterDistance = 523;
+            this.splitContainer1.Size = new System.Drawing.Size(1250, 822);
+            this.splitContainer1.SplitterDistance = 527;
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
             // 
@@ -151,7 +152,7 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1186, 523);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1250, 527);
             this.flowLayoutPanel1.TabIndex = 0;
             this.flowLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.flowLayoutPanel1_Paint);
             // 
@@ -176,7 +177,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer2.Size = new System.Drawing.Size(1186, 287);
+            this.splitContainer2.Size = new System.Drawing.Size(1250, 291);
             this.splitContainer2.SplitterDistance = 244;
             this.splitContainer2.TabIndex = 11;
             this.splitContainer2.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer2_SplitterMoved);
@@ -264,6 +265,7 @@
             // 
             // splitContainer3.Panel1
             // 
+            this.splitContainer3.Panel1.Controls.Add(this.button2);
             this.splitContainer3.Panel1.Controls.Add(this.label20);
             this.splitContainer3.Panel1.Controls.Add(this.comboBoxDSPmode);
             this.splitContainer3.Panel1.Controls.Add(this.label_DSPCH);
@@ -320,9 +322,19 @@
             this.splitContainer3.Panel2.Controls.Add(this.comboBoxDisplayGain);
             this.splitContainer3.Panel2.Controls.Add(this.labelDisplayLen);
             this.splitContainer3.Panel2.Controls.Add(this.comboBoxDisplayLen);
-            this.splitContainer3.Size = new System.Drawing.Size(938, 287);
-            this.splitContainer3.SplitterDistance = 641;
+            this.splitContainer3.Size = new System.Drawing.Size(1002, 291);
+            this.splitContainer3.SplitterDistance = 686;
             this.splitContainer3.TabIndex = 51;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(511, 62);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(115, 26);
+            this.button2.TabIndex = 69;
+            this.button2.Text = "Load Custom Filter1";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // label20
             // 
@@ -459,7 +471,7 @@
             // 
             // button_forceTrig
             // 
-            this.button_forceTrig.Location = new System.Drawing.Point(382, 234);
+            this.button_forceTrig.Location = new System.Drawing.Point(382, 225);
             this.button_forceTrig.Name = "button_forceTrig";
             this.button_forceTrig.Size = new System.Drawing.Size(117, 40);
             this.button_forceTrig.TabIndex = 57;
@@ -569,7 +581,7 @@
             // 
             // button_sendparams
             // 
-            this.button_sendparams.Location = new System.Drawing.Point(255, 233);
+            this.button_sendparams.Location = new System.Drawing.Point(255, 224);
             this.button_sendparams.Name = "button_sendparams";
             this.button_sendparams.Size = new System.Drawing.Size(110, 41);
             this.button_sendparams.TabIndex = 50;
@@ -759,7 +771,8 @@
             "IED          (60-80)",
             "Ripple\t(100-200)",
             "SPW\t(8-40)",
-            "Custom"});
+            "Custom Filter 0",
+            "Custom Filter 1"});
             this.comboBox_CL_FilterType.Location = new System.Drawing.Point(343, 32);
             this.comboBox_CL_FilterType.Name = "comboBox_CL_FilterType";
             this.comboBox_CL_FilterType.Size = new System.Drawing.Size(155, 21);
@@ -874,7 +887,7 @@
             this.comboBoxDoutType.FormattingEnabled = true;
             this.comboBoxDoutType.Location = new System.Drawing.Point(136, 137);
             this.comboBoxDoutType.Name = "comboBoxDoutType";
-            this.comboBoxDoutType.Size = new System.Drawing.Size(142, 29);
+            this.comboBoxDoutType.Size = new System.Drawing.Size(143, 29);
             this.comboBoxDoutType.TabIndex = 61;
             this.comboBoxDoutType.SelectedIndexChanged += new System.EventHandler(this.comboBoxDoutType_SelectedIndexChanged);
             // 
@@ -1024,16 +1037,16 @@
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Filter = "Filter Parameter|*.filter";
             // 
-            // CL04_center_MainInterface
+            // CL02_center_MainInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1186, 814);
+            this.ClientSize = new System.Drawing.Size(1250, 822);
             this.Controls.Add(this.splitContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            this.Name = "CL04_center_MainInterface";
-            this.Text = "CL02 closed-loop system V1.06";
+            this.Name = "CL02_center_MainInterface";
+            this.Text = "CL02 closed-loop system V1.0.7";
             this.Load += new System.EventHandler(this.CL04_center_MainInterface_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -1137,6 +1150,7 @@
         private System.Windows.Forms.ComboBox comboBoxDSPmode;
         private System.Windows.Forms.Label label_DSPCH;
         private System.Windows.Forms.NumericUpDown numericUpDown_DSPCH;
+        private System.Windows.Forms.Button button2;
     }
 }
 

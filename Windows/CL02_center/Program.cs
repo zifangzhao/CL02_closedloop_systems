@@ -16,7 +16,7 @@ namespace CL02_center
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new CL04_center_MainInterface());
+            Application.Run(new CL02_center_MainInterface());
         }
     }
 }

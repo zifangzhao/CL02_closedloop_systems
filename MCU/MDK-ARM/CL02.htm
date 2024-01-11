@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\CL02.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\CL02.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Wed Jan 10 17:13:27 2024
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu Jan 11 14:17:41 2024
 <BR><P>
 <H3>Maximum Stack Usage =        272 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -630,8 +630,8 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_USB_INTERCOM_RX_ISR
 </UL>
 
-<P><STRONG><a name="[82]"></a>CE32_InitFilter</STRONG> (Thumb, 258 bytes, Stack size 20 bytes, hd32_filter.o(i.CE32_InitFilter))
-<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = CE32_InitFilter &rArr; DF_InitFilter
+<P><STRONG><a name="[82]"></a>CE32_InitFilter</STRONG> (Thumb, 402 bytes, Stack size 24 bytes, hd32_filter.o(i.CE32_InitFilter))
+<BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = CE32_InitFilter &rArr; DF_InitFilter
 </UL>
 <BR>[Calls]<UL><LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DF_InitMAFilter
 <LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DF_InitFilter
@@ -795,7 +795,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CDC_Receive_FS
 </UL>
 
-<P><STRONG><a name="[ae]"></a>CL02_CmdSvr</STRONG> (Thumb, 710 bytes, Stack size 40 bytes, main.o(i.CL02_CmdSvr))
+<P><STRONG><a name="[ae]"></a>CL02_CmdSvr</STRONG> (Thumb, 736 bytes, Stack size 40 bytes, main.o(i.CL02_CmdSvr))
 <BR><BR>[Stack]<UL><LI>Max Depth = 256<LI>Call Chain = CL02_CmdSvr &rArr; CE32_CL_Init &rArr; CE32_CL_Set_RndTrig &rArr; CE32_CL_Random_Update &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_InitFilter
@@ -2119,7 +2119,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[5f]"></a>main</STRONG> (Thumb, 500 bytes, Stack size 16 bytes, main.o(i.main))
+<P><STRONG><a name="[5f]"></a>main</STRONG> (Thumb, 502 bytes, Stack size 16 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 272<LI>Call Chain = main &rArr; CL02_CmdSvr &rArr; CE32_CL_Init &rArr; CE32_CL_Set_RndTrig &rArr; CE32_CL_Random_Update &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_USB_INTERCOM_RX_DequeueCmd

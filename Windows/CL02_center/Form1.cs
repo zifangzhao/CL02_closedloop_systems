@@ -39,7 +39,7 @@ namespace CL02_center
         MISC_SIG_LD1 = 0x4000,
         MISC_SIG_LD2 = 0x8000
     }
-    public partial class CL04_center_MainInterface : Form
+    public partial class CL02_center_MainInterface : Form
     {
 
         private List<Panel> Panels = new List<Panel>();
@@ -69,7 +69,7 @@ namespace CL02_center
         private List<bool> PaintThresh = new List<bool> { false, false, true, false };
 
         private int filter_ID;
-        private bool custom_filter_loaded = false;
+        private bool[] custom_filter_loaded= new bool[] { false, false };
         System.IO.FileStream fs;
         System.IO.BinaryWriter strWR;
         System.IO.BufferedStream fs_buf;
@@ -92,7 +92,7 @@ namespace CL02_center
         public int port = 2000;
         public string host = "127.0.0.1";
         public Socket socket;
-        public CL04_center_MainInterface()
+        public CL02_center_MainInterface()
         {
             InitializeComponent();
             Initialize();
@@ -690,7 +690,8 @@ namespace CL02_center
         {
             UpdParams();
             SendSYSSettings();
-            SendCustomFilter();
+            SendCustomFilter(0);
+            SendCustomFilter(1);
             SendDSPSettings();
             SetDSPParam();
             SetStimParam();
@@ -947,7 +948,7 @@ namespace CL02_center
 
         private void numericUpDown_CL_MAOrd_ValueChanged(object sender, EventArgs e)
         {
-            SetDSPParam();
+            //SetDSPParam();
         }
 
         private void comboBox_CL_FilterType_SelectedIndexChanged(object sender, EventArgs e)
@@ -957,13 +958,13 @@ namespace CL02_center
             v = v > numericUpDown_CL_MAOrd.Maximum ? numericUpDown_CL_MAOrd.Maximum : v;
             numericUpDown_CL_MAOrd.Value = v;
 
-            if (comboBox_CL_FilterType.SelectedIndex == (freq.Length-1))
+            if (comboBox_CL_FilterType.SelectedIndex == (comboBox_CL_FilterType.Items.Count-custom_filter_loaded.Length))
             {
-                if (custom_filter_loaded==false)
+                if (custom_filter_loaded[0]==false)
                 {
-                    load_CustomFilter();
+                    load_CustomFilter(0);
                 }
-                if (custom_filter_loaded)
+                if (custom_filter_loaded[0])
                 {
                     filter_ID = comboBox_CL_FilterType.SelectedIndex;
                 }
@@ -974,16 +975,32 @@ namespace CL02_center
             }
             else
             {
-                filter_ID = comboBox_CL_FilterType.SelectedIndex;
-            }
-
-           
-            SetDSPParam();
+                if (comboBox_CL_FilterType.SelectedIndex == (comboBox_CL_FilterType.Items.Count - custom_filter_loaded.Length+1))
+                {
+                    if (custom_filter_loaded[1] == false)
+                    {
+                        load_CustomFilter(1);
+                    }
+                    if (custom_filter_loaded[1])
+                    {
+                        filter_ID = comboBox_CL_FilterType.SelectedIndex;
+                    }
+                    else
+                    {
+                        comboBox_CL_FilterType.SelectedIndex = filter_ID; //restore to previous selection if custom filter is not loaded
+                    }
+                }
+                else
+                {
+                    filter_ID = comboBox_CL_FilterType.SelectedIndex;
+                }
+            }         
+            //SetDSPParam();
         }
 
         private void comboBox_CL_Arb_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SetDSPParam();
+            //SetDSPParam();
         }
 
         private void labelPort_Click(object sender, EventArgs e)
@@ -1015,7 +1032,7 @@ namespace CL02_center
             //}
         }
 
-        private int load_CustomFilter()
+        private int load_CustomFilter(int customfilter_id)
         {
             openFileDialog1.ShowDialog();
             if(File.Exists(openFileDialog1.FileName))
@@ -1023,26 +1040,27 @@ namespace CL02_center
                 filter_param = new Byte[512];
                 filter_param = File.ReadAllBytes(openFileDialog1.FileName);
                 labelCustomFilter.Text = openFileDialog1.FileName;
-                custom_filter_loaded = true;
-                comboBox_CL_FilterType.SelectedIndex = 8;
-                SendCustomFilter();
+                custom_filter_loaded[customfilter_id] = true;
+                comboBox_CL_FilterType.SelectedIndex = comboBox_CL_FilterType.Items.Count-custom_filter_loaded.Length+customfilter_id;
+                SendCustomFilter(customfilter_id);
             }
             
             return 0;
         }
 
-        private void SendCustomFilter()
+        private void SendCustomFilter(int customfilter_id)
         {
             //delay,rnd_delay,duration,interval int32
-            byte[] wrBuf = new byte[515];
+            byte[] wrBuf = new byte[516];
             wrBuf[0] = 0x3c;
             wrBuf[1] = 0x06;
-            wrBuf[514] = 0x3e;
+            wrBuf[2] = (byte) customfilter_id;
+            wrBuf[515] = 0x3e;
             if (filter_param != null)
             {
                 if (filter_param.Length <= 512)
                 {
-                    Buffer.BlockCopy(filter_param, 0, wrBuf, 2, filter_param.Length);
+                    Buffer.BlockCopy(filter_param, 0, wrBuf, 3, filter_param.Length);
                     if (serialPort1.IsOpen)
                     {
                         serialPort1.Write(wrBuf, 0, wrBuf.Length);
@@ -1052,10 +1070,14 @@ namespace CL02_center
         }
         private void button1_Click_1(object sender, EventArgs e)
         {
-            load_CustomFilter();
+            load_CustomFilter(0);
             
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            load_CustomFilter(1);
+        }
         private void button_forceTrig_Click(object sender, EventArgs e)
         {
             if (serialPort1.IsOpen)
@@ -1180,5 +1202,7 @@ namespace CL02_center
         {
 
         }
+
+
     }
 }
