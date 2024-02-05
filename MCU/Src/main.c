@@ -89,7 +89,7 @@ CE32_systemParam 	sysParam;
 
 CE32_dspParam    sysDSP[2];
 CE32_Filter			 mainFil[2];
-CE32_MA_Filter   maFil[2];
+CE32_Filter   	 maFil[2];
 CE32_StimControl sc[2];
 CE32_CL					 cl;
 const int trans_size=256;

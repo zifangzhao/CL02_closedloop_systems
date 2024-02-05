@@ -23,6 +23,16 @@
 #include "fdacoefs_BPF_R1_100_200Hz@1000_ord4_SOS.h"
 #include "fdacoefs_BPF_SPW_8_40Hz@1000_ord4_SOS.h"
 
+#include "fdacoefs_LPF_D_2Hz@1000_ord4_SOS.h"
+#include "fdacoefs_LPF_T_4Hz@1000_ord4_SOS.h"
+#include "fdacoefs_LPF_A_6Hz@1000_ord4_SOS.h"
+#include "fdacoefs_LPF_B_15Hz@1000_ord4_SOS.h"
+#include "fdacoefs_LPF_G_30Hz@1000_ord4_SOS.h"
+#include "fdacoefs_LPF_E_60Hz@1000_ord4_SOS.h"
+#include "fdacoefs_LPF_R_110Hz@1000_ord4_SOS.h"
+#include "fdacoefs_LPF_I_40Hz@1000_ord4_SOS.h"
+#include "fdacoefs_LPF_R1_100Hz@1000_ord4_SOS.h"
+#include "fdacoefs_LPF_SPW_20Hz@1000_ord4_SOS.h"
 HD32_filter_coeff filter_custom_coeff[2];
 #endif
 #include "fdacoefs_dispLPF_500Hz@20K_ord1.h"
@@ -124,37 +134,47 @@ float DF_IIR_inputData(void* fil,float input){
 	return fil_temp;
 }
 
-void CE32_InitFilter(CE32_Filter* fil,CE32_MA_Filter* MA_fil, CE32_dspParam* dsp){
+void CE32_InitFilter(CE32_Filter* fil,CE32_Filter* MA_fil, CE32_dspParam* dsp){
 	switch(dsp->func1){
 		case CE32_FILTER_DELTA:
 			DF_InitFilter(fil,(float(*)[3])NUM_D,(float(*)[3])DEN_D,MWSPT_NSEC,(int*)NL_D);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_D,(float(*)[3])DEN_LPF_D,MWSPT_NSEC,(int*)NL_LPF_D);
 			break;
 		case CE32_FILTER_THETA:
 			DF_InitFilter(fil,(float(*)[3])NUM_T,(float(*)[3])DEN_T,MWSPT_NSEC,(int*)NL_T);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_T,(float(*)[3])DEN_LPF_T,MWSPT_NSEC,(int*)NL_LPF_T);
 			break;
 		case CE32_FILTER_ALPHA:
 			DF_InitFilter(fil,(float(*)[3])NUM_A,(float(*)[3])DEN_A,MWSPT_NSEC,(int*)NL_A);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_A,(float(*)[3])DEN_LPF_A,MWSPT_NSEC,(int*)NL_LPF_A);
 			break;
 		case CE32_FILTER_BETA:
 			DF_InitFilter(fil,(float(*)[3])NUM_B,(float(*)[3])DEN_B,MWSPT_NSEC,(int*)NL_B);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_B,(float(*)[3])DEN_LPF_B,MWSPT_NSEC,(int*)NL_LPF_B);
 			break;
 		case CE32_FILTER_GAMMA:
 			DF_InitFilter(fil,(float(*)[3])NUM_G,(float(*)[3])DEN_G,MWSPT_NSEC,(int*)NL_G);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_G,(float(*)[3])DEN_LPF_G,MWSPT_NSEC,(int*)NL_LPF_G);
 			break;
 		case CE32_FILTER_EPSILON:
 			DF_InitFilter(fil,(float(*)[3])NUM_E,(float(*)[3])DEN_E,MWSPT_NSEC,(int*)NL_E);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_E,(float(*)[3])DEN_LPF_E,MWSPT_NSEC,(int*)NL_LPF_E);
 			break;
 		case CE32_FILTER_RIPPLE:
 			DF_InitFilter(fil,(float(*)[3])NUM_R,(float(*)[3])DEN_R,MWSPT_NSEC,(int*)NL_R);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_R,(float(*)[3])DEN_LPF_R,MWSPT_NSEC,(int*)NL_LPF_R);
 			break;
 		case CE32_FILTER_IED:
 			DF_InitFilter(fil,(float(*)[3])NUM_I,(float(*)[3])DEN_I,MWSPT_NSEC,(int*)NL_I);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_I,(float(*)[3])DEN_LPF_I,MWSPT_NSEC,(int*)NL_LPF_I);
 			break;
 		case CE32_FILTER_SPW_RIPPLE:
 			DF_InitFilter(fil,(float(*)[3])NUM_R1,(float(*)[3])DEN_R1,MWSPT_NSEC,(int*)NL_R1);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_R1,(float(*)[3])DEN_LPF_R1,MWSPT_NSEC,(int*)NL_LPF_R1);
 			break;
 		case CE32_FILTER_SPW:
 			DF_InitFilter(fil,(float(*)[3])NUM_SPW,(float(*)[3])DEN_SPW,MWSPT_NSEC,(int*)NL_SPW);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_SPW,(float(*)[3])DEN_LPF_SPW,MWSPT_NSEC,(int*)NL_LPF_SPW);
 			break;
 		case CE32_FILTER_CUSTOM:
 			{
@@ -163,6 +183,7 @@ void CE32_InitFilter(CE32_Filter* fil,CE32_MA_Filter* MA_fil, CE32_dspParam* dsp
 				{
 					DF_InitFilter(fil,filter_custom_coeff[fil_id].Num,filter_custom_coeff[fil_id].Den,filter_custom_coeff[fil_id].ord,filter_custom_coeff[fil_id].NL);
 				}
+				DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_SPW,(float(*)[3])DEN_LPF_SPW,MWSPT_NSEC,(int*)NL_LPF_SPW);
 				break;
 			}
 		case CE32_FILTER_CUSTOM1:
@@ -172,10 +193,10 @@ void CE32_InitFilter(CE32_Filter* fil,CE32_MA_Filter* MA_fil, CE32_dspParam* dsp
 				{
 					DF_InitFilter(fil,filter_custom_coeff[fil_id].Num,filter_custom_coeff[fil_id].Den,filter_custom_coeff[fil_id].ord,filter_custom_coeff[fil_id].NL);
 				}
+				DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_SPW,(float(*)[3])DEN_LPF_SPW,MWSPT_NSEC,(int*)NL_LPF_SPW);
 				break;
 			}
 	}
-	DF_InitMAFilter(MA_fil,dsp->MAOrd);
 }
 #endif
 

@@ -55,13 +55,13 @@ typedef struct
 	CE32_systemParam* sysParam;
 	void (*CL_func)(void* cl,float input1,float input2);
 	CE32_Filter *main_fil[CE32_CL_UNIT_NUM];
-	CE32_MA_Filter *MA_fil[CE32_CL_UNIT_NUM];
+	CE32_Filter *MA_fil[CE32_CL_UNIT_NUM];
 	CE32_StimControl *sc[CE32_CL_UNIT_NUM];
 	CE32_dspParam*    sysDSP[CE32_CL_UNIT_NUM];
 	CE32_CL_RndTrig rndTrig;
 }CE32_CL;
 
-void CE32_CL_Init(CE32_CL* cl, CE32_systemParam* sysParam, CE32_dspParam* sysDSP, CE32_Filter* main_Fil, CE32_MA_Filter* MA_fil, CE32_StimControl* sc); //Should be calling after the filter and stim control initialized
+void CE32_CL_Init(CE32_CL* cl, CE32_systemParam* sysParam, CE32_dspParam* sysDSP, CE32_Filter* main_Fil, CE32_Filter* MA_fil, CE32_StimControl* sc); //Should be calling after the filter and stim control initialized
 void CE32_CL_Start(CE32_CL* cl);
 void CE32_CL_Reset(CE32_CL* cl,int id);
 

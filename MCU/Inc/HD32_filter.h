@@ -31,6 +31,18 @@
 #define CE32_FILTER_SPW 9
 #define CE32_FILTER_CUSTOM 10
 #define CE32_FILTER_CUSTOM1 11
+#define CE32_FILTER_DELTA_LPF 12
+#define CE32_FILTER_THETA_LPF 13
+#define CE32_FILTER_ALPHA_LPF 14
+#define CE32_FILTER_BETA_LPF 15
+#define CE32_FILTER_GAMMA_LPF 16
+#define CE32_FILTER_EPSILON_LPF 17
+#define CE32_FILTER_RIPPLE_LPF 18
+#define CE32_FILTER_IED_LPF 19
+#define CE32_FILTER_SPW_RIPPLE_LPF 20
+#define CE32_FILTER_SPW_LPF 21
+#define CE32_FILTER_CUSTOM_LPF 22
+#define CE32_FILTER_CUSTOM1_LPF 23
 typedef struct{
 	int16_t state_x[MAX_FIL_ORD];
 	int16_t state_y[MAX_FIL_ORD];
@@ -85,7 +97,7 @@ typedef struct{
 
 //float DF_IIR_inputData(void* fil,float input);
 //float DF_FIR_inputData(void* fil,float input);
-void CE32_InitFilter(CE32_Filter* fil,CE32_MA_Filter* MA_fil, CE32_dspParam* dsp);
+void CE32_InitFilter(CE32_Filter* fil,CE32_Filter* MA_fil, CE32_dspParam* dsp);
 void DF_InitMAFilter(CE32_MA_Filter* fil,int ord);
 
 #ifndef _SOS

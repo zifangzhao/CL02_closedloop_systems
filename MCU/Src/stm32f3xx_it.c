@@ -51,7 +51,7 @@ extern CE32_systemParam 	sysParam;
 extern CE32_dspParam    sysDSP[2];
 extern CE32_Filter			 LPF[2];
 extern CE32_Filter			 mainFil[2];
-extern CE32_MA_Filter   maFil[2];
+extern CE32_Filter   maFil[2];
 extern CE32_StimControl sc[2];
 extern CE32_CL					 cl;
 extern CE32_stimulator STIM_handle[2];
