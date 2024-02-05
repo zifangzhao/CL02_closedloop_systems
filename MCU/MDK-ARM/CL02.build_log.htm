@@ -21,13 +21,33 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.9.0
 Dialog DLL:      TCM.DLL V1.56.1.0
  
 <h2>Project:</h2>
-C:\code\github\CL02_opensource\MCU\MDK-ARM\CL02_Lite.uvprojx
-Project File Date:  02/23/2023
+C:\code\github\CL02_opensource\MCU\MDK-ARM\CL02_lite.uvprojx
+Project File Date:  02/05/2024
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
-Build target 'CL02'
-".\CL02.axf" - 0 Error(s), 0 Warning(s).
+Build target 'CL02_lite'
+assembling startup_stm32f373xc.s...
+compiling main.c...
+../Src/main.c(120): warning:  #1295-D: Deprecated declaration CL02_sendDataPackage - give arg types
+  int CL02_sendDataPackage();
+../Src/main.c(121): warning:  #1295-D: Deprecated declaration CL02_purgeData - give arg types
+  int CL02_purgeData();
+../Src/main.c(122): warning:  #1295-D: Deprecated declaration CL02_setClParam - give arg types
+  int CL02_setClParam();
+../Src/main.c(1027): warning:  #177-D: variable "type"  was declared but never referenced
+  			uint8_t type=*(uint8_t*)&data_ptr[2]; //first data is uint8,type(01=DF1,02=SOS)
+../Src/main.c(1289): warning:  #940-D: missing return statement at end of non-void function "CL02_sendDataPackage" 
+  }
+../Src/main.c(1294): warning:  #940-D: missing return statement at end of non-void function "CL02_purgeData" 
+  }
+../Src/main.c(1306): warning:  #940-D: missing return statement at end of non-void function "CL02_setClParam" 
+  }
+../Src/main.c: 7 warnings, 0 errors
+linking...
+Program Size: Code=31424 RO-data=3280 RW-data=412 ZI-data=29972  
+FromELF: creating hex file...
+".\CL02.axf" - 0 Error(s), 7 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -43,14 +63,14 @@ Package Vendor: Keil
                 STMicroelectronics STM32F3 Series Device Support and Examples
 
 <h2>Collection of Component include folders:</h2>
-  ./RTE/_CL02
+  ./RTE/_CL02_lite
   C:/Users/aeria/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include
   C:/Users/aeria/AppData/Local/Arm/Packs/Keil/STM32F3xx_DFP/2.1.0/Drivers/CMSIS/Device/ST/STM32F3xx/Include
 
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.6.0
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>
