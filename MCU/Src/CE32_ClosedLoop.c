@@ -37,6 +37,7 @@ void CE32_CL_Init(CE32_CL* cl, CE32_systemParam* sysParam,CE32_dspParam* sysDSP,
 	CE32_CL_Set_RndTrig(cl,sysParam->randtrig_min,sysParam->randtrig_max);
 	cl->sysParam=sysParam;
 	cl->mode=cl->sysParam->cl_mode;
+	cl->trig_mode = 0;
 	switch(cl->mode)
 	{
 		case CE32_CL_FUNC_DISABLED:
@@ -58,6 +59,7 @@ void CE32_CL_Init(CE32_CL* cl, CE32_systemParam* sysParam,CE32_dspParam* sysDSP,
 			cl->CL_func=&CE32_CL_Random;
 			break;
 	}	
+
 	srand(RTC->SSR);	//Randomize seed
 }
 

@@ -195,6 +195,7 @@ namespace CL02_center
                 UpdParams();
             }
 
+            comboBox_TrigMode.SelectedIndex = 0;
             //InitSocket();
             InitTimer();
         }
@@ -696,6 +697,7 @@ namespace CL02_center
             SetDSPParam();
             SetStimParam();
             SetDACGain();
+            SetTrigMode();
         }
         private void SendSYSSettings()
         {
@@ -733,6 +735,17 @@ namespace CL02_center
                 byte[] cmd = { 0x3c, 0x60, 0x00, 0x00, 0x00, 0x00, 0x3e };
                 UInt32[] v = { (UInt32)numericUpDown_DACgain.Value * 10 };
                 Buffer.BlockCopy(v, 0, cmd, 2, 4);
+                serialPort1.Write(cmd, 0, cmd.Length);
+            }
+        }
+
+        void SetTrigMode()
+        {
+            if (serialPort1.IsOpen)
+            {
+                byte[] cmd = { 0x3c, 0x12, 0x00, 0x3e };
+                Char[] v = { (Char)comboBox_TrigMode.SelectedIndex};
+                Buffer.BlockCopy(v, 0, cmd, 2, 1);
                 serialPort1.Write(cmd, 0, cmd.Length);
             }
         }
@@ -1203,6 +1216,9 @@ namespace CL02_center
 
         }
 
-
+        private void comboBox_TrigMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SetTrigMode();
+        }
     }
 }

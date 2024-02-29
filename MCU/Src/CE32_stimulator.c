@@ -9,6 +9,7 @@ void CE32_STIM_Init(CE32_stimulator* handle,TIM_HandleTypeDef* htim,uint16_t CC_
 	handle->htim->Init.AutoReloadPreload=TIM_AUTORELOAD_PRELOAD_ENABLE;
 	handle->htim->Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	handle->htim->Init.Prescaler=HAL_RCC_GetSysClockFreq()/CE32_STIM_TIMEBASECLK-1;
+	handle->trig_mode = 0;
 }
 
 #ifdef __USE_PWM
@@ -51,22 +52,31 @@ void CE32_STIM_DISABLE(CE32_stimulator* handle){
 }
 
 void CE32_STIM_Trig(CE32_stimulator* handle){
-	if(handle->state&CE32_STIM_STATE_ON)
+	uint32_t flag;
+	if(handle->trig_mode ==0)
 	{
-		if((handle->state&(CE32_STIM_STATE_DELAY|CE32_STIM_STATE_STIM|CE32_STIM_STATE_REFRACT))==0)
-		{
-			handle->state|=CE32_STIM_STATE_TRIG;
-			CE32_STIM_TrigAct(handle);
-			uint32_t rand_delay=handle->random_delay*(rand()%UINT16_MAX);
-			rand_delay/=UINT16_MAX;
-			handle->delay_this=handle->delay+rand_delay;
-			handle->cycle_left=handle->cycle;
-			if(handle->delay_this!=0){
-				CE32_STIM_Delay(handle);
-			}
-			else{
+		flag = CE32_STIM_STATE_DELAY|CE32_STIM_STATE_STIM|CE32_STIM_STATE_REFRACT; //trig on first trigger
+	}
+	else
+	{
+		flag = CE32_STIM_STATE_STIM|CE32_STIM_STATE_REFRACT; //trig on last trigger
+	}
+	if((handle->state&flag)==0)
+	{
+		handle->state|=CE32_STIM_STATE_TRIG;
+		CE32_STIM_TrigAct(handle);
+		uint32_t rand_delay=handle->random_delay*(rand()%UINT16_MAX);
+		rand_delay/=UINT16_MAX;
+		handle->delay_this=handle->delay+rand_delay;
+		handle->cycle_left=handle->cycle;
+		if(handle->delay_this!=0){
+			CE32_STIM_Delay(handle);
+		}
+		else{
+//			if(handle->state&CE32_STIM_STATE_ON)
+//			{
 				CE32_STIM_Stim(handle);
-			}
+//			}
 		}
 	}
 }
@@ -146,8 +156,6 @@ void CE32_STIM_IT(CE32_stimulator* handle){
 			}
 		}
 	}
-	
-
 }
 
 void CE32_STIM_Stim(CE32_stimulator* handle){

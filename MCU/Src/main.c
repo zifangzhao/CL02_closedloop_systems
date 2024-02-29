@@ -374,13 +374,6 @@ static void MX_DAC1_Init(void)
   {
     Error_Handler();
   }
-
-  /** DAC channel OUT2 config
-  */
-  if (HAL_DAC_ConfigChannel(&hdac1, &sConfig, DAC_CHANNEL_2) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN DAC1_Init 2 */
 
   /* USER CODE END DAC1_Init 2 */
@@ -948,10 +941,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, DOUT_Pin|LED1_Pin|LED0_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, DOUT1_Pin|DOUT_Pin|LED1_Pin|LED0_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : DOUT_Pin LED1_Pin LED0_Pin */
-  GPIO_InitStruct.Pin = DOUT_Pin|LED1_Pin|LED0_Pin;
+  /*Configure GPIO pins : DOUT1_Pin DOUT_Pin LED1_Pin LED0_Pin */
+  GPIO_InitStruct.Pin = DOUT1_Pin|DOUT_Pin|LED1_Pin|LED0_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -1063,6 +1056,21 @@ int CL02_CmdSvr(uint8_t *data_ptr,uint32_t cmd_len)
 				CE32_STIM_ENABLE(&STIM_handle[0]);
 			}
 				break;
+		}
+		case 0x12: //Trig mode
+		{
+			if(data_ptr[1]==0){
+				cl.trig_mode = 0;
+				STIM_handle[0].trig_mode = 0;
+				STIM_handle[1].trig_mode = 0;
+			}
+			else
+			{
+				cl.trig_mode = 1;
+				STIM_handle[0].trig_mode = 1;
+				STIM_handle[1].trig_mode = 1;
+			}
+			break;
 		}
 		case 0x14:
 		{
@@ -1177,6 +1185,7 @@ void CE32_CL_TrigInitAct(int id)
 void CE32_STIM_TrigAct(CE32_stimulator* handle)//Trigger Onset action, Define this action in IT
 {
 	PIN_SET(LED1);
+	PIN_SET(DOUT1);
 	switch(handle->id){
 		case 0:
 			misc_DigiSig|=MISC_SIG_TRIG1;
@@ -1188,22 +1197,26 @@ void CE32_STIM_TrigAct(CE32_stimulator* handle)//Trigger Onset action, Define th
 }
 void CE32_STIM_StimAct(CE32_stimulator* handle)//Stimulation Onset action, Define this action in IT
 {
-	PIN_SET(LED0);
-	switch(handle->id){
-		case 0:
-			misc_DigiSig|=MISC_SIG_STIM1;
-			PIN_SET(DOUT);
-			break;
-		case 1:
-			misc_DigiSig|=MISC_SIG_STIM2;
-			PIN_SET(DOUT);
-			break;
+	if(sysParam.stim_mode ==1)
+	{
+		PIN_SET(LED0);
+		switch(handle->id){
+			case 0:
+				misc_DigiSig|=MISC_SIG_STIM1;
+				PIN_SET(DOUT);
+				break;
+			case 1:
+				misc_DigiSig|=MISC_SIG_STIM2;
+				PIN_SET(DOUT);
+				break;
+		}
 	}
 }
 
 void CE32_STIM_TrigStopAct(CE32_stimulator* handle)
 {
 	PIN_RESET(LED1);
+	PIN_RESET(DOUT1);
 	switch(handle->id){
 		case 0:
 			misc_DigiSig&=~(MISC_SIG_TRIG1);

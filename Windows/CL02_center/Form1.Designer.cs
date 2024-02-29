@@ -97,6 +97,8 @@
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.label19 = new System.Windows.Forms.Label();
+            this.comboBox_TrigMode = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -265,6 +267,8 @@
             // 
             // splitContainer3.Panel1
             // 
+            this.splitContainer3.Panel1.Controls.Add(this.comboBox_TrigMode);
+            this.splitContainer3.Panel1.Controls.Add(this.label19);
             this.splitContainer3.Panel1.Controls.Add(this.button2);
             this.splitContainer3.Panel1.Controls.Add(this.label20);
             this.splitContainer3.Panel1.Controls.Add(this.comboBoxDSPmode);
@@ -1037,6 +1041,27 @@
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Filter = "Filter Parameter|*.filter";
             // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(510, 114);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(70, 13);
+            this.label19.TabIndex = 70;
+            this.label19.Text = "Trigger Mode";
+            // 
+            // comboBox_TrigMode
+            // 
+            this.comboBox_TrigMode.FormattingEnabled = true;
+            this.comboBox_TrigMode.Items.AddRange(new object[] {
+            "First",
+            "Last"});
+            this.comboBox_TrigMode.Location = new System.Drawing.Point(517, 130);
+            this.comboBox_TrigMode.Name = "comboBox_TrigMode";
+            this.comboBox_TrigMode.Size = new System.Drawing.Size(109, 21);
+            this.comboBox_TrigMode.TabIndex = 71;
+            this.comboBox_TrigMode.SelectedIndexChanged += new System.EventHandler(this.comboBox_TrigMode_SelectedIndexChanged);
+            // 
             // CL02_center_MainInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1151,6 +1176,8 @@
         private System.Windows.Forms.Label label_DSPCH;
         private System.Windows.Forms.NumericUpDown numericUpDown_DSPCH;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ComboBox comboBox_TrigMode;
+        private System.Windows.Forms.Label label19;
     }
 }
 

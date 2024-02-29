@@ -13,6 +13,7 @@
 #define CE32_STIM_STATE_REFRACT 0x0010
 #define CE32_STIM_STATE_ERR 0x0020
 
+
 #define CE32_STIM_TIMEBASECLK 10000
 //Unit is in 0.1ms;
 typedef struct{
@@ -30,6 +31,7 @@ typedef struct{
 	uint16_t cycle_left;
 	uint16_t level;
 	uint16_t id;
+	uint16_t trig_mode;
 }CE32_stimulator;
 
 void CE32_STIM_Init(CE32_stimulator* handle,TIM_HandleTypeDef* htim,uint16_t cc_channel,uint16_t unit_id);

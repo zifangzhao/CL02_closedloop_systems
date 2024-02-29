@@ -63,8 +63,8 @@ void Error_Handler(void);
 #define GAIN_GPIO_Port GPIOA
 #define AOUT_Pin GPIO_PIN_4
 #define AOUT_GPIO_Port GPIOA
-#define AOUT1_Pin GPIO_PIN_5
-#define AOUT1_GPIO_Port GPIOA
+#define DOUT1_Pin GPIO_PIN_5
+#define DOUT1_GPIO_Port GPIOA
 #define DOUT_Pin GPIO_PIN_6
 #define DOUT_GPIO_Port GPIOA
 #define IN0_Pin GPIO_PIN_0

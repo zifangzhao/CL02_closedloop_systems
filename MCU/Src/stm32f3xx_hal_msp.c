@@ -167,12 +167,11 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
     __HAL_RCC_GPIOA_CLK_ENABLE();
     /**DAC1 GPIO Configuration
     PA4     ------> DAC1_OUT1
-    PA5     ------> DAC1_OUT2
     */
-    GPIO_InitStruct.Pin = AOUT_Pin|AOUT1_Pin;
+    GPIO_InitStruct.Pin = AOUT_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    HAL_GPIO_Init(AOUT_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN DAC1_MspInit 1 */
 
@@ -199,9 +198,8 @@ void HAL_DAC_MspDeInit(DAC_HandleTypeDef* hdac)
 
     /**DAC1 GPIO Configuration
     PA4     ------> DAC1_OUT1
-    PA5     ------> DAC1_OUT2
     */
-    HAL_GPIO_DeInit(GPIOA, AOUT_Pin|AOUT1_Pin);
+    HAL_GPIO_DeInit(AOUT_GPIO_Port, AOUT_Pin);
 
   /* USER CODE BEGIN DAC1_MspDeInit 1 */
 
