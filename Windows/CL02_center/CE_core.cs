@@ -91,7 +91,7 @@ namespace CL02_center
         {
             fs = sampling_rate;
             stim_interval[dsp_idx] = stimulation_interval;
-            stim_delay[dsp_idx] = stimulation_randomDelay;
+            stim_delay[dsp_idx] = stimulation_delay;
             stim_RndDelay[dsp_idx] = stimulation_randomDelay;
             pulse_width[dsp_idx] = stimulation_pulseWidth;
             pulse_cyc[dsp_idx] = stimulation_pulseCyc;

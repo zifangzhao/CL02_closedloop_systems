@@ -81,6 +81,7 @@ void CE32_STIM_Trig(CE32_stimulator* handle){
 	}
 }
 void CE32_STIM_Delay(CE32_stimulator* handle){
+	HAL_TIM_Base_Stop_IT(handle->htim);
 	handle->state|=CE32_STIM_STATE_DELAY;
 	uint32_t temp=handle->delay_this;
 	temp=temp>UINT16_MAX?UINT16_MAX:temp;			//Make sure temp is not saturated 

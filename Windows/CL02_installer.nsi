@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "CL02 Closed-loop system"
-!define PRODUCT_VERSION "1.0.7.0"
+!define PRODUCT_VERSION "2.0.2.1"
 !define PRODUCT_PUBLISHER "FTL"
 !define PRODUCT_WEB_SITE "https://zifangzhao.notion.site/CL02-Instructions-d0e2a1d6ffdf4666bf22a0d3cb299155"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\CL02_center.exe"

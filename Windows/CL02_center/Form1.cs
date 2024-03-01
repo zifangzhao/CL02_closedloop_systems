@@ -768,6 +768,10 @@ namespace CL02_center
             {
                 while (serialPort1.BytesToRead > package_size + 3) //+3 for head and tail
                 {
+                    if (serialPort1.IsOpen == false)
+                    {
+                        return;
+                    }
                     int temp = 0;
                     while (temp != 0x3C)
                     {
