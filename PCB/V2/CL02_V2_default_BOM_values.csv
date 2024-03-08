@@ -1,0 +1,26 @@
+Qty,Value,Device,Parts,Package,Description,BOM,MF,MPN,OC_FARNELL,OC_NEWARK,POPULARITY,SPICEMODEL,SPICEPREFIX
+1,2.54MM_2X5,2.54MM_2X5,U$9,2.54MM_2X5,,,,,,,,,
+4,MCP6007T-E,AD8542R,"IC1, IC2, IC3, IC4",SO8,General-Purpose CMOS Rail-to-Rail Amplifiers,,ALTERA CORPORATION,AD8542ARZ-REEL,1424150,59K6827,0,,
+6,BNC_8MM,BNC_8MM,"A_OUT1, A_OUT2, D_OUT, IN1, IN2, IN3",BNC_V_8MM,,,,,,,,,
+,,,,,,,,,,,,,
+2,18p,CC0402,"C1, C2",C0402,"CAPACITOR, European symbol",,,,,,,NONE,C
+15,10u,CC0402,"C3, C4, C5, C6, C7, C8, C9, C10, C11, C14, C15, C16, C18, C19, C22",C0402,"CAPACITOR, European symbol",,,,,,,NONE,C
+4,33n,CC0402,"C12, C13, C17, C21",C0402,"CAPACITOR, European symbol",,,,,,,NONE,C
+1,CUS-12B,CUS-12B,U$12,CUS-12B,Toggle Switch,,,,,,,,
+12,MMSZ4684T1GOSCT-ND,DIODE_ZENER_SOD-123,"D2, D3, D4, D6, D7, D8, D9, D10, D11, D12, D13, D14",SOD-123,Zener diode,,,,,,,,
+1,,EEPROM_I2C_SOIC8_GENERIC,U2,SOIC8_150MIL,Note: The same pinout is used for many I2C EEPROMs in SOIC8(150mil) from a variety of manufacturers and in various sizes.,,,,,,,,
+1,,JST_8PIN,CN5,JSTPH8,JST 8-Pin Right-Angle Connector,,,,,,,,
+5,,LED0603,"DET, ENABLE, PWR, READY, STIM",CHIPLED_0603,LED,,,,,,,,
+1,MICRO-USB-ZX62R-B-5P,MICRO-USB-ZX62R-B-5P,U$10,ZX62R-B-5P,Hirose Micro USB Connector,,,,,,,,
+3,1.5k,RR0402,"R5, R6, R7",R0402,"RESISTOR, European symbol",,,,,,,NONE,R
+3,100k,RR0402,"R9, R11, R13",R0402,"RESISTOR, European symbol",,,,,,,NONE,R
+13,10k,RR0402,"R1, R2, R3, R8, R10, R12, R14, R15, R16, R23, R24, R25,R4",R0402,"RESISTOR, European symbol",,,,,,,NONE,R
+1,20k,RR0402,R17,R0402,"RESISTOR, European symbol",,,,,,,NONE,R
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+1,STM32F373CCT6,STM32F373CCT6,U$1,LQFP48,,,,,,,,,
+1,,SWITCH_DPDT,SW1,DPDT_SMT_JS202011SCQN,Switch - DPDT,,,,,,,,
+1,TERMINAL_BLOCK_8-3.5MM,TERMINAL_BLOCK_8-3.5MM,S1,TERMINAL_BLOCK_3.5MM_8,8-point terminal block,,,,,,,,
+,,,,,,,,,,,,,
+1,TPS79333,TPS79333,U1,TSOT-23-5,,,,,,,,,
+1,12MHz,XTAL/S,Q1,QS,CRYSTAL,,,,,,,,
