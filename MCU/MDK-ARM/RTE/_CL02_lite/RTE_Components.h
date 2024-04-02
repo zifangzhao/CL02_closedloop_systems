@@ -3,7 +3,7 @@
  * Auto generated Run-Time-Environment Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'CL02_lite' 
+ * Project: 'CL02_Lite' 
  * Target:  'CL02_lite' 
  */
 
