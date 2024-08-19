@@ -53,6 +53,7 @@ typedef struct
 	uint16_t mode;
 	uint16_t trig_state[CE32_CL_UNIT_NUM];
 	uint16_t trig_mode; //Setting trigger on first/last
+	int rectifier[CE32_CL_UNIT_NUM];
 	CE32_systemParam* sysParam;
 	void (*CL_func)(void* cl,float input1,float input2);
 	CE32_Filter *main_fil[CE32_CL_UNIT_NUM];

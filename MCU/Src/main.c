@@ -1103,6 +1103,7 @@ int CL02_CmdSvr(uint8_t *data_ptr,uint32_t cmd_len)
 			sysDSP[id].func1=ptr[1];
 			sysDSP[id].formula=ptr[2];
 			CE32_InitFilter(&mainFil[id],&maFil[id],&sysDSP[id]);
+			cl.rectifier[id] = (sysDSP[id].func1==CE32_FILTER_DELTA)?0:1;
 			break;
 		}
 		case 0x40:

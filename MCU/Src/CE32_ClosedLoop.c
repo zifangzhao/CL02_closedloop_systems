@@ -33,11 +33,13 @@ void CE32_CL_Init(CE32_CL* cl, CE32_systemParam* sysParam,CE32_dspParam* sysDSP,
 			sysParam->pulse_width[i],sysParam->stim_interval[i],
 			sysParam->stim_delay[i],sysParam->stim_RndDelay[i],
 			sysParam->trigger_gain[i]);
+		cl->rectifier[i] = 1;
 	}
 	CE32_CL_Set_RndTrig(cl,sysParam->randtrig_min,sysParam->randtrig_max);
 	cl->sysParam=sysParam;
 	cl->mode=cl->sysParam->cl_mode;
 	cl->trig_mode = 0;
+	
 	switch(cl->mode)
 	{
 		case CE32_CL_FUNC_DISABLED:
@@ -102,7 +104,8 @@ void CE32_CL_Single(void* vcl, float input1,float input2)
 	CE32_CL* cl=(CE32_CL*) vcl;
 	float* DSP_output=(float*)vcl;
 	float DSP_temp1=DF_IIR_inputData(cl->main_fil[0],input1);	//Process main filter
-	DSP_output[0]=DF_IIR_inputData(cl->MA_fil[0],fabsf(DSP_temp1));	// Process main moving average filter
+	DSP_temp1 = cl->rectifier[0]==1?fabsf(DSP_temp1):DSP_temp1;
+	DSP_output[0]=DF_IIR_inputData(cl->MA_fil[0],(DSP_temp1));	// Process main moving average filter
 	cl->DSP_temp[0]=DSP_temp1;
 	int rst=DF_StimControl_inputdata(cl->sc[0],DSP_output[0],0);
 	
@@ -116,9 +119,11 @@ void CE32_CL_Double(void* vcl, float input1,float input2)
 	CE32_CL* cl=(CE32_CL*) vcl;
 	float* DSP_output=(float*)vcl;
 	float DSP_temp1=DF_IIR_inputData(cl->main_fil[0],input1);	//Process main filter
-	DSP_output[0]=DF_IIR_inputData(cl->MA_fil[0],fabsf(DSP_temp1));	// Process main moving average filter
+	DSP_temp1 = cl->rectifier[0]==1?fabsf(DSP_temp1):DSP_temp1;
+	DSP_output[0]=DF_IIR_inputData(cl->MA_fil[0],(DSP_temp1));	// Process main moving average filter
 	float DSP_temp2=DF_IIR_inputData(cl->main_fil[1],input2);	//Process main filter
-	DSP_output[1]=DF_IIR_inputData(cl->MA_fil[1],fabsf(DSP_temp2));	// Process main moving average filter
+	DSP_temp2 = cl->rectifier[1]==1?fabsf(DSP_temp2):DSP_temp2;
+	DSP_output[1]=DF_IIR_inputData(cl->MA_fil[1],(DSP_temp2));	// Process main moving average filter
 	cl->DSP_temp[0]=DSP_temp1;
 	cl->DSP_temp[1]=DSP_temp2;
 	DF_StimControl_inputdata(cl->sc[0],DSP_output[0],0);
@@ -140,7 +145,8 @@ void CE32_CL_Cascade(void* vcl, float input1,float input2)
 	float DSP_temp1=DF_IIR_inputData(cl->main_fil[0],input1);	//Process main filter
 	DSP_output[0]=DSP_temp1;
 	float DSP_temp2=DF_IIR_inputData(cl->main_fil[1],DSP_temp1);	//Process main filter
-	DSP_output[1]=DF_IIR_inputData(cl->MA_fil[1],fabsf(DSP_temp2));	// Process main moving average filter
+	DSP_temp2 = cl->rectifier[1]==1?fabsf(DSP_temp2):DSP_temp2;
+	DSP_output[1]=DF_IIR_inputData(cl->MA_fil[1],(DSP_temp2));	// Process main moving average filter
 	cl->DSP_temp[0]=DSP_temp1;
 	cl->DSP_temp[1]=DSP_temp2;
 	int rst=DF_StimControl_inputdata(cl->sc[0],DSP_output[1],0);
@@ -154,9 +160,11 @@ void CE32_CL_Gated(void* vcl, float input1,float input2)
 	CE32_CL* cl=(CE32_CL*) vcl;
 	float* DSP_output=(float*)vcl;
 	float DSP_temp1=DF_IIR_inputData(cl->main_fil[0],input1);	//Process main filter
-	DSP_output[0]=DF_IIR_inputData(cl->MA_fil[0],fabsf(DSP_temp1));	// Process main moving average filter
+	DSP_temp1 = cl->rectifier[0]==1?fabsf(DSP_temp1):DSP_temp1;
+	DSP_output[0]=DF_IIR_inputData(cl->MA_fil[0],(DSP_temp1));	// Process main moving average filter
 	float DSP_temp2=DF_IIR_inputData(cl->main_fil[1],input2);	//Process main filter
-	DSP_output[1]=DF_IIR_inputData(cl->MA_fil[1],fabsf(DSP_temp2));	// Process main moving average filter
+	DSP_temp2 = cl->rectifier[1]==1?fabsf(DSP_temp2):DSP_temp2;
+	DSP_output[1]=DF_IIR_inputData(cl->MA_fil[1],(DSP_temp2));	// Process main moving average filter
 	cl->DSP_temp[0]=DSP_temp1;
 	cl->DSP_temp[1]=DSP_temp2;
 	DF_StimControl_inputdata(cl->sc[0],DSP_output[0],0);

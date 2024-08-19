@@ -3,17 +3,6 @@
 % filter_LPF = cellfun(@(x) x(1),filter_bands);
 
 filters={};fil_idx=1;
-fil=[];
-fil.name = 'D';
-fil.bands = [1,4];
-fil.lpf = 1;
-filters{fil_idx}=fil;fil_idx=fil_idx+1;
-
-fil=[];
-fil.name = 'T';
-fil.bands = [4,8];
-fil.lpf = 4;
-filters{fil_idx}=fil;fil_idx=fil_idx+1;
 
 fil=[];
 fil.name = 'A';
@@ -27,6 +16,16 @@ fil.bands = [13,30];
 fil.lpf = 10;
 filters{fil_idx}=fil;fil_idx=fil_idx+1;
 
+fil=[];
+fil.name = 'D';
+fil.bands = [1.5,5.5];
+fil.lpf = 6;
+filters{fil_idx}=fil;fil_idx=fil_idx+1;
+
+fil=[];
+fil.name = 'T';
+fil.bands = [4,8];
+fil.lpf = 4;
 fil=[];
 fil.name = 'G';
 fil.bands = [30,80];
@@ -65,7 +64,7 @@ filters{fil_idx}=fil;fil_idx=fil_idx+1;
 
 Fs = 1000;  % Sampling Frequency
 N   = 1;   % Order
-header_txt = cell(length(filters),2);
+
 for idx=1:length(filters)
     freqs = filters{idx}.bands;
     name = filters{idx}.name;
@@ -83,10 +82,15 @@ for idx=1:length(filters)
     % Construct an FDESIGN object and call its BUTTER method.
     h  = fdesign.lowpass('N,F3dB', N, Fl, Fs);
     Hd = design(h, 'butter');
+    if(name=='D')
+        b=1;
+        a=1;
+        sos=tf2sos(b,a);
+        Hd.sosMatrix = sos;
+        Hd.ScaleValues = [1 1];
+    end
     set(Hd,'arithmetic','single');
-    filename_LPF = "fdacoefs_LPF_"+name+"_" + num2str(Fl) + "Hz@1000_ord" + num2str(N) + '_SOS.h';
-    CE32_filterGen_SOS(filename_LPF,"LPF_"+name,Hd.sosMatrix,Hd.ScaleValues);
-    header_txt{idx,1} = "#include """+filename + """;";
-    header_txt{idx,2} = "#include """+filename_LPF + """;";
+    filename = "fdacoefs_LPF_"+name+"_" + num2str(Fl) + "Hz@1000_ord" + num2str(N) + '_SOS.h';
+    CE32_filterGen_SOS(filename,["LPF_"+name],Hd.sosMatrix,Hd.ScaleValues);
+
 end
-writecell(header_txt(:),"CE32_filterDef.h",'FileType','text');
