@@ -30,6 +30,7 @@
 #include "CE32_Stimulator.h"
 #include "CE32_ClosedLoop.h"
 #define kFS 1000
+#define FM_version 30
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

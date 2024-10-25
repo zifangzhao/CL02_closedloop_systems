@@ -166,6 +166,8 @@ namespace CL02_center
                 infoList.Add(info);
                 info = new Info() { Value = 1, Name = "Single A" };
                 infoList.Add(info);
+                info = new Info() { Value = 6, Name = "Single A (Hilbert)" };
+                infoList.Add(info);
                 info = new Info() { Value = 3, Name = "Cascade A->B" };
                 infoList.Add(info);
                 info = new Info() { Value = 4, Name = "Gated A & B" };
@@ -671,6 +673,10 @@ namespace CL02_center
                 UInt32 MA_ord, Filter_type, Formula;
                 MA_ord = (UInt32)DeviceParams.MAOrd[DSP_id];
                 Filter_type = (UInt32)DeviceParams.func[DSP_id];
+                if (DeviceParams.cl_mode > 5)
+                {
+                    Filter_type += 24;//switch IDs for Hilbert transformer
+                }
                 Formula = (UInt32)DeviceParams.formula[DSP_id];
                 UInt32[] src = new UInt32[3] { MA_ord, Filter_type, Formula };
                 if (serialPort1.IsOpen)

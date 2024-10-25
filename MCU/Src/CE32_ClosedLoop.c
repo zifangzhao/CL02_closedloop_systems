@@ -6,10 +6,14 @@
 #define CE32_CL_FUNC_CASCADE 3
 #define CE32_CL_FUNC_GATED 4
 #define CE32_CL_FUNC_RND 5
+#define CE32_CL_FUNC_SINGLE_HT 6
+#define CE32_CL_FUNC_DOUBLE_HT 7
 
 void CE32_CL_Disabled(void* cl, float input1,float input2);
 void CE32_CL_Single(void* cl, float input1,float input2);
 void CE32_CL_Double(void* cl, float input1,float input2);
+void CE32_CL_Single_HT(void* cl, float input1,float input2);
+void CE32_CL_Double_HT(void* cl, float input1,float input2);
 void CE32_CL_Cascade(void* cl, float input1,float input2);
 void CE32_CL_Gated(void* cl, float input1,float input2);
 void CE32_CL_Random(void* cl, float input1,float input2);
@@ -27,7 +31,15 @@ void CE32_CL_Init(CE32_CL* cl, CE32_systemParam* sysParam,CE32_dspParam* sysDSP,
 		cl->main_fil[i]=&main_Fil[i];
 		cl->MA_fil[i]=&LPF_fil[i];
 		cl->sc[i]=&sc[i];
+		if(cl->mode>CE32_CL_FUNC_RND)
+		{
+			if(sysDSP[i].func1<CE32_FILTER_CUSTOM)
+			{
+				sysDSP[i].func1+=CE32_FILTER_DELTA_HTF; //map filter to hilbert mode
+			}
+		}
 		CE32_InitFilter(&main_Fil[i],&LPF_fil[i],&sysDSP[i]);
+
 		DF_StimControl_init(&sc[i],sysParam->fs,
 			sysParam->trigger_trainStart,sysParam->trigger_trainDuration,
 			sysParam->pulse_width[i],sysParam->stim_interval[i],
@@ -60,6 +72,12 @@ void CE32_CL_Init(CE32_CL* cl, CE32_systemParam* sysParam,CE32_dspParam* sysDSP,
 		case CE32_CL_FUNC_RND:
 			cl->CL_func=&CE32_CL_Random;
 			break;
+		case CE32_CL_FUNC_SINGLE_HT:
+			cl->CL_func=&CE32_CL_Single_HT;
+			break;
+		case CE32_CL_FUNC_DOUBLE_HT:
+			cl->CL_func=&CE32_CL_Double_HT;
+			break;
 	}	
 
 	srand(RTC->SSR);	//Randomize seed
@@ -88,6 +106,13 @@ void CE32_CL_Start(CE32_CL* cl)
 			break;
 		case CE32_CL_FUNC_RND:
 			DF_StimControl_Start(cl->sc[0]);
+			break;
+		case CE32_CL_FUNC_SINGLE_HT:
+			DF_StimControl_Start(cl->sc[0]);
+			break;
+		case CE32_CL_FUNC_DOUBLE_HT:
+			DF_StimControl_Start(cl->sc[0]);
+			DF_StimControl_Start(cl->sc[1]);
 			break;
 	}
 }
@@ -138,6 +163,56 @@ void CE32_CL_Double(void* vcl, float input1,float input2)
 		CE32_CL_TrigAct(0x01);
 	}
 }
+
+void CE32_CL_Single_HT(void* vcl, float input1,float input2)
+{
+	CE32_CL* cl=(CE32_CL*) vcl;
+	float* DSP_output=(float*)vcl;
+	float DSP_temp1=DF_IIR_inputData(cl->main_fil[0],input1);	//Process main filter
+	float temp=DF_IIR_inputData(cl->MA_fil[0],(DSP_temp1));	// Process main moving average filter
+	DSP_output[0] = sqrt(temp*temp+DSP_temp1*DSP_temp1);
+	cl->DSP_temp[0]=DSP_temp1;
+	//calculating phase
+	DSP_output[1] = (atan2(temp, DSP_temp1) / 3.14159265358979) * 15000+15000; //phase angle
+	cl->DSP_temp[1]=DSP_output[1];
+	//	DSP_output[1] = DSP_output[1]<=65535?DSP_output[1]:65535;
+//	DSP_output[1] = DSP_output[1]>=0?DSP_output[1]:0;
+	
+	int rst=DF_StimControl_inputdata(cl->sc[0],DSP_output[0],0);
+	
+	if((cl->sc[0]->Trig_state&SC_STATE_TRIG)!=0)
+	{
+		CE32_CL_TrigAct(0x00);
+	}
+	
+
+}
+void CE32_CL_Double_HT(void* vcl, float input1,float input2)
+{
+	CE32_CL* cl=(CE32_CL*) vcl;
+	float* DSP_output=(float*)vcl;
+	float DSP_temp1=DF_IIR_inputData(cl->main_fil[0],input1);	//Process main filter
+	float temp1=DF_IIR_inputData(cl->MA_fil[0],(DSP_temp1));	// Process main moving average filter
+	float DSP_temp2=DF_IIR_inputData(cl->main_fil[1],input2);	//Process main filter
+	float temp2=DF_IIR_inputData(cl->MA_fil[1],(DSP_temp2));	// Process main moving average filter
+	//calculate envelop
+	DSP_output[0] = sqrt(temp1*temp1+DSP_temp1*DSP_temp1);
+	DSP_output[1] = sqrt(temp2*temp2+DSP_temp2*DSP_temp2);
+	cl->DSP_temp[0]=DSP_temp1;
+	cl->DSP_temp[1]=DSP_temp2;
+	DF_StimControl_inputdata(cl->sc[0],DSP_output[0],0);
+	DF_StimControl_inputdata(cl->sc[1],DSP_output[1],1);
+	
+	if((cl->sc[0]->Trig_state&SC_STATE_TRIG)!=0)
+	{
+		CE32_CL_TrigAct(0x00);
+	}
+	if((cl->sc[1]->Trig_state&SC_STATE_TRIG)!=0)
+	{
+		CE32_CL_TrigAct(0x01);
+	}
+}
+
 void CE32_CL_Cascade(void* vcl, float input1,float input2)
 {
 	CE32_CL* cl=(CE32_CL*) vcl;
