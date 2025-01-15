@@ -30,6 +30,8 @@ namespace CL02_center
         public uint LED_pulse_CNT;
         private uint randtrig_min;         //324
         private uint randtrig_max;         //328
+        public float[] cl_param1 = new float[] { 0, 0, 0, 0 };
+        public float[] cl_param2 = new float[] { 0, 0, 0, 0 };
         public CE_core(int ch_num){
             chOrd = new List<uint>(ch_num);
         }
@@ -66,7 +68,9 @@ namespace CL02_center
             public fixed uint stim_ch[4];           //320
             public uint randtrig_min;         //324
             public uint randtrig_max;         //328
-            public fixed uint unassigned[46];      //unassigned
+            public fixed float cl_param1[4];
+            public fixed float cl_param2[4];
+            public fixed uint unassigned[38];      //unassigned
         };
 
         unsafe private struct CE32_systemLog
@@ -87,7 +91,7 @@ namespace CL02_center
         };
 
         public void SetSysParams(uint dsp_idx,uint sampling_rate,uint stimulation_interval,uint stimulation_delay,uint stimulation_randomDelay,uint stimulation_pulseWidth, uint stimulation_pulseCyc,
-            float trigger_level,uint trigger_trainStartTime,uint trigger_trainLength,uint closedLoop_mode,uint stimulation_mode,uint rand_min,uint rand_max)
+            float trigger_level,uint trigger_trainStartTime,uint trigger_trainLength,uint closedLoop_mode,uint stimulation_mode,uint rand_min,uint rand_max,float param1,float param2)
         {
             fs = sampling_rate;
             stim_interval[dsp_idx] = stimulation_interval;
@@ -102,6 +106,8 @@ namespace CL02_center
             stim_mode = stimulation_mode;
             randtrig_max = rand_max/100;
             randtrig_min = rand_min/100;
+            cl_param1[dsp_idx] = param1;
+            cl_param2[dsp_idx] = param2;
         }
 
         public void SetDspParams(uint dsp_idx, uint Formula, uint Func1, uint MA_Ord1)
@@ -124,6 +130,8 @@ namespace CL02_center
                 sys.pulse_cnt[i] = pulse_cyc[i];
                 sys.stim_intensity[i] = stim_intensity[i];
                 sys.stim_ch[i] = stim_ch[i];
+                sys.cl_param1[i] = cl_param1[i];
+                sys.cl_param2[i] = cl_param2[i];
             }
             sys.trigger_trainStart = trigger_trainStart;
             sys.trigger_trainDuration = trigger_trainDuration;

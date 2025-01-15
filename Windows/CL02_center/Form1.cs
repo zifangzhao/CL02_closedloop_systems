@@ -565,12 +565,16 @@ namespace CL02_center
             DeviceParams.SetSysParams(0, 1000, (uint)(numericUpDown_TgInt.Value * ratio),
                    (uint)(numericUpDown_TgDly.Value * ratio), (uint)(numericUpDown_TgRndDly.Value * ratio),
                    (uint)(numericUpDown_TgPW.Value * ratio), (uint)numericUpDown_TgCyc.Value, DeviceParams.trigger_gain[0],
-                   (uint)numericUpDown_CLSt.Value, (uint)numericUpDown_CLEd.Value, cl_mode, Convert.ToUInt16(checkBox2.Checked), (uint)numericUpDown_randTrigMin.Value, (uint)numericUpDown_randTrigMax.Value);
+                   (uint)numericUpDown_CLSt.Value, (uint)numericUpDown_CLEd.Value, cl_mode, Convert.ToUInt16(checkBox2.Checked), 
+                   (uint)numericUpDown_randTrigMin.Value, (uint)numericUpDown_randTrigMax.Value,
+                   (float)((float)numericUpDown_CL_param1.Value/ 180 * Math.PI), (float)((float)numericUpDown_CL_param2.Value / 180 * Math.PI));
 
             DeviceParams.SetSysParams(DSP_id, 1000, (uint)(numericUpDown_TgInt.Value * ratio),
                     (uint)(numericUpDown_TgDly.Value * ratio), (uint)(numericUpDown_TgRndDly.Value * ratio),
                     (uint)(numericUpDown_TgPW.Value * ratio), (uint)numericUpDown_TgCyc.Value, (float)numericUpDown_TgGain.Value,
-                    (uint)numericUpDown_CLSt.Value, (uint)numericUpDown_CLEd.Value, cl_mode, Convert.ToUInt16(checkBox2.Checked), (uint)numericUpDown_randTrigMin.Value, (uint)numericUpDown_randTrigMax.Value);
+                    (uint)numericUpDown_CLSt.Value, (uint)numericUpDown_CLEd.Value, cl_mode, Convert.ToUInt16(checkBox2.Checked), 
+                    (uint)numericUpDown_randTrigMin.Value, (uint)numericUpDown_randTrigMax.Value,
+                    (float)((float)numericUpDown_CL_param1.Value / 180 * Math.PI), (float)((float)numericUpDown_CL_param2.Value / 180 * Math.PI));
             DeviceParams.SetDspParams(DSP_id,(uint)comboBox_CL_Arb.SelectedIndex,(uint)comboBox_CL_FilterType.SelectedIndex, (uint) numericUpDown_CL_MAOrd.Value);
         }
 
@@ -590,6 +594,8 @@ namespace CL02_center
             comboBox_CL_Arb.SelectedIndex = (int)DeviceParams.formula[DSP_id];
             comboBox_CL_FilterType.SelectedIndex = (int)DeviceParams.func[DSP_id];
             numericUpDown_CL_MAOrd.Value = (decimal)DeviceParams.MAOrd[DSP_id];
+            numericUpDown_CL_param1.Value = (decimal)(DeviceParams.cl_param1[DSP_id] / Math.PI * 360);
+            numericUpDown_CL_param2.Value = (decimal)(DeviceParams.cl_param2[DSP_id] / Math.PI * 360);
         }
         private void SetGain(float g)
         {

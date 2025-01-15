@@ -40,6 +40,8 @@
             this.buttonStopCollection = new System.Windows.Forms.Button();
             this.labelPort = new System.Windows.Forms.Label();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.comboBox_TrigMode = new System.Windows.Forms.ComboBox();
+            this.label19 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.label20 = new System.Windows.Forms.Label();
             this.comboBoxDSPmode = new System.Windows.Forms.ComboBox();
@@ -97,8 +99,9 @@
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.label19 = new System.Windows.Forms.Label();
-            this.comboBox_TrigMode = new System.Windows.Forms.ComboBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.numericUpDown_CL_param1 = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_CL_param2 = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -125,6 +128,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgInt)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgPW)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DACgain)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_CL_param1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_CL_param2)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -267,6 +272,9 @@
             // 
             // splitContainer3.Panel1
             // 
+            this.splitContainer3.Panel1.Controls.Add(this.numericUpDown_CL_param2);
+            this.splitContainer3.Panel1.Controls.Add(this.numericUpDown_CL_param1);
+            this.splitContainer3.Panel1.Controls.Add(this.label21);
             this.splitContainer3.Panel1.Controls.Add(this.comboBox_TrigMode);
             this.splitContainer3.Panel1.Controls.Add(this.label19);
             this.splitContainer3.Panel1.Controls.Add(this.button2);
@@ -329,6 +337,27 @@
             this.splitContainer3.Size = new System.Drawing.Size(1002, 291);
             this.splitContainer3.SplitterDistance = 686;
             this.splitContainer3.TabIndex = 51;
+            // 
+            // comboBox_TrigMode
+            // 
+            this.comboBox_TrigMode.FormattingEnabled = true;
+            this.comboBox_TrigMode.Items.AddRange(new object[] {
+            "First",
+            "Last"});
+            this.comboBox_TrigMode.Location = new System.Drawing.Point(517, 130);
+            this.comboBox_TrigMode.Name = "comboBox_TrigMode";
+            this.comboBox_TrigMode.Size = new System.Drawing.Size(109, 21);
+            this.comboBox_TrigMode.TabIndex = 71;
+            this.comboBox_TrigMode.SelectedIndexChanged += new System.EventHandler(this.comboBox_TrigMode_SelectedIndexChanged);
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(510, 114);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(70, 13);
+            this.label19.TabIndex = 70;
+            this.label19.Text = "Trigger Mode";
             // 
             // button2
             // 
@@ -475,9 +504,9 @@
             // 
             // button_forceTrig
             // 
-            this.button_forceTrig.Location = new System.Drawing.Point(382, 225);
+            this.button_forceTrig.Location = new System.Drawing.Point(509, 244);
             this.button_forceTrig.Name = "button_forceTrig";
-            this.button_forceTrig.Size = new System.Drawing.Size(117, 40);
+            this.button_forceTrig.Size = new System.Drawing.Size(117, 34);
             this.button_forceTrig.TabIndex = 57;
             this.button_forceTrig.Text = "Force Trigger";
             this.button_forceTrig.UseVisualStyleBackColor = true;
@@ -585,9 +614,9 @@
             // 
             // button_sendparams
             // 
-            this.button_sendparams.Location = new System.Drawing.Point(255, 224);
+            this.button_sendparams.Location = new System.Drawing.Point(382, 243);
             this.button_sendparams.Name = "button_sendparams";
-            this.button_sendparams.Size = new System.Drawing.Size(110, 41);
+            this.button_sendparams.Size = new System.Drawing.Size(110, 35);
             this.button_sendparams.TabIndex = 50;
             this.button_sendparams.Text = "Download Parameters";
             this.button_sendparams.UseVisualStyleBackColor = true;
@@ -684,7 +713,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(257, 85);
+            this.label16.Location = new System.Drawing.Point(253, 85);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(52, 13);
             this.label16.TabIndex = 46;
@@ -1041,26 +1070,62 @@
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Filter = "Filter Parameter|*.filter";
             // 
-            // label19
+            // label21
             // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(510, 114);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(70, 13);
-            this.label19.TabIndex = 70;
-            this.label19.Text = "Trigger Mode";
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(30, 265);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(131, 13);
+            this.label21.TabIndex = 72;
+            this.label21.Text = "Phase degrees (HT mode)";
             // 
-            // comboBox_TrigMode
+            // numericUpDown_CL_param1
             // 
-            this.comboBox_TrigMode.FormattingEnabled = true;
-            this.comboBox_TrigMode.Items.AddRange(new object[] {
-            "First",
-            "Last"});
-            this.comboBox_TrigMode.Location = new System.Drawing.Point(517, 130);
-            this.comboBox_TrigMode.Name = "comboBox_TrigMode";
-            this.comboBox_TrigMode.Size = new System.Drawing.Size(109, 21);
-            this.comboBox_TrigMode.TabIndex = 71;
-            this.comboBox_TrigMode.SelectedIndexChanged += new System.EventHandler(this.comboBox_TrigMode_SelectedIndexChanged);
+            this.numericUpDown_CL_param1.DecimalPlaces = 1;
+            this.numericUpDown_CL_param1.Location = new System.Drawing.Point(167, 263);
+            this.numericUpDown_CL_param1.Maximum = new decimal(new int[] {
+            180,
+            0,
+            0,
+            0});
+            this.numericUpDown_CL_param1.Minimum = new decimal(new int[] {
+            180,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDown_CL_param1.Name = "numericUpDown_CL_param1";
+            this.numericUpDown_CL_param1.Size = new System.Drawing.Size(59, 20);
+            this.numericUpDown_CL_param1.TabIndex = 73;
+            this.numericUpDown_CL_param1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numericUpDown_CL_param1.Value = new decimal(new int[] {
+            180,
+            0,
+            0,
+            -2147483648});
+            // 
+            // numericUpDown_CL_param2
+            // 
+            this.numericUpDown_CL_param2.DecimalPlaces = 1;
+            this.numericUpDown_CL_param2.Location = new System.Drawing.Point(246, 263);
+            this.numericUpDown_CL_param2.Maximum = new decimal(new int[] {
+            180,
+            0,
+            0,
+            0});
+            this.numericUpDown_CL_param2.Minimum = new decimal(new int[] {
+            180,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDown_CL_param2.Name = "numericUpDown_CL_param2";
+            this.numericUpDown_CL_param2.Size = new System.Drawing.Size(59, 20);
+            this.numericUpDown_CL_param2.TabIndex = 73;
+            this.numericUpDown_CL_param2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numericUpDown_CL_param2.Value = new decimal(new int[] {
+            180,
+            0,
+            0,
+            0});
             // 
             // CL02_center_MainInterface
             // 
@@ -1102,6 +1167,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgInt)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgPW)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DACgain)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_CL_param1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_CL_param2)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1178,6 +1245,9 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ComboBox comboBox_TrigMode;
         private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.NumericUpDown numericUpDown_CL_param2;
+        private System.Windows.Forms.NumericUpDown numericUpDown_CL_param1;
+        private System.Windows.Forms.Label label21;
     }
 }
 

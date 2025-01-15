@@ -173,7 +173,8 @@ void CE32_CL_Single_HT(void* vcl, float input1,float input2)
 	DSP_output[0] = sqrt(temp*temp+DSP_temp1*DSP_temp1);
 	cl->DSP_temp[0]=DSP_temp1;
 	//calculating phase
-	DSP_output[1] = (atan2(temp, DSP_temp1) / 3.14159265358979) * 15000+15000; //phase angle
+	float phase = atan2(temp, DSP_temp1) ;
+	DSP_output[1] = (phase / 3.14159265358979) * 15000+15000; //phase angle
 	cl->DSP_temp[1]=DSP_output[1];
 	//	DSP_output[1] = DSP_output[1]<=65535?DSP_output[1]:65535;
 //	DSP_output[1] = DSP_output[1]>=0?DSP_output[1]:0;
@@ -182,10 +183,14 @@ void CE32_CL_Single_HT(void* vcl, float input1,float input2)
 	
 	if((cl->sc[0]->Trig_state&SC_STATE_TRIG)!=0)
 	{
-		CE32_CL_TrigAct(0x00);
+		float *phase_lim_low,*phase_lim_high;
+		phase_lim_low = (float*) &cl->sysParam->cl_param1[0];
+		phase_lim_high = (float*) &cl->sysParam->cl_param2[0];
+		if((phase>=*phase_lim_low)&(phase<=*phase_lim_high))
+		{
+			CE32_CL_TrigAct(0x00);
+		}
 	}
-	
-
 }
 void CE32_CL_Double_HT(void* vcl, float input1,float input2)
 {
@@ -205,11 +210,25 @@ void CE32_CL_Double_HT(void* vcl, float input1,float input2)
 	
 	if((cl->sc[0]->Trig_state&SC_STATE_TRIG)!=0)
 	{
-		CE32_CL_TrigAct(0x00);
+		float phase = atan2(temp1, DSP_temp1) ;
+		float *phase_lim_low,*phase_lim_high;
+		phase_lim_low = (float*) &cl->sysParam->cl_param1[0];
+		phase_lim_high = (float*) &cl->sysParam->cl_param2[0];
+		if((phase>=*phase_lim_low)&(phase<=*phase_lim_high))
+		{
+			CE32_CL_TrigAct(0x00);
+		}
 	}
 	if((cl->sc[1]->Trig_state&SC_STATE_TRIG)!=0)
 	{
-		CE32_CL_TrigAct(0x01);
+		float phase = atan2(temp2, DSP_temp2) ;
+		float *phase_lim_low,*phase_lim_high;
+		phase_lim_low = (float*) &cl->sysParam->cl_param1[1];
+		phase_lim_high = (float*) &cl->sysParam->cl_param2[1];
+		if((phase>=*phase_lim_low)&(phase<=*phase_lim_high))
+		{
+			CE32_CL_TrigAct(0x01);
+		}
 	}
 }
 
