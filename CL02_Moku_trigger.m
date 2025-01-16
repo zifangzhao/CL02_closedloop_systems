@@ -32,8 +32,8 @@ try
     % Burst modulation on Channel 2 using Output 1 as the trigger
     i.set_burst_mode(2,'Input2','NCycle','trigger_level',1.5, 'burst_cycles',1);
     
-    i.set_output_load(1,'1Mohm');
-    i.set_output_load(2,'1Mohm');
+    i.set_output_load(1,'1MOhm');
+    i.set_output_load(2,'1MOhm');
 catch ME
     % End the current connection session with your Moku
     i.relinquish_ownership();

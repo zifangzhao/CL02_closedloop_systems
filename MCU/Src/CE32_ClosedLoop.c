@@ -194,14 +194,11 @@ void CE32_CL_Single_HT(void* vcl, float input1,float input2)
 		
 		if((phase>=phase_lim_low))
 		{		
-			if(trigger1 == 1)
-			{
-				CE32_CL_TrigAct(0x00);
-				phase_cycle = 0; //start counting phase cycle
-			}		
+
 		}
 		else
 		{
+			trigger1=0;
 			phase_cycle=1;
 		}
 		
@@ -213,8 +210,14 @@ void CE32_CL_Single_HT(void* vcl, float input1,float input2)
 
 		if(phase>=phase_lim_high)
 		{
+			trigger1 =0;
 			CE32_CL_TrigStopAct(0x00);
 		}
+		if(trigger1 == 1)
+		{
+			CE32_CL_TrigAct(0x00);
+			phase_cycle = 0; //start counting phase cycle
+		}		
 	}
 }
 void CE32_CL_Double_HT(void* vcl, float input1,float input2)
@@ -239,54 +242,79 @@ void CE32_CL_Double_HT(void* vcl, float input1,float input2)
 			trigger1=1;
 	}
 	float phase = atan2(temp1, DSP_temp1) ;
-	float *phase_lim_low,*phase_lim_high;
+	float phase_lim_low,phase_lim_high;
+	static int phase_cycle = 0;
 	{
-		phase_lim_low = (float*) &cl->sysParam->cl_param1[0];
-		phase_lim_high = (float*) &cl->sysParam->cl_param2[0];
-		if((phase>=*phase_lim_low))
-		{
-			if(phase_lim_high<phase_lim_low)
-			{
-				phase-=3.14159265358979;
-			}
-			if(phase<=*phase_lim_high)
-			{
-				if(trigger1 == 1)
-				{
-					CE32_CL_TrigAct(0x00);
-				}
-				}			
+		phase_lim_low = *(float*) &cl->sysParam->cl_param1[0];
+		phase_lim_high = *(float*) &cl->sysParam->cl_param2[0];
+		
+		if((phase>=phase_lim_low))
+		{		
+
 		}
 		else
 		{
+			trigger1=0;
+			phase_cycle=1;
+		}
+		
+		if(phase_lim_high<phase_lim_low)
+		{
+			phase_lim_high+= 2*3.14159265358979;
+			phase += phase_cycle*2*3.14159265358979;
+		}
+
+		if(phase>=phase_lim_high)
+		{
+			trigger1 =0;
 			CE32_CL_TrigStopAct(0x00);
 		}
+		if(trigger1 == 1)
+		{
+			CE32_CL_TrigAct(0x00);
+			phase_cycle = 0; //start counting phase cycle
+		}		
 	}
+	
 	int trigger2 = 0;
 	if((cl->sc[1]->Trig_state&SC_STATE_TRIG)!=0)
 	{
 		trigger2 = 1;
 	}
 	{
-		phase_lim_low = (float*) &cl->sysParam->cl_param1[0];
-		phase_lim_high = (float*) &cl->sysParam->cl_param2[0];
-		if((phase>=*phase_lim_low))
+		float phase = atan2(temp2, DSP_temp2) ;
+		float phase_lim_low,phase_lim_high;
+		static int phase_cycle = 0;
 		{
+			phase_lim_low = *(float*) &cl->sysParam->cl_param1[0];
+			phase_lim_high = *(float*) &cl->sysParam->cl_param2[0];
+			
+			if((phase>=phase_lim_low))
+			{		
+
+			}
+			else
+			{
+				trigger2=0;
+				phase_cycle=1;
+			}
+			
 			if(phase_lim_high<phase_lim_low)
 			{
-				phase-=3.14159265358979;
+				phase_lim_high+= 2*3.14159265358979;
+				phase += phase_cycle*2*3.14159265358979;
 			}
-			if(phase<=*phase_lim_high)
+
+			if(phase>=phase_lim_high)
 			{
-				if(trigger2 == 1)
-				{
-					CE32_CL_TrigAct(0x01);
-				}
-				}			
-		}
-		else
-		{
-			CE32_CL_TrigStopAct(0x01);
+				trigger2 =0;
+				CE32_CL_TrigStopAct(0x01);
+			}
+			if(trigger2 == 1)
+			{
+				CE32_CL_TrigAct(0x01);
+				phase_cycle = 0; //start counting phase cycle
+			}		
 		}
 	}
 }
