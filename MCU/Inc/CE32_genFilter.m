@@ -12,7 +12,7 @@ filters{fil_idx}=fil;fil_idx=fil_idx+1;
 
 fil=[];
 fil.name = 'T';
-fil.bands = [4,8];
+fil.bands = [4,12];
 fil.lpf = 4;
 fil=[];
 

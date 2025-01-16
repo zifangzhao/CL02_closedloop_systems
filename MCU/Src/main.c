@@ -1137,6 +1137,11 @@ void CE32_CL_TrigAct(int id) //Triggers when Closed-loop detect a event
 	CE32_STIM_Trig(&STIM_handle[id]);
 }
 
+void CE32_CL_TrigStopAct(int id) //Triggers when Closed-loop detect a event
+{
+	CE32_STIM_Abort(&STIM_handle[id]);
+}
+
 void CE32_CL_WaitAct(int id)
 {
 	if(id==0)
