@@ -1,36 +1,48 @@
 #include "tmwtypes.h"
-#define MWSPT_NSEC_HTF_T 5
-const int NL_HTF_T [MWSPT_NSEC_HTF_T][3] = { 1,3,1,3,1 };
+#define MWSPT_NSEC_HTF_T 7
+const int NL_HTF_T [MWSPT_NSEC_HTF_T][3] = { 1,3,1,3,1,3,1 };
 const real32_T NUM_HTF_T [MWSPT_NSEC_HTF_T][3] = {
 { 
--0.21779, 0, 0,
+-0.089352, 0, 0,
  },
 { 
-1, -1.0355, 0,
+1, -1.0145, 0,
  },
 { 
 1, 0, 0,
  },
 { 
-1, -1.2568, 4.1763,
+1, -0.58717, 3.8645,
+ },
+{ 
+1, 0, 0,
+ },
+{ 
+1, -2.0656, 1.7712,
  },
 { 
 1, 0, 0,
  }
 };
-const int DL_HTF_T [MWSPT_NSEC_HTF_T][3] = { 1,3,1,3,1 };
+const int DL_HTF_T [MWSPT_NSEC_HTF_T][3] = { 1,3,1,3,1,3,1 };
 const real32_T DEN_HTF_T [MWSPT_NSEC_HTF_T][3] = {
 { 
 1, 0, 0,
  },
 { 
-1, -0.87877, 0,
+1, -0.91428, 0,
  },
 { 
 1, 0, 0,
  },
 { 
-1, -1.1546, 0.56433,
+1, -1.4708, 0.65447,
+ },
+{ 
+1, 0, 0,
+ },
+{ 
+1, -0.92871, 0.71076,
  },
 { 
 1, 0, 0,
