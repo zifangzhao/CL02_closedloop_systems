@@ -20,6 +20,7 @@ void CE32_CL_Random(void* cl, float input1,float input2);
 
 void CE32_CL_Random_Update(void* cl);
 
+float unwrap_phase(float phase, float prev_phase);
 
 void CE32_CL_Init(CE32_CL* cl, CE32_systemParam* sysParam,CE32_dspParam* sysDSP, CE32_Filter* main_Fil, CE32_Filter* LPF_fil, CE32_StimControl* sc)
 {
@@ -180,45 +181,48 @@ void CE32_CL_Single_HT(void* vcl, float input1,float input2)
 //	DSP_output[1] = DSP_output[1]>=0?DSP_output[1]:0;
 	
 	int rst=DF_StimControl_inputdata(cl->sc[0],DSP_output[0],0);
-	int trigger1 = 0;
+	
+	int trig1 = 0;
+	static int trigged1 = 0;
 	if((cl->sc[0]->Trig_state&SC_STATE_TRIG)!=0)
 	{
-		trigger1=1;
+		trig1 = 1;
 	}
 	
-	float phase_lim_low,phase_lim_high;
-	static int phase_cycle = 0;
-	{
-		phase_lim_low = *(float*) &cl->sysParam->cl_param1[0];
-		phase_lim_high = *(float*) &cl->sysParam->cl_param2[0];
-		
-		if((phase>=phase_lim_low))
-		{		
+	float phase_lim_low, phase_lim_high, phase_unwarp;
+	static float prev_phase = 0; // To track phase continuity
+	// Unwrap the current phase relative to the previous phase
 
-		}
-		else
-		{
-			trigger1=0;
-			phase_cycle=1;
-		}
-		
-		if(phase_lim_high<phase_lim_low)
-		{
-			phase_lim_high+= 2*3.14159265358979;
-			phase += phase_cycle*2*3.14159265358979;
-		}
+	// Retrieve limits from system parameters
+	phase_lim_low = *(float*)&cl->sysParam->cl_param1[0];
+	phase_lim_high = *(float*)&cl->sysParam->cl_param2[0];
 
-		if(phase>=phase_lim_high)
-		{
-			trigger1 =0;
-			CE32_CL_TrigStopAct(0x00);
-		}
-		if(trigger1 == 1)
-		{
-			CE32_CL_TrigAct(0x00);
-			phase_cycle = 0; //start counting phase cycle
-		}		
+	// Ensure limits are within a valid range
+	if (phase_lim_high < phase_lim_low) {
+			phase_lim_high += 2 * 3.14159265358979; // Wrap high limit
 	}
+
+	// Phase-based triggering logic
+	if(trigged1==0)
+	{
+		if (phase >= phase_lim_low)
+		{
+			trigged1=1;
+			prev_phase = phase;
+			CE32_CL_TrigAct(0x00); // Trigger action
+		}
+	}
+	else
+	{
+		phase = unwrap_phase(phase, prev_phase);
+		prev_phase = phase; // Update for the next cycle
+		if(phase >= phase_lim_high) 
+		{
+			trigged1=0;
+			CE32_CL_TrigStopAct(0x00); // Stop action
+		}
+	}
+
 }
 void CE32_CL_Double_HT(void* vcl, float input1,float input2)
 {
@@ -496,6 +500,16 @@ int DF_StimControl_inputdata(CE32_StimControl* sc, float data,int id){
 		}
 	}
 	return sc->Trig_state;
+}
+
+float unwrap_phase(float phase, float prev_phase) {
+    float delta = phase - prev_phase;
+    if (delta > 3.14159265358979) {
+        phase -= 2 * 3.14159265358979; // Wrap down
+    } else if (delta < -3.14159265358979) {
+        phase += 2 * 3.14159265358979; // Wrap up
+    }
+    return phase;
 }
 
 __weak void CE32_CL_WaitAct(int id)
