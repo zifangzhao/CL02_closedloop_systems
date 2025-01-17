@@ -1,7 +1,7 @@
 #include "tmwtypes.h"
-#define MWSPT_NSEC 7
-const int NL_HTF_D [MWSPT_NSEC][3] = { 1,3,1,3,1,3,1 };
-const real32_T NUM_HTF_D [MWSPT_NSEC][3] = {
+#define MWSPT_NSEC_HTF_D 7
+const int NL_HTF_D [MWSPT_NSEC_HTF_D][3] = { 1,3,1,3,1,3,1 };
+const real32_T NUM_HTF_D [MWSPT_NSEC_HTF_D][3] = {
 { 
 -0.13631, 0, 0,
  },
@@ -24,8 +24,8 @@ const real32_T NUM_HTF_D [MWSPT_NSEC][3] = {
 1, 0, 0,
  }
 };
-const int DL_HTF_D [MWSPT_NSEC][3] = { 1,3,1,3,1,3,1 };
-const real32_T DEN_HTF_D [MWSPT_NSEC][3] = {
+const int DL_HTF_D [MWSPT_NSEC_HTF_D][3] = { 1,3,1,3,1,3,1 };
+const real32_T DEN_HTF_D [MWSPT_NSEC_HTF_D][3] = {
 { 
 1, 0, 0,
  },

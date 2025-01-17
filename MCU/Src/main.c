@@ -1085,6 +1085,12 @@ int CL02_CmdSvr(uint8_t *data_ptr,uint32_t cmd_len)
 			sc[id].Trig_level=v;
 			break;
 		}
+		case 0x15: //set cl params
+		{		
+			memcpy(sysParam.cl_param1,&data_ptr[1],sizeof(sysParam.cl_param1));
+			memcpy(sysParam.cl_param2,&data_ptr[1]+sizeof(sysParam.cl_param1),sizeof(sysParam.cl_param2));
+			break;
+		}
 		case 0x20:
 		{
 			uint32_t* ptr=(uint32_t*)(&data_ptr[2]);

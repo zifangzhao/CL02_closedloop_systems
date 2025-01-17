@@ -2,9 +2,9 @@
 #include "fdacoefs_LPF_D_6Hz@1000_ord1_SOS.h"
 #include "fdacoefs_HTF_D_1.5_5.5Hz@1000_ord1_SOS.h"
 
-#include "fdacoefs_BPF_T_4_InfHz@1000_ord1_SOS.h"
+#include "fdacoefs_BPF_T_4_12Hz@1000_ord1_SOS.h"
 #include "fdacoefs_LPF_T_4Hz@1000_ord1_SOS.h"
-#include "fdacoefs_HTF_T_4_InfHz@1000_ord1_SOS.h"
+#include "fdacoefs_HTF_T_4_12Hz@1000_ord1_SOS.h"
 
 #include "fdacoefs_BPF_A_8_13Hz@1000_ord1_SOS.h"
 #include "fdacoefs_LPF_A_4Hz@1000_ord1_SOS.h"

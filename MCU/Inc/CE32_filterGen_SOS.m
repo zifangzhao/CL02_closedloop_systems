@@ -2,7 +2,8 @@ function CE32_filterGen_SOS(filename,var_name,sos,G)
 fh = fopen(filename,'w+');
 N = size(sos,1)+length(G);
 writeline(fh,'#include "tmwtypes.h"');
-writeline(fh,"#define MWSPT_NSEC " + num2str(N));
+txt_MWSPT = "MWSPT_NSEC_"+ var_name;
+writeline(fh,"#define "  + txt_MWSPT  + " " + num2str(N));
 
 b = zeros(N,3);
 b(1:2:end,1) = G;
@@ -14,12 +15,12 @@ NL_mat = ones(1,N);
 NL_mat(2:2:end)=3;
 NL_str = vector2txt(NL_mat);
 
-writeline(fh,"const int NL_" + var_name + " [MWSPT_NSEC][3] = " + [NL_str{:}] + ";");
-writeline(fh,"const real32_T NUM_" + var_name + " [MWSPT_NSEC][3] = {")
+writeline(fh,"const int NL_" + var_name + " [" + txt_MWSPT +"][3] = " + [NL_str{:}] + ";");
+writeline(fh,"const real32_T NUM_" + var_name + " ["+ txt_MWSPT +"][3] = {")
 cellfun(@(x) writeline(fh,x),matrix2txt(b));
 writeline(fh,'};');
-writeline(fh,"const int DL_" + var_name + " [MWSPT_NSEC][3] = " + [NL_str{:}] + ";");
-writeline(fh,"const real32_T DEN_" + var_name + " [MWSPT_NSEC][3] = {")
+writeline(fh,"const int DL_" + var_name + " ["+ txt_MWSPT +"][3] = " + [NL_str{:}] + ";");
+writeline(fh,"const real32_T DEN_" + var_name + " ["+ txt_MWSPT +"][3] = {")
 cellfun(@(x) writeline(fh,x),matrix2txt(a));
 writeline(fh,'};');
 writeline(fh,'');

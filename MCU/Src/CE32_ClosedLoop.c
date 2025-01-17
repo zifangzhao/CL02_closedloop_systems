@@ -203,24 +203,24 @@ void CE32_CL_Single_HT(void* vcl, float input1,float input2)
 	}
 
 	// Phase-based triggering logic
-	if(trigged1==0)
+	if(trig1 ==1)
 	{
-		if (phase >= phase_lim_low)
+		if (phase >= phase_lim_low) //trigger stimualtion once the original phase in [-pi:pi] passed the low limit
 		{
-			trigged1=1;
-			prev_phase = phase;
-			CE32_CL_TrigAct(0x00); // Trigger action
+			prev_phase = phase;    // log starting phase of the stimulation start, start unwarping following phase
 		}
 	}
-	else
+
+	phase = unwrap_phase(phase, prev_phase);
+	prev_phase = phase; // Update for the next cycle
+	if(phase >= phase_lim_high) 
 	{
-		phase = unwrap_phase(phase, prev_phase);
-		prev_phase = phase; // Update for the next cycle
-		if(phase >= phase_lim_high) 
-		{
-			trigged1=0;
-			CE32_CL_TrigStopAct(0x00); // Stop action
-		}
+		trig1=0;
+		CE32_CL_TrigStopAct(0x00); // Stop action
+	}
+	if(trig1==1)
+	{
+			CE32_CL_TrigAct(0x00); // Trigger action
 	}
 
 }

@@ -1,7 +1,7 @@
 #include "tmwtypes.h"
-#define MWSPT_NSEC 3
-const int NL_LPF_R1 [MWSPT_NSEC][3] = { 1,3,1 };
-const real32_T NUM_LPF_R1 [MWSPT_NSEC][3] = {
+#define MWSPT_NSEC_LPF_R1 3
+const int NL_LPF_R1 [MWSPT_NSEC_LPF_R1][3] = { 1,3,1 };
+const real32_T NUM_LPF_R1 [MWSPT_NSEC_LPF_R1][3] = {
 { 
 0.13673, 0, 0,
  },
@@ -12,8 +12,8 @@ const real32_T NUM_LPF_R1 [MWSPT_NSEC][3] = {
 1, 0, 0,
  }
 };
-const int DL_LPF_R1 [MWSPT_NSEC][3] = { 1,3,1 };
-const real32_T DEN_LPF_R1 [MWSPT_NSEC][3] = {
+const int DL_LPF_R1 [MWSPT_NSEC_LPF_R1][3] = { 1,3,1 };
+const real32_T DEN_LPF_R1 [MWSPT_NSEC_LPF_R1][3] = {
 { 
 1, 0, 0,
  },

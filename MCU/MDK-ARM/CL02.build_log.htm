@@ -27,79 +27,7 @@ Project File Date:  01/17/2025
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'CL02_lite'
-assembling startup_stm32f373xc.s...
-startup_stm32f373xc.s: error: A1023E: File "startup_stm32f373xc.s" could not be opened: No such file or directory
-compiling HD32_filter.c...
-../Inc/fdacoefs_HTF_D_1.5_5.5Hz@1000_ord1_SOS.h(2): warning:  #47-D: incompatible redefinition of macro "MWSPT_NSEC"  (declared at line 2 of "../Inc/fdacoefs_LPF_D_6Hz@1000_ord1_SOS.h")
-  #define MWSPT_NSEC 7
-../Inc/fdacoefs_BPF_T_4_InfHz@1000_ord1_SOS.h(2): warning:  #47-D: incompatible redefinition of macro "MWSPT_NSEC"  (declared at line 2 of "../Inc/fdacoefs_HTF_D_1.5_5.5Hz@1000_ord1_SOS.h")
-  #define MWSPT_NSEC 3
-../Inc/fdacoefs_HTF_A_8_13Hz@1000_ord1_SOS.h(2): warning:  #47-D: incompatible redefinition of macro "MWSPT_NSEC"  (declared at line 2 of "../Inc/fdacoefs_LPF_A_4Hz@1000_ord1_SOS.h")
-  #define MWSPT_NSEC 5
-../Inc/fdacoefs_BPF_B_13_30Hz@1000_ord1_SOS.h(2): warning:  #47-D: incompatible redefinition of macro "MWSPT_NSEC"  (declared at line 2 of "../Inc/fdacoefs_HTF_A_8_13Hz@1000_ord1_SOS.h")
-  #define MWSPT_NSEC 3
-../Inc/fdacoefs_HTF_B_13_30Hz@1000_ord1_SOS.h(2): warning:  #47-D: incompatible redefinition of macro "MWSPT_NSEC"  (declared at line 2 of "../Inc/fdacoefs_LPF_B_10Hz@1000_ord1_SOS.h")
-  #define MWSPT_NSEC 5
-../Inc/fdacoefs_BPF_G_30_80Hz@1000_ord1_SOS.h(2): warning:  #47-D: incompatible redefinition of macro "MWSPT_NSEC"  (declared at line 2 of "../Inc/fdacoefs_HTF_B_13_30Hz@1000_ord1_SOS.h")
-  #define MWSPT_NSEC 3
-../Inc/fdacoefs_HTF_SPW_12_30Hz@1000_ord1_SOS.h(2): warning:  #47-D: incompatible redefinition of macro "MWSPT_NSEC"  (declared at line 2 of "../Inc/fdacoefs_LPF_SPW_5Hz@1000_ord1_SOS.h")
-  #define MWSPT_NSEC 5
-../Inc/fdacoefs_BPF_R_110_250Hz@1000_ord1_SOS.h(2): warning:  #47-D: incompatible redefinition of macro "MWSPT_NSEC"  (declared at line 2 of "../Inc/fdacoefs_HTF_SPW_12_30Hz@1000_ord1_SOS.h")
-  #define MWSPT_NSEC 3
-..\Src\HD32_filter.c(183): error:  #20: identifier "MWSPT_NSEC_HTF_D" is undefined
-  			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_D,(float(*)[3])DEN_HTF_D,MWSPT_NSEC_HTF_D,(int*)NL_HTF_D);
-..\Src\HD32_filter.c(187): error:  #20: identifier "MWSPT_NSEC_HTF_T" is undefined
-  			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_T,(float(*)[3])DEN_HTF_T,MWSPT_NSEC_HTF_T,(int*)NL_HTF_T);
-..\Src\HD32_filter.c(191): error:  #20: identifier "MWSPT_NSEC_HTF_A" is undefined
-  			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_A,(float(*)[3])DEN_HTF_A,MWSPT_NSEC_HTF_A,(int*)NL_HTF_A);
-..\Src\HD32_filter.c(195): error:  #20: identifier "MWSPT_NSEC_HTF_B" is undefined
-  			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_B,(float(*)[3])DEN_HTF_B,MWSPT_NSEC_HTF_B,(int*)NL_HTF_B);
-..\Src\HD32_filter.c(199): error:  #20: identifier "MWSPT_NSEC_HTF_G" is undefined
-  			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_G,(float(*)[3])DEN_HTF_G,MWSPT_NSEC_HTF_G,(int*)NL_HTF_G);
-..\Src\HD32_filter.c(211): error:  #20: identifier "MWSPT_NSEC_HTF_I" is undefined
-  			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_I,(float(*)[3])DEN_HTF_I,MWSPT_NSEC_HTF_I,(int*)NL_HTF_I);
-..\Src\HD32_filter.c(219): error:  #20: identifier "MWSPT_NSEC_HTF_SPW" is undefined
-  			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_SPW,(float(*)[3])DEN_HTF_SPW,MWSPT_NSEC_HTF_SPW,(int*)NL_HTF_SPW);
-..\Src\HD32_filter.c: 8 warnings, 7 errors
-compiling dataMGR.c...
-compiling CE32_stimulator.c...
-..\Src\CE32_stimulator.c(36): warning:  #177-D: variable "temp"  was declared but never referenced
-  	int64_t temp;
-..\Src\CE32_stimulator.c: 1 warning, 0 errors
-compiling stm32f3xx_it.c...
-compiling usbd_cdc_if.c...
-../Src/usbd_cdc_if.c(84): warning:  #47-D: incompatible redefinition of macro "APP_RX_DATA_SIZE"  (declared at line 51 of "../Inc/usbd_cdc_if.h")
-  #define APP_RX_DATA_SIZE  1000
-../Src/usbd_cdc_if.c(85): warning:  #47-D: incompatible redefinition of macro "APP_TX_DATA_SIZE"  (declared at line 52 of "../Inc/usbd_cdc_if.h")
-  #define APP_TX_DATA_SIZE  1000
-../Src/usbd_cdc_if.c: 2 warnings, 0 errors
-compiling CE32_ClosedLoop.c...
-..\Src\CE32_ClosedLoop.c(178): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  	DSP_output[1] = (phase / 3.14159265358979) * 15000+15000; //phase angle
-..\Src\CE32_ClosedLoop.c(185): warning:  #550-D: variable "trig1"  was set but never used
-  	int trig1 = 0;
-..\Src\CE32_ClosedLoop.c(192): warning:  #177-D: variable "phase_unwarp"  was declared but never referenced
-  	float phase_lim_low, phase_lim_high, phase_unwarp;
-..\Src\CE32_ClosedLoop.c(507): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      if (delta > 3.14159265358979) {
-..\Src\CE32_ClosedLoop.c: 4 warnings, 0 errors
-compiling main.c...
-../Src/main.c(121): warning:  #1295-D: Deprecated declaration CL02_sendDataPackage - give arg types
-  int CL02_sendDataPackage();
-../Src/main.c(122): warning:  #1295-D: Deprecated declaration CL02_purgeData - give arg types
-  int CL02_purgeData();
-../Src/main.c(123): warning:  #1295-D: Deprecated declaration CL02_setClParam - give arg types
-  int CL02_setClParam();
-../Src/main.c(1021): warning:  #177-D: variable "type"  was declared but never referenced
-  			uint8_t type=*(uint8_t*)&data_ptr[2]; //first data is uint8,type(01=DF1,02=SOS)
-../Src/main.c(1309): warning:  #940-D: missing return statement at end of non-void function "CL02_sendDataPackage" 
-  }
-../Src/main.c(1314): warning:  #940-D: missing return statement at end of non-void function "CL02_purgeData" 
-  }
-../Src/main.c(1326): warning:  #940-D: missing return statement at end of non-void function "CL02_setClParam" 
-  }
-../Src/main.c: 7 warnings, 0 errors
-".\CL02.axf" - 8 Error(s), 22 Warning(s).
+".\CL02.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -122,8 +50,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.2.0
-Target not created.
-Build Time Elapsed:  00:00:05
+Build Time Elapsed:  00:00:00
 </pre>
 </body>
 </html>

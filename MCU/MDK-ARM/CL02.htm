@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\CL02.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\CL02.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu Jan 16 18:46:44 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Jan 17 14:12:12 2025
 <BR><P>
 <H3>Maximum Stack Usage =        236 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -723,8 +723,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> ce32_closedloop.o(i.CE32_CL_Init)
 </UL>
-<P><STRONG><a name="[6a]"></a>CE32_CL_Single_HT</STRONG> (Thumb, 294 bytes, Stack size 24 bytes, ce32_closedloop.o(i.CE32_CL_Single_HT))
-<BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = CE32_CL_Single_HT &rArr; __hardfp_atan2 &rArr; atan &rArr; __hardfp_atan &rArr; __kernel_poly &rArr; __aeabi_dmul
+<P><STRONG><a name="[6a]"></a>CE32_CL_Single_HT</STRONG> (Thumb, 304 bytes, Stack size 32 bytes, ce32_closedloop.o(i.CE32_CL_Single_HT))
+<BR><BR>[Stack]<UL><LI>Max Depth = 192<LI>Call Chain = CE32_CL_Single_HT &rArr; __hardfp_atan2 &rArr; atan &rArr; __hardfp_atan &rArr; __kernel_poly &rArr; __aeabi_dmul
 </UL>
 <BR>[Calls]<UL><LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DF_IIR_inputData
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_CL_TrigStopAct
@@ -834,11 +834,11 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_USB_INTERCOM_RX_ISR
 </UL>
 
-<P><STRONG><a name="[c9]"></a>CE32_INTERCOM_Incoming_CMD_Len</STRONG> (Thumb, 108 bytes, Stack size 0 bytes, ce32_usb_intercom.o(i.CE32_INTERCOM_Incoming_CMD_Len))
+<P><STRONG><a name="[c9]"></a>CE32_INTERCOM_Incoming_CMD_Len</STRONG> (Thumb, 112 bytes, Stack size 0 bytes, ce32_usb_intercom.o(i.CE32_INTERCOM_Incoming_CMD_Len))
 <BR><BR>[Called By]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_USB_INTERCOM_RX_ISR
 </UL>
 
-<P><STRONG><a name="[9d]"></a>CE32_InitFilter</STRONG> (Thumb, 838 bytes, Stack size 52 bytes, hd32_filter.o(i.CE32_InitFilter))
+<P><STRONG><a name="[9d]"></a>CE32_InitFilter</STRONG> (Thumb, 828 bytes, Stack size 52 bytes, hd32_filter.o(i.CE32_InitFilter))
 <BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = CE32_InitFilter &rArr; DF_InitFilter
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DF_InitFilter
@@ -1018,7 +1018,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CDC_Receive_FS
 </UL>
 
-<P><STRONG><a name="[cd]"></a>CL02_CmdSvr</STRONG> (Thumb, 618 bytes, Stack size 32 bytes, main.o(i.CL02_CmdSvr))
+<P><STRONG><a name="[cd]"></a>CL02_CmdSvr</STRONG> (Thumb, 650 bytes, Stack size 32 bytes, main.o(i.CL02_CmdSvr))
 <BR><BR>[Stack]<UL><LI>Max Depth = 220<LI>Call Chain = CL02_CmdSvr &rArr; CE32_CL_Init &rArr; CE32_CL_TrigInitAct &rArr; MX_TIM17_Init &rArr; HAL_TIM_OnePulse_Init &rArr; TIM_Base_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_InitFilter

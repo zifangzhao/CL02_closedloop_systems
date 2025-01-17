@@ -118,44 +118,44 @@ float DF_IIR_inputData(void* fil,float input){
 void CE32_InitFilter(CE32_Filter* fil,CE32_Filter* MA_fil, CE32_dspParam* dsp){
 	switch(dsp->func1){
 		case CE32_FILTER_DELTA:
-			DF_InitFilter(fil,(float(*)[3])NUM_D,(float(*)[3])DEN_D,MWSPT_NSEC,(int*)NL_D);
-			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_D,(float(*)[3])DEN_LPF_D,MWSPT_NSEC,(int*)NL_LPF_D);
+			DF_InitFilter(fil,(float(*)[3])NUM_D,(float(*)[3])DEN_D,MWSPT_NSEC_D,(int*)NL_D);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_D,(float(*)[3])DEN_LPF_D,MWSPT_NSEC_LPF_D,(int*)NL_LPF_D);
 			break;
 		case CE32_FILTER_THETA:
-			DF_InitFilter(fil,(float(*)[3])NUM_T,(float(*)[3])DEN_T,MWSPT_NSEC,(int*)NL_T);
-			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_T,(float(*)[3])DEN_LPF_T,MWSPT_NSEC,(int*)NL_LPF_T);
+			DF_InitFilter(fil,(float(*)[3])NUM_T,(float(*)[3])DEN_T,MWSPT_NSEC_T,(int*)NL_T);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_T,(float(*)[3])DEN_LPF_T,MWSPT_NSEC_LPF_T,(int*)NL_LPF_T);
 			break;
 		case CE32_FILTER_ALPHA:
-			DF_InitFilter(fil,(float(*)[3])NUM_A,(float(*)[3])DEN_A,MWSPT_NSEC,(int*)NL_A);
-			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_A,(float(*)[3])DEN_LPF_A,MWSPT_NSEC,(int*)NL_LPF_A);
+			DF_InitFilter(fil,(float(*)[3])NUM_A,(float(*)[3])DEN_A,MWSPT_NSEC_A,(int*)NL_A);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_A,(float(*)[3])DEN_LPF_A,MWSPT_NSEC_LPF_A,(int*)NL_LPF_A);
 			break;
 		case CE32_FILTER_BETA:
-			DF_InitFilter(fil,(float(*)[3])NUM_B,(float(*)[3])DEN_B,MWSPT_NSEC,(int*)NL_B);
-			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_B,(float(*)[3])DEN_LPF_B,MWSPT_NSEC,(int*)NL_LPF_B);
+			DF_InitFilter(fil,(float(*)[3])NUM_B,(float(*)[3])DEN_B,MWSPT_NSEC_B,(int*)NL_B);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_B,(float(*)[3])DEN_LPF_B,MWSPT_NSEC_LPF_B,(int*)NL_LPF_B);
 			break;
 		case CE32_FILTER_GAMMA:
-			DF_InitFilter(fil,(float(*)[3])NUM_G,(float(*)[3])DEN_G,MWSPT_NSEC,(int*)NL_G);
-			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_G,(float(*)[3])DEN_LPF_G,MWSPT_NSEC,(int*)NL_LPF_G);
+			DF_InitFilter(fil,(float(*)[3])NUM_G,(float(*)[3])DEN_G,MWSPT_NSEC_G,(int*)NL_G);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_G,(float(*)[3])DEN_LPF_G,MWSPT_NSEC_LPF_G,(int*)NL_LPF_G);
 			break;
 		case CE32_FILTER_EPSILON:
-			DF_InitFilter(fil,(float(*)[3])NUM_E,(float(*)[3])DEN_E,MWSPT_NSEC,(int*)NL_E);
-			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_E,(float(*)[3])DEN_LPF_E,MWSPT_NSEC,(int*)NL_LPF_E);
+			DF_InitFilter(fil,(float(*)[3])NUM_E,(float(*)[3])DEN_E,MWSPT_NSEC_E,(int*)NL_E);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_E,(float(*)[3])DEN_LPF_E,MWSPT_NSEC_LPF_E,(int*)NL_LPF_E);
 			break;
 		case CE32_FILTER_RIPPLE:
-			DF_InitFilter(fil,(float(*)[3])NUM_R,(float(*)[3])DEN_R,MWSPT_NSEC,(int*)NL_R);
-			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_R,(float(*)[3])DEN_LPF_R,MWSPT_NSEC,(int*)NL_LPF_R);
+			DF_InitFilter(fil,(float(*)[3])NUM_R,(float(*)[3])DEN_R,MWSPT_NSEC_R,(int*)NL_R);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_R,(float(*)[3])DEN_LPF_R,MWSPT_NSEC_LPF_R,(int*)NL_LPF_R);
 			break;
 		case CE32_FILTER_IED:
-			DF_InitFilter(fil,(float(*)[3])NUM_I,(float(*)[3])DEN_I,MWSPT_NSEC,(int*)NL_I);
-			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_I,(float(*)[3])DEN_LPF_I,MWSPT_NSEC,(int*)NL_LPF_I);
+			DF_InitFilter(fil,(float(*)[3])NUM_I,(float(*)[3])DEN_I,MWSPT_NSEC_I,(int*)NL_I);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_I,(float(*)[3])DEN_LPF_I,MWSPT_NSEC_I,(int*)NL_LPF_I);
 			break;
 		case CE32_FILTER_SPW_RIPPLE:
-			DF_InitFilter(fil,(float(*)[3])NUM_R1,(float(*)[3])DEN_R1,MWSPT_NSEC,(int*)NL_R1);
-			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_R1,(float(*)[3])DEN_LPF_R1,MWSPT_NSEC,(int*)NL_LPF_R1);
+			DF_InitFilter(fil,(float(*)[3])NUM_R1,(float(*)[3])DEN_R1,MWSPT_NSEC_R1,(int*)NL_R1);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_R1,(float(*)[3])DEN_LPF_R1,MWSPT_NSEC_LPF_R1,(int*)NL_LPF_R1);
 			break;
 		case CE32_FILTER_SPW:
-			DF_InitFilter(fil,(float(*)[3])NUM_SPW,(float(*)[3])DEN_SPW,MWSPT_NSEC,(int*)NL_SPW);
-			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_SPW,(float(*)[3])DEN_LPF_SPW,MWSPT_NSEC,(int*)NL_LPF_SPW);
+			DF_InitFilter(fil,(float(*)[3])NUM_SPW,(float(*)[3])DEN_SPW,MWSPT_NSEC_SPW,(int*)NL_SPW);
+			DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_SPW,(float(*)[3])DEN_LPF_SPW,MWSPT_NSEC_LPF_SPW,(int*)NL_LPF_SPW);
 			break;
 		case CE32_FILTER_CUSTOM:
 			{
@@ -164,7 +164,7 @@ void CE32_InitFilter(CE32_Filter* fil,CE32_Filter* MA_fil, CE32_dspParam* dsp){
 				{
 					DF_InitFilter(fil,filter_custom_coeff[fil_id].Num,filter_custom_coeff[fil_id].Den,filter_custom_coeff[fil_id].ord,filter_custom_coeff[fil_id].NL);
 				}
-				DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_SPW,(float(*)[3])DEN_LPF_SPW,MWSPT_NSEC,(int*)NL_LPF_SPW);
+				DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_SPW,(float(*)[3])DEN_LPF_SPW,MWSPT_NSEC_LPF_SPW,(int*)NL_LPF_SPW);
 				break;
 			}
 		case CE32_FILTER_CUSTOM1:
@@ -174,48 +174,48 @@ void CE32_InitFilter(CE32_Filter* fil,CE32_Filter* MA_fil, CE32_dspParam* dsp){
 				{
 					DF_InitFilter(fil,filter_custom_coeff[fil_id].Num,filter_custom_coeff[fil_id].Den,filter_custom_coeff[fil_id].ord,filter_custom_coeff[fil_id].NL);
 				}
-				DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_SPW,(float(*)[3])DEN_LPF_SPW,MWSPT_NSEC,(int*)NL_LPF_SPW);
+				DF_InitFilter(MA_fil,(float(*)[3])NUM_LPF_SPW,(float(*)[3])DEN_LPF_SPW,MWSPT_NSEC_LPF_SPW,(int*)NL_LPF_SPW);
 				break;
 			}
 			
 		case CE32_FILTER_DELTA_HTF:
-			DF_InitFilter(fil,(float(*)[3])NUM_D,(float(*)[3])DEN_D,MWSPT_NSEC,(int*)NL_D);
+			DF_InitFilter(fil,(float(*)[3])NUM_D,(float(*)[3])DEN_D,MWSPT_NSEC_D,(int*)NL_D);
 			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_D,(float(*)[3])DEN_HTF_D,MWSPT_NSEC_HTF_D,(int*)NL_HTF_D);
 			break;
 		case CE32_FILTER_THETA_HTF:
-			DF_InitFilter(fil,(float(*)[3])NUM_T,(float(*)[3])DEN_T,MWSPT_NSEC,(int*)NL_T);
+			DF_InitFilter(fil,(float(*)[3])NUM_T,(float(*)[3])DEN_T,MWSPT_NSEC_T,(int*)NL_T);
 			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_T,(float(*)[3])DEN_HTF_T,MWSPT_NSEC_HTF_T,(int*)NL_HTF_T);
 			break;
 		case CE32_FILTER_ALPHA_HTF:
-			DF_InitFilter(fil,(float(*)[3])NUM_A,(float(*)[3])DEN_A,MWSPT_NSEC,(int*)NL_A);
+			DF_InitFilter(fil,(float(*)[3])NUM_A,(float(*)[3])DEN_A,MWSPT_NSEC_A,(int*)NL_A);
 			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_A,(float(*)[3])DEN_HTF_A,MWSPT_NSEC_HTF_A,(int*)NL_HTF_A);
 			break;
 		case CE32_FILTER_BETA_HTF:
-			DF_InitFilter(fil,(float(*)[3])NUM_B,(float(*)[3])DEN_B,MWSPT_NSEC,(int*)NL_B);
+			DF_InitFilter(fil,(float(*)[3])NUM_B,(float(*)[3])DEN_B,MWSPT_NSEC_B,(int*)NL_B);
 			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_B,(float(*)[3])DEN_HTF_B,MWSPT_NSEC_HTF_B,(int*)NL_HTF_B);
 			break;
 		case CE32_FILTER_GAMMA_HTF:
-			DF_InitFilter(fil,(float(*)[3])NUM_G,(float(*)[3])DEN_G,MWSPT_NSEC,(int*)NL_G);
+			DF_InitFilter(fil,(float(*)[3])NUM_G,(float(*)[3])DEN_G,MWSPT_NSEC_G,(int*)NL_G);
 			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_G,(float(*)[3])DEN_HTF_G,MWSPT_NSEC_HTF_G,(int*)NL_HTF_G);
 			break;
 		case CE32_FILTER_EPSILON_HTF:
-			DF_InitFilter(fil,(float(*)[3])NUM_E,(float(*)[3])DEN_E,MWSPT_NSEC,(int*)NL_E);
+			DF_InitFilter(fil,(float(*)[3])NUM_E,(float(*)[3])DEN_E,MWSPT_NSEC_E,(int*)NL_E);
 			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_E,(float(*)[3])DEN_HTF_E,MWSPT_NSEC_HTF_E,(int*)NL_HTF_E);
 			break;
 		case CE32_FILTER_RIPPLE_HTF:
-			DF_InitFilter(fil,(float(*)[3])NUM_R,(float(*)[3])DEN_R,MWSPT_NSEC,(int*)NL_R);
+			DF_InitFilter(fil,(float(*)[3])NUM_R,(float(*)[3])DEN_R,MWSPT_NSEC_R,(int*)NL_R);
 			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_R,(float(*)[3])DEN_HTF_R,MWSPT_NSEC_HTF_R,(int*)NL_HTF_R);
 			break;
 		case CE32_FILTER_IED_HTF:
-			DF_InitFilter(fil,(float(*)[3])NUM_I,(float(*)[3])DEN_I,MWSPT_NSEC,(int*)NL_I);
+			DF_InitFilter(fil,(float(*)[3])NUM_I,(float(*)[3])DEN_I,MWSPT_NSEC_I,(int*)NL_I);
 			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_I,(float(*)[3])DEN_HTF_I,MWSPT_NSEC_HTF_I,(int*)NL_HTF_I);
 			break;
 		case CE32_FILTER_SPW_RIPPLE_HTF:
-			DF_InitFilter(fil,(float(*)[3])NUM_R1,(float(*)[3])DEN_R1,MWSPT_NSEC,(int*)NL_R1);
+			DF_InitFilter(fil,(float(*)[3])NUM_R1,(float(*)[3])DEN_R1,MWSPT_NSEC_R1,(int*)NL_R1);
 			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_R1,(float(*)[3])DEN_HTF_R1,MWSPT_NSEC_HTF_R1,(int*)NL_HTF_R1);
 			break;
 		case CE32_FILTER_SPW_HTF:
-			DF_InitFilter(fil,(float(*)[3])NUM_SPW,(float(*)[3])DEN_SPW,MWSPT_NSEC,(int*)NL_SPW);
+			DF_InitFilter(fil,(float(*)[3])NUM_SPW,(float(*)[3])DEN_SPW,MWSPT_NSEC_SPW,(int*)NL_SPW);
 			DF_InitFilter(MA_fil,(float(*)[3])NUM_HTF_SPW,(float(*)[3])DEN_HTF_SPW,MWSPT_NSEC_HTF_SPW,(int*)NL_HTF_SPW);
 			break;
 
