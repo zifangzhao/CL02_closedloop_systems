@@ -40,6 +40,9 @@
             this.buttonStopCollection = new System.Windows.Forms.Button();
             this.labelPort = new System.Windows.Forms.Label();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.numericUpDown_CL_param2 = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_CL_param1 = new System.Windows.Forms.NumericUpDown();
+            this.label21 = new System.Windows.Forms.Label();
             this.comboBox_TrigMode = new System.Windows.Forms.ComboBox();
             this.label19 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
@@ -99,9 +102,6 @@
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.label21 = new System.Windows.Forms.Label();
-            this.numericUpDown_CL_param1 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown_CL_param2 = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -114,6 +114,8 @@
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_CL_param2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_CL_param1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DSPCH)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_randTrigMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_randTrigMin)).BeginInit();
@@ -128,8 +130,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgInt)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgPW)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DACgain)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_CL_param1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_CL_param2)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -337,6 +337,65 @@
             this.splitContainer3.Size = new System.Drawing.Size(1002, 291);
             this.splitContainer3.SplitterDistance = 686;
             this.splitContainer3.TabIndex = 51;
+            // 
+            // numericUpDown_CL_param2
+            // 
+            this.numericUpDown_CL_param2.DecimalPlaces = 1;
+            this.numericUpDown_CL_param2.Location = new System.Drawing.Point(246, 263);
+            this.numericUpDown_CL_param2.Maximum = new decimal(new int[] {
+            180,
+            0,
+            0,
+            0});
+            this.numericUpDown_CL_param2.Minimum = new decimal(new int[] {
+            180,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDown_CL_param2.Name = "numericUpDown_CL_param2";
+            this.numericUpDown_CL_param2.Size = new System.Drawing.Size(59, 20);
+            this.numericUpDown_CL_param2.TabIndex = 73;
+            this.numericUpDown_CL_param2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numericUpDown_CL_param2.Value = new decimal(new int[] {
+            180,
+            0,
+            0,
+            0});
+            this.numericUpDown_CL_param2.ValueChanged += new System.EventHandler(this.numericUpDown_CL_param2_ValueChanged);
+            // 
+            // numericUpDown_CL_param1
+            // 
+            this.numericUpDown_CL_param1.DecimalPlaces = 1;
+            this.numericUpDown_CL_param1.Location = new System.Drawing.Point(167, 263);
+            this.numericUpDown_CL_param1.Maximum = new decimal(new int[] {
+            180,
+            0,
+            0,
+            0});
+            this.numericUpDown_CL_param1.Minimum = new decimal(new int[] {
+            180,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDown_CL_param1.Name = "numericUpDown_CL_param1";
+            this.numericUpDown_CL_param1.Size = new System.Drawing.Size(59, 20);
+            this.numericUpDown_CL_param1.TabIndex = 73;
+            this.numericUpDown_CL_param1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numericUpDown_CL_param1.Value = new decimal(new int[] {
+            180,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDown_CL_param1.ValueChanged += new System.EventHandler(this.numericUpDown_CL_param1_ValueChanged);
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(30, 265);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(131, 13);
+            this.label21.TabIndex = 72;
+            this.label21.Text = "Phase degrees (HT mode)";
             // 
             // comboBox_TrigMode
             // 
@@ -1070,63 +1129,6 @@
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Filter = "Filter Parameter|*.filter";
             // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(30, 265);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(131, 13);
-            this.label21.TabIndex = 72;
-            this.label21.Text = "Phase degrees (HT mode)";
-            // 
-            // numericUpDown_CL_param1
-            // 
-            this.numericUpDown_CL_param1.DecimalPlaces = 1;
-            this.numericUpDown_CL_param1.Location = new System.Drawing.Point(167, 263);
-            this.numericUpDown_CL_param1.Maximum = new decimal(new int[] {
-            180,
-            0,
-            0,
-            0});
-            this.numericUpDown_CL_param1.Minimum = new decimal(new int[] {
-            180,
-            0,
-            0,
-            -2147483648});
-            this.numericUpDown_CL_param1.Name = "numericUpDown_CL_param1";
-            this.numericUpDown_CL_param1.Size = new System.Drawing.Size(59, 20);
-            this.numericUpDown_CL_param1.TabIndex = 73;
-            this.numericUpDown_CL_param1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numericUpDown_CL_param1.Value = new decimal(new int[] {
-            180,
-            0,
-            0,
-            -2147483648});
-            // 
-            // numericUpDown_CL_param2
-            // 
-            this.numericUpDown_CL_param2.DecimalPlaces = 1;
-            this.numericUpDown_CL_param2.Location = new System.Drawing.Point(246, 263);
-            this.numericUpDown_CL_param2.Maximum = new decimal(new int[] {
-            180,
-            0,
-            0,
-            0});
-            this.numericUpDown_CL_param2.Minimum = new decimal(new int[] {
-            180,
-            0,
-            0,
-            -2147483648});
-            this.numericUpDown_CL_param2.Name = "numericUpDown_CL_param2";
-            this.numericUpDown_CL_param2.Size = new System.Drawing.Size(59, 20);
-            this.numericUpDown_CL_param2.TabIndex = 73;
-            this.numericUpDown_CL_param2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numericUpDown_CL_param2.Value = new decimal(new int[] {
-            180,
-            0,
-            0,
-            0});
-            // 
             // CL02_center_MainInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1153,6 +1155,8 @@
             this.splitContainer3.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_CL_param2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_CL_param1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DSPCH)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_randTrigMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_randTrigMin)).EndInit();
@@ -1167,8 +1171,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgInt)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_TgPW)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_DACgain)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_CL_param1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_CL_param2)).EndInit();
             this.ResumeLayout(false);
 
         }

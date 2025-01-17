@@ -578,6 +578,7 @@ namespace CL02_center
             DeviceParams.SetDspParams(DSP_id,(uint)comboBox_CL_Arb.SelectedIndex,(uint)comboBox_CL_FilterType.SelectedIndex, (uint) numericUpDown_CL_MAOrd.Value);
         }
 
+
         private void LoadParams()
         {
             uint DSP_id = (uint)DSP_id_curr;
@@ -671,6 +672,27 @@ namespace CL02_center
             }
         }
 
+        private void SetCLParam()
+        {
+            //delay,rnd_delay,duration,interval int32
+            UpdParams();
+            for (uint DSP_id = 0; DSP_id < DSP_count; DSP_id++)
+            {
+
+                float[] src = DeviceParams.cl_param1.Concat(DeviceParams.cl_param2).ToArray();
+                byte[] wrBuf = new byte[3 + sizeof(float)*(DeviceParams.cl_param1.Length+ DeviceParams.cl_param2.Length)];
+                wrBuf[0] = 0x3c;
+                wrBuf[1] = 0x15;
+                Buffer.BlockCopy(src, 0, wrBuf, 2, sizeof(float) * src.Length);
+                wrBuf[wrBuf.Length-1] = 0x3e; // Use index-from-end operator for clarity
+
+                if (serialPort1.IsOpen)
+                {
+                    serialPort1.Write(wrBuf, 0, wrBuf.Length);
+                }
+                Thread.Sleep(50);
+            }
+        }
         private void SetDSPParam()
         {
             UpdParams();
@@ -1235,6 +1257,18 @@ namespace CL02_center
         private void comboBox_TrigMode_SelectedIndexChanged(object sender, EventArgs e)
         {
             SetTrigMode();
+        }
+
+        private void numericUpDown_CL_param1_ValueChanged(object sender, EventArgs e)
+        {
+            UpdParams();
+            SetCLParam();
+        }
+
+        private void numericUpDown_CL_param2_ValueChanged(object sender, EventArgs e)
+        {
+            UpdParams();
+            SetCLParam();
         }
     }
 }
