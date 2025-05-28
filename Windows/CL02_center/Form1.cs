@@ -104,6 +104,12 @@ namespace CL02_center
             public string Name { get; set; }
         }
 
+        public class Info_Int
+        {
+            public int Value { get; set; }
+            public string Name { get; set; }
+        }
+
         private void Initialize()
         {
             int pannelnum = GetPanelNum();
@@ -161,18 +167,18 @@ namespace CL02_center
                 comboBoxDSPGain.DisplayMember = "Name";
             }
             {
-                IList<Info> infoList = new List<Info>();
-                Info info = new Info() { Value = 0, Name = "Disabled" };
+                IList<Info_Int> infoList = new List<Info_Int>();
+                Info_Int info = new Info_Int() { Value = 0, Name = "Disabled" };
                 infoList.Add(info);
-                info = new Info() { Value = 1, Name = "Single A" };
+                info = new Info_Int() { Value = 1, Name = "Single A" };
                 infoList.Add(info);
-                info = new Info() { Value = 6, Name = "Single A (Hilbert)" };
+                info = new Info_Int() { Value = 6, Name = "Single A (Hilbert)" };
                 infoList.Add(info);
-                info = new Info() { Value = 3, Name = "Cascade A->B" };
+                info = new Info_Int() { Value = 3, Name = "Cascade A->B" };
                 infoList.Add(info);
-                info = new Info() { Value = 4, Name = "Gated A & B" };
+                info = new Info_Int() { Value = 4, Name = "Gated A & B" };
                 infoList.Add(info);
-                info = new Info() { Value = 5, Name = "Random" };
+                info = new Info_Int() { Value = 5, Name = "Random" };
                 infoList.Add(info);
                 comboBoxDSPmode.DataSource = infoList;
                 comboBoxDSPmode.ValueMember = "Value";
@@ -585,7 +591,7 @@ namespace CL02_center
             uint Stim_id = 0;
             int ratio = 10 * sample_rate / 1000;
             int cl_id = (int)DeviceParams.cl_mode;
-            comboBoxDSPmode.SelectedIndex = cl_id > 1 ? cl_id - 1 : cl_id;
+            comboBoxDSPmode.SelectedValue = cl_id;
             numericUpDown_TgInt.Value = DeviceParams.stim_interval[Stim_id] / ratio;
             numericUpDown_TgDly.Value = DeviceParams.stim_delay[Stim_id] / ratio;
             numericUpDown_TgRndDly.Value = DeviceParams.stim_RndDelay[Stim_id] / ratio;
@@ -595,8 +601,14 @@ namespace CL02_center
             comboBox_CL_Arb.SelectedIndex = (int)DeviceParams.formula[DSP_id];
             comboBox_CL_FilterType.SelectedIndex = (int)DeviceParams.func[DSP_id];
             numericUpDown_CL_MAOrd.Value = (decimal)DeviceParams.MAOrd[DSP_id];
-            numericUpDown_CL_param1.Value = (decimal)(DeviceParams.cl_param1[DSP_id] / Math.PI * 360);
-            numericUpDown_CL_param2.Value = (decimal)(DeviceParams.cl_param2[DSP_id] / Math.PI * 360);
+
+            decimal degree1 = (decimal)(DeviceParams.cl_param1[DSP_id] / Math.PI * 360);
+            degree1 = ((degree1 + 180) % 360 + 360) % 360 - 180;
+            decimal degree2 = (decimal)(DeviceParams.cl_param1[DSP_id] / Math.PI * 360);
+            degree2 = ((degree2 + 180) % 360 + 360) % 360 - 180;
+
+            numericUpDown_CL_param1.Value = degree1;
+            numericUpDown_CL_param2.Value = degree2;
         }
         private void SetGain(float g)
         {

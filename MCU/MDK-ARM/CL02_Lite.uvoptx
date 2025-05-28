@@ -154,7 +154,7 @@
           <Type>0</Type>
           <LineNumber>158</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134252226</Address>
+          <Address>134252234</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -170,7 +170,7 @@
           <Type>0</Type>
           <LineNumber>136</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134252216</Address>
+          <Address>134252224</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -180,22 +180,6 @@
           <Filename>../Src/main.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\CL02\../Src/main.c\136</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>1090</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134224592</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Src/main.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\CL02\../Src/main.c\1090</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

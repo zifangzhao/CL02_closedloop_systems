@@ -997,6 +997,7 @@
             // numericUpDown_DACgain
             // 
             this.numericUpDown_DACgain.DecimalPlaces = 1;
+            this.numericUpDown_DACgain.Enabled = false;
             this.numericUpDown_DACgain.Increment = new decimal(new int[] {
             1,
             0,
@@ -1018,7 +1019,7 @@
             this.numericUpDown_DACgain.TabIndex = 59;
             this.numericUpDown_DACgain.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numericUpDown_DACgain.Value = new decimal(new int[] {
-            5,
+            1,
             0,
             0,
             0});
