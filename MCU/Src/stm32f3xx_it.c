@@ -320,6 +320,7 @@ void TIM18_DAC2_IRQHandler(void)
 	//HAL_DAC_SetValue(&hdac1,DAC_CHANNEL_1,DAC_ALIGN_12B_L,(uint16_t) temp);    //Set DAC value to Calculated Envelop
 	//6. Processed data of channel2
 	temp=(float32_t) *(((float*)&cl)+1);
+	temp*=dsp_gain;
 	temp=temp>INT16_MAX?INT16_MAX:temp;			//Make sure temp is not saturated 
 	temp=temp<INT16_MIN?INT16_MIN:temp;			//Make sure temp is not saturated 
 	dataMGR_enQueue_halfword_aligned(&MGR,(int16_t)temp);

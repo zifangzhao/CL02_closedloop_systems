@@ -3610,8 +3610,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <parts>
 <part name="U$1" library="HD128" deviceset="STM32F373CCT6" device=""/>
 <part name="U1" library="harrison" deviceset="TPS79333" device=""/>
-<part name="U$10" library="con-hirose" deviceset="MICRO-USB-" device="ZX62R-B-5P" value="ZX62R-B-5P(30)"/>
-<part name="Q1" library="special" deviceset="XTAL/S" device="" value="ECS-120-18-4X-CKM"/>
+<part name="U$10" library="con-hirose" deviceset="MICRO-USB-" device="ZX62R-B-5P"/>
+<part name="Q1" library="special" deviceset="XTAL/S" device="" value="12MHz"/>
 <part name="C1" library="eagle-ltspice" deviceset="C" device="C0402" value="18p"/>
 <part name="C2" library="eagle-ltspice" deviceset="C" device="C0402" value="18p"/>
 <part name="C5" library="eagle-ltspice" deviceset="C" device="C0402" value="10u"/>
@@ -3626,11 +3626,11 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="R5" library="eagle-ltspice" deviceset="R" device="R0402" value="1.5k"/>
 <part name="R6" library="eagle-ltspice" deviceset="R" device="R0402" value="1.5k"/>
 <part name="R7" library="eagle-ltspice" deviceset="R" device="R0402" value="1.5k"/>
-<part name="U2" library="microbuilder" deviceset="EEPROM_I2C_SOIC8_GENERIC" device="" value="DNP"/>
+<part name="U2" library="microbuilder" deviceset="EEPROM_I2C_SOIC8_GENERIC" device=""/>
 <part name="R23" library="eagle-ltspice" deviceset="R" device="R0402" value="10k"/>
 <part name="R24" library="eagle-ltspice" deviceset="R" device="R0402" value="10k"/>
 <part name="R25" library="eagle-ltspice" deviceset="R" device="R0402" value="10k"/>
-<part name="CN5" library="microbuilder" deviceset="JST_8PIN" device="" value="DNP"/>
+<part name="CN5" library="microbuilder" deviceset="JST_8PIN" device=""/>
 <part name="U$9" library="HD128" library_urn="urn:adsk.eagle:library:12502162" deviceset="2.54MM_2X5" device=""/>
 <part name="C15" library="eagle-ltspice" deviceset="C" device="C0402" value="10u"/>
 <part name="IC1" library="analog-devices" library_urn="urn:adsk.eagle:library:102" deviceset="AD8542" device="R" package3d_urn="urn:adsk.eagle:package:30987/2" value="AD8532"/>
