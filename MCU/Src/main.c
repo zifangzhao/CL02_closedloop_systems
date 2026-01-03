@@ -30,7 +30,7 @@
 #include "CE32_Stimulator.h"
 #include "CE32_ClosedLoop.h"
 #define kFS 1000
-#define FM_version 30
+#define FM_version 31
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -177,6 +177,7 @@ int main(void)
 	
 	dataMGR_init(&MGR,(char*) data_buf,sizeof(data_buf));					//FIFO setup 
 	sysParam.fs = kFS;
+	sysParam.firm_version = FM_version;
 	CE32_CL_Init(&cl,&sysParam,sysDSP,mainFil,maFil,sc); //Initialize Closed-loop unit
 	CE32_CL_Start(&cl);
 	
@@ -214,7 +215,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
 		
 		if(MGR.bufferUsed[0]>trans_size){
-			if(MGR.sysParam&MGR_SYS_PREVIEW){
+			if(MGR.sysState&MGR_SYS_PREVIEW){
 				CL02_sendDataPackage();
 			}
 			else{
@@ -1115,12 +1116,12 @@ int CL02_CmdSvr(uint8_t *data_ptr,uint32_t cmd_len)
 		}
 		case 0x40:
 		{
-			MGR.sysParam|=MGR_SYS_PREVIEW;
+			MGR.sysState|=MGR_SYS_PREVIEW;
 			break;
 		}
 		case 0x41:
 		{
-			MGR.sysParam=~MGR_SYS_PREVIEW;
+			MGR.sysState=~MGR_SYS_PREVIEW;
 			break;
 		}
 		case 0x60:

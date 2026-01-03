@@ -9,6 +9,5 @@
 #include "CE32_ClosedLoop.h"
 #include <stdlib.h>
 
-
 int CL02_CmdSvr(uint8_t *data_ptr,uint32_t cmd_len,dataMGR *MGR,CE32_systemParam *sysParam,CE32_dspParam *sysDSP,CE32_Filter *mainFil,CE32_MA_Filter *maFil,CE32_StimControl *sc,CE32_CL* cl);
 #endif

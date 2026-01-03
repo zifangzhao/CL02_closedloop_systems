@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\CL02.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\CL02.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu Apr 24 11:15:15 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sat Jan 03 12:44:09 2026
 <BR><P>
 <H3>Maximum Stack Usage =        236 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -666,7 +666,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> ce32_closedloop.o(i.CE32_CL_Init)
 </UL>
-<P><STRONG><a name="[9b]"></a>CE32_CL_Init</STRONG> (Thumb, 242 bytes, Stack size 56 bytes, ce32_closedloop.o(i.CE32_CL_Init))
+<P><STRONG><a name="[9b]"></a>CE32_CL_Init</STRONG> (Thumb, 244 bytes, Stack size 56 bytes, ce32_closedloop.o(i.CE32_CL_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 188<LI>Call Chain = CE32_CL_Init &rArr; CE32_CL_TrigInitAct &rArr; MX_TIM17_Init &rArr; HAL_TIM_OnePulse_Init &rArr; TIM_Base_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_InitFilter
@@ -1006,14 +1006,14 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[8d]"></a>CE32_USB_INTERCOM_RX_ISR</STRONG> (Thumb, 160 bytes, Stack size 24 bytes, ce32_usb_intercom.o(i.CE32_USB_INTERCOM_RX_ISR))
-<BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = CE32_USB_INTERCOM_RX_ISR &rArr; CE32_USB_INTERCOM_RX_EnqueueCmd &rArr; CE32_COMMAND_EnqueueCmd_buffered &rArr; CE32_COMMAND_EnqueueCmd
+<BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = CE32_USB_INTERCOM_RX_ISR &rArr; CE32_COMMAND_Enqueue_Allocate
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_USB_INTERCOM_RX_Enqueue_Byte
-<LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_USB_INTERCOM_RX_EnqueueCmd
-<LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_INTERCOM_Incoming_CMD_Len
-<LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_COMMAND_Enqueue_BytesLeft
+<BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_COMMAND_Enqueue_BytesLeft
 <LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_COMMAND_Enqueue_Byte_Abort
 <LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_COMMAND_Enqueue_Allocate
+<LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_USB_INTERCOM_RX_Enqueue_Byte
+<LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_USB_INTERCOM_RX_EnqueueCmd
+<LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_INTERCOM_Incoming_CMD_Len
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CDC_Receive_FS
 </UL>
@@ -1036,11 +1036,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[191]"></a>CL02_purgeData</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, main.o(i.CL02_purgeData))
-<BR><BR>[Called By]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<P><STRONG><a name="[191]"></a>CL02_purgeData</STRONG> (Thumb, 54 bytes, Stack size 8 bytes, main.o(i.CL02_purgeData))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = CL02_purgeData
+</UL>
+<BR>[Called By]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[d2]"></a>CL02_sendDataPackage</STRONG> (Thumb, 222 bytes, Stack size 16 bytes, main.o(i.CL02_sendDataPackage))
+<P><STRONG><a name="[d2]"></a>CL02_sendDataPackage</STRONG> (Thumb, 232 bytes, Stack size 16 bytes, main.o(i.CL02_sendDataPackage))
 <BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = CL02_sendDataPackage &rArr; CDC_Transmit_FS &rArr; USBD_CDC_TransmitPacket &rArr; USBD_LL_Transmit &rArr; HAL_PCD_EP_Transmit &rArr; USB_EPStartXfer
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CDC_Transmit_FS
@@ -1679,10 +1681,10 @@ Global Symbols
 <P><STRONG><a name="[126]"></a>HAL_TIM_IC_ConfigChannel</STRONG> (Thumb, 192 bytes, Stack size 16 bytes, stm32f3xx_hal_tim.o(i.HAL_TIM_IC_ConfigChannel))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = HAL_TIM_IC_ConfigChannel &rArr; TIM_TI1_SetConfig
 </UL>
-<BR>[Calls]<UL><LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_TI1_SetConfig
-<LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_TI4_SetConfig
+<BR>[Calls]<UL><LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_TI4_SetConfig
 <LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_TI3_SetConfig
 <LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_TI2_SetConfig
+<LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_TI1_SetConfig
 </UL>
 <BR>[Called By]<UL><LI><a href="#[14c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
 </UL>
@@ -1717,10 +1719,10 @@ Global Symbols
 <P><STRONG><a name="[12e]"></a>HAL_TIM_OC_ConfigChannel</STRONG> (Thumb, 82 bytes, Stack size 16 bytes, stm32f3xx_hal_tim.o(i.HAL_TIM_OC_ConfigChannel))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = HAL_TIM_OC_ConfigChannel &rArr; TIM_OC1_SetConfig
 </UL>
-<BR>[Calls]<UL><LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC2_SetConfig
-<LI><a href="#[132]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC4_SetConfig
+<BR>[Calls]<UL><LI><a href="#[132]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC4_SetConfig
 <LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC3_SetConfig
 <LI><a href="#[12f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC1_SetConfig
+<LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC2_SetConfig
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM16_Init
 </UL>
@@ -1728,8 +1730,8 @@ Global Symbols
 <P><STRONG><a name="[133]"></a>HAL_TIM_OC_Init</STRONG> (Thumb, 92 bytes, Stack size 8 bytes, stm32f3xx_hal_tim.o(i.HAL_TIM_OC_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = HAL_TIM_OC_Init &rArr; TIM_Base_SetConfig
 </UL>
-<BR>[Calls]<UL><LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Base_SetConfig
-<LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_OC_MspInit
+<BR>[Calls]<UL><LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_OC_MspInit
+<LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Base_SetConfig
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM16_Init
 </UL>
@@ -1741,8 +1743,8 @@ Global Symbols
 <P><STRONG><a name="[135]"></a>HAL_TIM_OnePulse_Init</STRONG> (Thumb, 96 bytes, Stack size 16 bytes, stm32f3xx_hal_tim.o(i.HAL_TIM_OnePulse_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = HAL_TIM_OnePulse_Init &rArr; TIM_Base_SetConfig
 </UL>
-<BR>[Calls]<UL><LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Base_SetConfig
-<LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_OnePulse_MspInit
+<BR>[Calls]<UL><LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_OnePulse_MspInit
+<LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Base_SetConfig
 </UL>
 <BR>[Called By]<UL><LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM17_Init
 <LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM16_Init
@@ -1755,10 +1757,10 @@ Global Symbols
 <P><STRONG><a name="[137]"></a>HAL_TIM_PWM_ConfigChannel</STRONG> (Thumb, 216 bytes, Stack size 16 bytes, stm32f3xx_hal_tim.o(i.HAL_TIM_PWM_ConfigChannel))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = HAL_TIM_PWM_ConfigChannel &rArr; TIM_OC1_SetConfig
 </UL>
-<BR>[Calls]<UL><LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC2_SetConfig
-<LI><a href="#[132]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC4_SetConfig
+<BR>[Calls]<UL><LI><a href="#[132]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC4_SetConfig
 <LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC3_SetConfig
 <LI><a href="#[12f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC1_SetConfig
+<LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC2_SetConfig
 </UL>
 <BR>[Called By]<UL><LI><a href="#[14e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM5_Init
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM17_Init
@@ -1878,7 +1880,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f373xc.o(RESET)
 </UL>
-<P><STRONG><a name="[3d]"></a>TIM18_DAC2_IRQHandler</STRONG> (Thumb, 608 bytes, Stack size 24 bytes, stm32f3xx_it.o(i.TIM18_DAC2_IRQHandler))
+<P><STRONG><a name="[3d]"></a>TIM18_DAC2_IRQHandler</STRONG> (Thumb, 744 bytes, Stack size 24 bytes, stm32f3xx_it.o(i.TIM18_DAC2_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = TIM18_DAC2_IRQHandler &rArr; HAL_DAC_SetValue
 </UL>
 <BR>[Calls]<UL><LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DAC_SetValue
@@ -2530,7 +2532,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_atan2
 </UL>
 
-<P><STRONG><a name="[18f]"></a>dataMGR_init</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, datamgr.o(i.dataMGR_init))
+<P><STRONG><a name="[18f]"></a>dataMGR_init</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, datamgr.o(i.dataMGR_init))
 <BR><BR>[Called By]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
@@ -2541,11 +2543,10 @@ Global Symbols
 <LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_atan2
 </UL>
 
-<P><STRONG><a name="[79]"></a>main</STRONG> (Thumb, 606 bytes, Stack size 16 bytes, main.o(i.main))
+<P><STRONG><a name="[79]"></a>main</STRONG> (Thumb, 610 bytes, Stack size 16 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 236<LI>Call Chain = main &rArr; CL02_CmdSvr &rArr; CE32_CL_Init &rArr; CE32_CL_TrigInitAct &rArr; MX_TIM17_Init &rArr; HAL_TIM_OnePulse_Init &rArr; TIM_Base_SetConfig
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_USB_INTERCOM_RX_DequeueCmd
-<LI><a href="#[18f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dataMGR_init
+<BR>[Calls]<UL><LI><a href="#[18f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dataMGR_init
 <LI><a href="#[150]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USB_DEVICE_Init
 <LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_PWM_Start
 <LI><a href="#[14d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIMEx_MasterConfigSynchronization
@@ -2577,6 +2578,7 @@ Global Symbols
 <LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_STIM_Init
 <LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_CL_Start
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_CL_Init
+<LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CE32_USB_INTERCOM_RX_DequeueCmd
 <LI><a href="#[190]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DAC_Start
 <LI><a href="#[18e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DAC_ConfigChannel
 <LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rand

@@ -84,7 +84,7 @@
 #define PREV_SIZE						0x10
 #define PREV_MASK						(PREV_SIZE-1)
 //#define DATASIZE 515*50
-#define DATASIZE MGR->dataSize
+//#define DATASIZE MGR->dataSize
 
 //#define REPORT_MAX_BUF
 
@@ -107,17 +107,18 @@
 
 typedef struct{
 	unsigned long moduleConnected;
-}CE32_sysParam;
+}CE32_sysState;
 
 typedef struct{
-	unsigned long logState;
-	unsigned long sysParam;
-	unsigned long dataSize;
-	unsigned long inPTR;
-	unsigned long outPTR[outPTR_num];
-	unsigned long bufferUsed[outPTR_num];
-	unsigned long bufferMAX[outPTR_num];
-	char* dataPtr;		//pointer to data buffer	
+	__IO unsigned long logState;
+	__IO unsigned long sysState;
+	__IO unsigned long dataSize;
+	__IO unsigned long inPTR;
+	__IO unsigned long ptr_mask;
+	__IO unsigned long outPTR[outPTR_num];
+	__IO unsigned long bufferUsed[outPTR_num];
+	__IO unsigned long bufferMAX[outPTR_num];
+	__IO char* dataPtr;		//pointer to data buffer	
 	__IO uint32_t* DMA_RX_NDTR;
 	__IO uint32_t* DMA_TX_NDTR;
 }dataMGR;
@@ -162,19 +163,24 @@ typedef struct{
 	ulong Flag;
 }CE32_systemParam;
 
+
+#define MAX_LOG_PER_BLOCK 63
 typedef struct{
-	ulong Nrec;					//Number of records
-	ulong log[127];				//Log storage locations. Format as [Start1,End1,Start2,End2....] keep size as 512B 
+	__IO ulong Nrec;					//Number of records
+	__IO ulong log[MAX_LOG_PER_BLOCK];				//Log storage locations. Format as [Start1,End1,Start2,End2....] keep size as 512B 
+	__IO ulong evt_log[MAX_LOG_PER_BLOCK];				//Log storage locations. Format as [Start1,End1,Start2,End2....] keep size as 512B 
+	__IO ulong continued;		//Flag indicate a following table exists.(also making struct 512B).	
 }CE32_systemLog;
 
+#define DSP_CH_ORD_MAX 128
 typedef struct{
-	uchar chOrd[128];			//Channel order for calculation;
-	ulong formula;				//Formula type					; 132B
-	ulong func1;					//Function handle1				; 136B
-	ulong func2;					//Function handle2				; 140B
-	ulong MAOrd;							//Channel number for DSP	; 144B
-	float filter1[46];			//Filter1 Param
-	float filter2[46];			//Filter2 Param
+	__IO uchar chOrd[DSP_CH_ORD_MAX];			//Channel order for calculation;
+	__IO ulong formula;				//Formula type					; 132B
+	__IO ulong func1;					//Function handle1				; 136B
+	__IO ulong func2;					//Function handle2				; 140B
+	__IO ulong MAOrd;							//Channel number for DSP	; 144B
+	__IO float filter1[46];			//Filter1 Param
+	__IO float filter2[46];			//Filter2 Param
 }CE32_dspParam;
 
 void dataMGR_init(dataMGR* MGR,char* dataPtr,unsigned long dataSize);
@@ -194,14 +200,32 @@ __forceinline void CE32_convertPtrInc(CE32_systemParam* sys){
 	sys->cmd_ch&=0x1F;
 }
 
+__forceinline void AtomicAdd_U32(volatile ulong* addr, uint32_t val)
+{
+	uint32_t tmp;
+	do {
+		tmp = __ldrex(addr);     // Load exclusive
+		tmp += val;
+	} while (__strex(tmp, addr)); // Store exclusive, repeat if failed
+}
+__forceinline void AtomicSub_U32(volatile ulong* addr, uint32_t val)
+{
+    uint32_t tmp;
+    do {
+        tmp = __ldrex(addr);
+        tmp -= val;
+    } while (__strex(tmp, addr));
+}
 __forceinline void dataMGR_enQueue_byte(dataMGR* MGR,char data){
+	uint32_t DATASIZE = MGR->dataSize;
 	MGR->dataPtr[MGR->inPTR]=data;
 	MGR->inPTR++;
 	if(MGR->inPTR>=DATASIZE){
 		MGR->inPTR-=DATASIZE;
 	}
 	for(int i=0;i<outPTR_num;i++){
-		MGR->bufferUsed[i]++;
+		AtomicAdd_U32(&(MGR->bufferUsed[i]), 1);
+		//MGR->bufferUsed[i]++;
 		#ifdef REPORT_MAX_BUF
 		if(MGR->bufferUsed[i]>MGR->bufferMAX[i])	MGR->bufferMAX[i]=MGR->bufferUsed[i];
 		#endif
@@ -209,6 +233,7 @@ __forceinline void dataMGR_enQueue_byte(dataMGR* MGR,char data){
 }
 
 __forceinline void dataMGR_enQueue_515B_halfword(dataMGR* MGR,short data){ 
+	uint32_t DATASIZE = MGR->dataSize;
 	*(short*)(&MGR->dataPtr[MGR->inPTR])=data;
 	MGR->inPTR+=2;
 
@@ -219,7 +244,8 @@ __forceinline void dataMGR_enQueue_515B_halfword(dataMGR* MGR,short data){
 			MGR->inPTR-=DATASIZE;
 		}
 	for(int i=0;i<outPTR_num;i++){
-		MGR->bufferUsed[i]+=2;
+		AtomicAdd_U32(&(MGR->bufferUsed[i]), 2);
+		//MGR->bufferUsed[i]+=2;
 		#ifdef REPORT_MAX_BUF
 		if(MGR->bufferUsed[i]>MGR->bufferMAX[i])	MGR->bufferMAX[i]=MGR->bufferUsed[i];
 		#endif
@@ -227,6 +253,7 @@ __forceinline void dataMGR_enQueue_515B_halfword(dataMGR* MGR,short data){
 }
 
 __forceinline void dataMGR_enQueue_halfword(dataMGR* MGR,short data){
+	uint32_t DATASIZE = MGR->dataSize;
 	if(MGR->inPTR<DATASIZE-1){
 		*(short*)(MGR->dataPtr+MGR->inPTR)=data;
 		MGR->inPTR+=2;
@@ -247,7 +274,8 @@ __forceinline void dataMGR_enQueue_halfword(dataMGR* MGR,short data){
 		}
 	}
 	for(int i=0;i<outPTR_num;i++){
-		MGR->bufferUsed[i]+=2;
+		AtomicAdd_U32(&(MGR->bufferUsed[i]), 2);
+		//MGR->bufferUsed[i]+=2;
 		#ifdef REPORT_MAX_BUF
 		if(MGR->bufferUsed[i]>MGR->bufferMAX[i])	MGR->bufferMAX[i]=MGR->bufferUsed[i];
 		#endif
@@ -257,9 +285,10 @@ __forceinline void dataMGR_enQueue_halfword(dataMGR* MGR,short data){
 __forceinline void dataMGR_enQueue_halfword_aligned(dataMGR* MGR,short data){	//fast enqueue function without boundary check
 	*(short*)(MGR->dataPtr+MGR->inPTR)=data;
 	MGR->inPTR+=2;
-	MGR->inPTR&=BUF_MASK;
+	MGR->inPTR&=MGR->ptr_mask;
 	for(int i=0;i<outPTR_num;i++){
-		MGR->bufferUsed[i]+=2;
+		AtomicAdd_U32(&(MGR->bufferUsed[i]), 2);
+		//MGR->bufferUsed[i]+=2;
 		#ifdef REPORT_MAX_BUF
 		if(MGR->bufferUsed[i]>MGR->bufferMAX[i])	MGR->bufferMAX[i]=MGR->bufferUsed[i];
 		#endif
@@ -267,9 +296,10 @@ __forceinline void dataMGR_enQueue_halfword_aligned(dataMGR* MGR,short data){	//
 }
 
 __forceinline void dataMGR_enQueue_halfword_DMA_1B(dataMGR* MGR){	//fast enqueue function without boundary check
-	MGR->inPTR=BUF_SIZE-*MGR->DMA_RX_NDTR;  //DMA is in byte mode
+	MGR->inPTR=MGR->dataSize-*MGR->DMA_RX_NDTR;  //DMA is in byte mode
 	for(int i=0;i<outPTR_num;i++){
-		MGR->bufferUsed[i]+=2;
+		AtomicAdd_U32(&(MGR->bufferUsed[i]), 2);
+		//MGR->bufferUsed[i]+=2;
 		#ifdef REPORT_MAX_BUF
 		if(MGR->bufferUsed[i]>MGR->bufferMAX[i])	MGR->bufferMAX[i]=MGR->bufferUsed[i];
 		#endif
@@ -277,9 +307,10 @@ __forceinline void dataMGR_enQueue_halfword_DMA_1B(dataMGR* MGR){	//fast enqueue
 }
 
 __forceinline void dataMGR_enQueue_halfword_DMA_2B(dataMGR* MGR){	//fast enqueue function without boundary check
-	MGR->inPTR=BUF_SIZE-*MGR->DMA_RX_NDTR*2;	//DMA is in halfword mode
+	MGR->inPTR=MGR->dataSize-*MGR->DMA_RX_NDTR*2;	//DMA is in halfword mode
 	for(int i=0;i<outPTR_num;i++){
-		MGR->bufferUsed[i]+=2;
+		AtomicAdd_U32(&(MGR->bufferUsed[i]), 2);
+		//MGR->bufferUsed[i]+=2;
 		#ifdef REPORT_MAX_BUF
 		if(MGR->bufferUsed[i]>MGR->bufferMAX[i])	MGR->bufferMAX[i]=MGR->bufferUsed[i];
 		#endif
@@ -287,9 +318,10 @@ __forceinline void dataMGR_enQueue_halfword_DMA_2B(dataMGR* MGR){	//fast enqueue
 }
 
 __forceinline void dataMGR_enQueue_Nhalfword_DMA_2B(dataMGR* MGR,uint32_t Nbytes){	//fast enqueue function without boundary check
-	MGR->inPTR=BUF_SIZE-*MGR->DMA_RX_NDTR*2;	//DMA is in halfword mode
+	MGR->inPTR=MGR->dataSize-*MGR->DMA_RX_NDTR*2;	//DMA is in halfword mode
 	for(int i=0;i<outPTR_num;i++){
-		MGR->bufferUsed[i]+=Nbytes;
+		AtomicAdd_U32(&(MGR->bufferUsed[i]), Nbytes);
+		//MGR->bufferUsed[i]+=Nbytes;
 		#ifdef REPORT_MAX_BUF
 		if(MGR->bufferUsed[i]>MGR->bufferMAX[i])	MGR->bufferMAX[i]=MGR->bufferUsed[i];
 		#endif
@@ -297,12 +329,14 @@ __forceinline void dataMGR_enQueue_Nhalfword_DMA_2B(dataMGR* MGR,uint32_t Nbytes
 }
 
 __forceinline void dataMGR_enQueue_Nbytes(dataMGR* MGR,uint32_t Nbytes){	//fast enqueue function without boundary check
+	uint32_t DATASIZE = MGR->dataSize;
 	MGR->inPTR+=Nbytes;
 	if(MGR->inPTR>=DATASIZE){
 		MGR->inPTR-=DATASIZE;
 	}
 	for(int i=0;i<outPTR_num;i++){
-		MGR->bufferUsed[i]+=Nbytes;
+		AtomicAdd_U32(&(MGR->bufferUsed[i]), Nbytes);
+		//MGR->bufferUsed[i]+=Nbytes;
 		#ifdef REPORT_MAX_BUF
 		if(MGR->bufferUsed[i]>MGR->bufferMAX[i])	MGR->bufferMAX[i]=MGR->bufferUsed[i];
 		#endif
@@ -310,6 +344,7 @@ __forceinline void dataMGR_enQueue_Nbytes(dataMGR* MGR,uint32_t Nbytes){	//fast 
 }
 
 __forceinline void dataMGR_enQueue_word(dataMGR* MGR,long data){
+	uint32_t DATASIZE = MGR->dataSize;
 	if(MGR->inPTR<DATASIZE-3){
 		*(long*)(MGR->dataPtr+MGR->inPTR)=data;
 		MGR->inPTR+=4;
@@ -345,32 +380,105 @@ __forceinline void dataMGR_enQueue_word(dataMGR* MGR,long data){
 }
 
 __forceinline char dataMGR_deQueue_byte(dataMGR* MGR,unsigned short outPTR_idx){
+	uint32_t DATASIZE = MGR->dataSize;
 	char output=MGR->dataPtr[MGR->outPTR[outPTR_idx]];
 	MGR->outPTR[outPTR_idx]++;
 	if(MGR->outPTR[outPTR_idx]>=DATASIZE){
 		MGR->outPTR[outPTR_idx]-=DATASIZE;
 	}
-	MGR->bufferUsed[outPTR_idx]--;
+	AtomicSub_U32(&MGR->bufferUsed[outPTR_idx],1);
+	//MGR->bufferUsed[outPTR_idx]--;
+	return output;
+}
+
+__forceinline int dataMGR_deQueue_byte_safe(dataMGR* MGR,unsigned short outPTR_idx,char* output){
+	if(MGR->bufferUsed[outPTR_idx]>0)
+	{
+		uint32_t DATASIZE = MGR->dataSize;
+		*output=MGR->dataPtr[MGR->outPTR[outPTR_idx]];
+		MGR->outPTR[outPTR_idx]++;
+		if(MGR->outPTR[outPTR_idx]>=DATASIZE){
+			MGR->outPTR[outPTR_idx]-=DATASIZE;
+		}
+		AtomicSub_U32(&MGR->bufferUsed[outPTR_idx],1);
+		//MGR->bufferUsed[outPTR_idx]--;
+		return 0;
+	}
+	else
+	{
+		return -1;
+	}
+}
+
+__forceinline uint8_t dataMGR_deQueue_byte_zerofill(dataMGR* MGR,unsigned short outPTR_idx){
+	uint32_t DATASIZE = MGR->dataSize;
+	uint8_t output=*(uint8_t*)&MGR->dataPtr[MGR->outPTR[outPTR_idx]];
+	*(uint8_t*)&MGR->dataPtr[MGR->outPTR[outPTR_idx]]=0;
+	MGR->outPTR[outPTR_idx]+=1;
+	if(MGR->outPTR[outPTR_idx]>=DATASIZE){
+		MGR->outPTR[outPTR_idx]-=DATASIZE;
+	}
+	AtomicSub_U32(&MGR->bufferUsed[outPTR_idx],1);
+	//MGR->bufferUsed[outPTR_idx]-=1;
 	return output;
 }
 
 __forceinline uint16_t dataMGR_deQueue_halfword(dataMGR* MGR,unsigned short outPTR_idx){
+	uint32_t DATASIZE = MGR->dataSize;
 	uint16_t output=*(uint16_t*)&MGR->dataPtr[MGR->outPTR[outPTR_idx]];
 	MGR->outPTR[outPTR_idx]+=2;
 	if(MGR->outPTR[outPTR_idx]>=DATASIZE){
 		MGR->outPTR[outPTR_idx]-=DATASIZE;
 	}
-	MGR->bufferUsed[outPTR_idx]-=2;
+	AtomicSub_U32(&MGR->bufferUsed[outPTR_idx],2);
+	//MGR->bufferUsed[outPTR_idx]-=2;
+	return output;
+}
+
+__forceinline uint16_t dataMGR_deQueue_halfword_zerofill(dataMGR* MGR,unsigned short outPTR_idx){
+	uint32_t DATASIZE = MGR->dataSize;
+	uint16_t output=*(uint16_t*)&MGR->dataPtr[MGR->outPTR[outPTR_idx]];
+	*(uint16_t*)&MGR->dataPtr[MGR->outPTR[outPTR_idx]]=0;
+	MGR->outPTR[outPTR_idx]+=2;
+	if(MGR->outPTR[outPTR_idx]>=DATASIZE){
+		MGR->outPTR[outPTR_idx]-=DATASIZE;
+	}
+	AtomicSub_U32(&MGR->bufferUsed[outPTR_idx],2);
+	//MGR->bufferUsed[outPTR_idx]-=2;
+	return output;
+}
+
+__forceinline uint8_t* dataMGR_returnPTR(dataMGR* MGR,unsigned short outPTR_idx){
+	uint32_t DATASIZE = MGR->dataSize;
+	return (uint8_t*)&MGR->dataPtr[MGR->outPTR[outPTR_idx]];
+}
+
+__forceinline uint8_t* dataMGR_returnInPTR(dataMGR* MGR){
+	uint32_t DATASIZE = MGR->dataSize;
+	return (uint8_t*)&MGR->dataPtr[MGR->inPTR];
+}
+
+__forceinline uint32_t dataMGR_deQueue_word(dataMGR* MGR,unsigned short outPTR_idx){
+	uint32_t DATASIZE = MGR->dataSize;
+	uint32_t output=*(uint32_t*)&MGR->dataPtr[MGR->outPTR[outPTR_idx]];
+	MGR->outPTR[outPTR_idx]+=4;
+	if(MGR->outPTR[outPTR_idx]>=DATASIZE){
+		MGR->outPTR[outPTR_idx]-=DATASIZE;
+	}
+	AtomicSub_U32(&MGR->bufferUsed[outPTR_idx],4);
+	//MGR->bufferUsed[outPTR_idx]-=4;
 	return output;
 }
 
 __forceinline void dataMGR_deQueue(dataMGR* MGR,unsigned long numBytes,unsigned short outPTR_idx){
+	uint32_t DATASIZE = MGR->dataSize;
 	unsigned long temp_ptr=MGR->outPTR[outPTR_idx]+numBytes;
 	if(temp_ptr>=DATASIZE){
 		temp_ptr-=(temp_ptr/DATASIZE)*DATASIZE;
 	}
 	MGR->outPTR[outPTR_idx]=temp_ptr;
-	MGR->bufferUsed[outPTR_idx]-=numBytes;
+	AtomicSub_U32(&MGR->bufferUsed[outPTR_idx],numBytes);
+	//MGR->bufferUsed[outPTR_idx]-=numBytes;
 }
 
 __forceinline float CE32_arbitarCal(CE32_dspParam* param, short* dataPacket){
