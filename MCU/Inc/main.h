@@ -85,7 +85,8 @@ void Error_Handler(void);
 #define LED0_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
-
+#define TTL_IN_Pin GPIO_PIN_3
+#define TTL_IN_GPIO_Port GPIOB
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

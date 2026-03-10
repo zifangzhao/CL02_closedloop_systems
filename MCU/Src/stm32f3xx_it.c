@@ -55,6 +55,7 @@
 #include "HD32_filter.h"
 #include "CE32_ClosedLoop.h"
 #include "CE32_Stimulator.h"
+#include "CE32_TTL_Trigger.h"
 
 extern DAC_HandleTypeDef hdac1;
 
@@ -70,6 +71,7 @@ extern CE32_Filter   maFil[2];
 extern CE32_StimControl sc[2];
 extern CE32_CL					 cl;
 extern CE32_stimulator STIM_handle[2];
+extern CE32_TTL_Config ttl_config;  // declares a variable whose definition is present in other file
 extern uint16_t misc_DigiSig;
 extern uint16_t test;
 extern float dsp_gain;
@@ -393,5 +395,18 @@ void USB_LP_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
+
+/**
+  * @brief This function handles EXTI line 3 interrupt.
+  *        PB3 is used for external TTL trigger from behavioral controller.
+  */
+void EXTI3_IRQHandler(void)
+{
+  if (__HAL_GPIO_EXTI_GET_IT(TTL_IN_Pin) != RESET)
+  {
+    __HAL_GPIO_EXTI_CLEAR_IT(TTL_IN_Pin);
+    CE32_TTL_IRQHandler(&ttl_config);
+  }
+}
 
 /* USER CODE END 1 */
