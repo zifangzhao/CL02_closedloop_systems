@@ -58,7 +58,6 @@ C_SOURCES = \
   Src/CE32_USB_INTERCOM.c \
   Src/CE32_ClosedLoop.c \
   Src/CE32_stimulator.c \
-  Src/CE32_TTL_Trigger.c \
   Src/usb_device.c \
   Src/usbd_conf.c \
   Src/usbd_desc.c \

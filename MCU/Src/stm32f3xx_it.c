@@ -74,7 +74,7 @@ extern CE32_stimulator STIM_handle[2];
 extern uint16_t misc_DigiSig;
 extern uint16_t test;
 extern float dsp_gain;
-\
+
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
