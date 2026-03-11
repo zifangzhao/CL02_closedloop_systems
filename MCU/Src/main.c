@@ -29,7 +29,6 @@
 #include "CE32_USB_INTERCOM.h"
 #include "CE32_Stimulator.h"
 #include "CE32_ClosedLoop.h"
-#include "CE32_TTL_Trigger.h"
 #define kFS 1000
 #define FM_version 31
 /* USER CODE END Includes */
@@ -96,7 +95,6 @@ void (*arbitarCal_CH2)(uchar* ch_ord,short* data,float* output);
 CE32_USB_INTERCOM_Handle IC_USB_handle;
 
 CE32_stimulator STIM_handle[2];
-CE32_TTL_Config ttl_config;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -201,25 +199,6 @@ int main(void)
 
 	HAL_DAC_Start(&hdac1,DAC_CHANNEL_1);
 	//start ticking timer
-	/* ── NVIC Priority Hierarchy ─────────────────────────────── */
-	/* DMA channels already at (0,0) from MX_DMA_Init             */
-	/* TTL EXTI:  priority 1 — can preempt DSP and stim timers    */
-	/* TIM18 DSP: priority 2 — main sample processing             */
-	/* TIM16/17:  priority 3 — stim timing (lowest)               */
-	/* USB:       priority 4 — non-critical communication         */
-	HAL_NVIC_SetPriority(TIM18_DAC2_IRQn, 2, 0);
-	HAL_NVIC_SetPriority(TIM16_IRQn, 3, 0);
-	HAL_NVIC_SetPriority(TIM17_IRQn, 3, 0);
-	HAL_NVIC_SetPriority(USB_LP_IRQn, 4, 0);
-
-	/* ── TTL Trigger Init ─────────────────────────────────────── */
-	CE32_TTL_Init(&ttl_config, TTL_IN_GPIO_Port, TTL_IN_Pin,
-	              EXTI3_IRQn, &STIM_handle[0]);
-	/* TTL is initialized but NOT enabled by default.
-	   Send command 0x13 from Windows app to enable, or
-	   uncomment the line below to auto-enable on boot:       */
-	// CE32_TTL_Enable(&ttl_config);
-
 	HAL_TIM_Base_Start_IT(&htim18);
   /* USER CODE END 2 */
 
@@ -947,7 +926,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin : PB3 */
   GPIO_InitStruct.Pin = GPIO_PIN_3;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PB4 */
@@ -965,6 +944,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI3_IRQn, 3, 0);
+  HAL_NVIC_EnableIRQ(EXTI3_IRQn);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
@@ -1065,16 +1048,6 @@ int CL02_CmdSvr(uint8_t *data_ptr,uint32_t cmd_len)
 				cl.trig_mode = 1;
 				STIM_handle[0].trig_mode = 1;
 				STIM_handle[1].trig_mode = 1;
-			}
-			break;
-		}
-		case 0x13: //TTL external trigger mode on/off
-		{
-			if(data_ptr[1]==0){
-				CE32_TTL_Disable(&ttl_config);
-			}
-			else{
-				CE32_TTL_Enable(&ttl_config);
 			}
 			break;
 		}

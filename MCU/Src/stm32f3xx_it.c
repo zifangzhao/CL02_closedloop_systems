@@ -55,7 +55,7 @@
 #include "HD32_filter.h"
 #include "CE32_ClosedLoop.h"
 #include "CE32_Stimulator.h"
-#include "CE32_TTL_Trigger.h"
+#include "CE32_macro.h"
 
 extern DAC_HandleTypeDef hdac1;
 
@@ -71,7 +71,6 @@ extern CE32_Filter   maFil[2];
 extern CE32_StimControl sc[2];
 extern CE32_CL					 cl;
 extern CE32_stimulator STIM_handle[2];
-extern CE32_TTL_Config ttl_config;  // declares a variable whose definition is present in other file
 extern uint16_t misc_DigiSig;
 extern uint16_t test;
 extern float dsp_gain;
@@ -225,6 +224,20 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32f3xx.s).                    */
 /******************************************************************************/
+
+/**
+  * @brief This function handles EXTI line3 interrupt.
+  */
+void EXTI3_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI3_IRQn 0 */
+
+  /* USER CODE END EXTI3_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_3);
+  /* USER CODE BEGIN EXTI3_IRQn 1 */
+
+  /* USER CODE END EXTI3_IRQn 1 */
+}
 
 /**
   * @brief This function handles TIM16 global interrupt.
@@ -400,12 +413,20 @@ void USB_LP_IRQHandler(void)
   * @brief This function handles EXTI line 3 interrupt.
   *        PB3 is used for external TTL trigger from behavioral controller.
   */
-void EXTI3_IRQHandler(void)
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  if (__HAL_GPIO_EXTI_GET_IT(TTL_IN_Pin) != RESET)
+  int level = HAL_GPIO_ReadPin(GPIOB, GPIO_Pin);
+  if (level == GPIO_PIN_SET)
   {
-    __HAL_GPIO_EXTI_CLEAR_IT(TTL_IN_Pin);
-    CE32_TTL_IRQHandler(&ttl_config);
+	  /* TTL went HIGH (rising edge) → trigger stimulation */
+	  CE32_STIM_ENABLE(&STIM_handle[0]);
+	  PIN_SET(LED1);
+  }
+  else
+  {
+	  /* TTL went LOW (falling edge) → abort stimulation */
+	  CE32_STIM_DISABLE(&STIM_handle[0]);
+	  PIN_RESET(LED1);
   }
 }
 
