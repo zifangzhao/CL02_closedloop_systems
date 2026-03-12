@@ -1,15 +1,9 @@
 """
 main_window.py — Cross-platform GUI for the CL02 closed-loop system.
 
-Replaces the C# WinForms Form1 with a PyQt6 + pyqtgraph application that
-reproduces the exact same layout, controls, and serial protocol behaviour.
-
-Layout (top-to-bottom):
-    ┌──────────────────────────────────────────────────────┐
-    │  4 real-time plots (CH1, CH2, DSP, DOUT) — 2×2 grid │
-    ├────────────┬─────────────────────────┬───────────────┤
-    │ Connection │  Trigger / DSP controls │ Display opts  │
-    └────────────┴─────────────────────────┴───────────────┘
+Hybrid UI strategy:
+  • magic-class for control surfaces (Connection, Trigger/DSP, Display)
+  • pyqtgraph for high-performance real-time plotting
 """
 
 from __future__ import annotations
@@ -19,17 +13,19 @@ import os
 import struct
 import time
 import logging
-from pathlib import Path
 from typing import Optional
 
 import numpy as np
+from magicclass import magicclass, field
 
-from PyQt6.QtCore import Qt, QTimer
-from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QGridLayout, QGroupBox, QLabel, QComboBox, QCheckBox, QPushButton,
-    QDoubleSpinBox, QSpinBox, QFileDialog, QMessageBox, QSplitter,
-    QSizePolicy,
+from qtpy.QtCore import Qt, QTimer
+from qtpy.QtWidgets import (
+    QMainWindow,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QFileDialog,
+    QMessageBox,
 )
 import pyqtgraph as pg
 
@@ -47,6 +43,7 @@ CHANNEL_NAMES = ["CH1", "CH2", "DSP", "DOUT"]
 N_DISPLAY_CH = 4
 
 DISPLAY_LENGTHS = [1, 2, 5, 10]  # seconds
+DISPLAY_LENGTH_LABELS = [f"{s}s" for s in DISPLAY_LENGTHS]
 
 # Voltage gain look-up  (display_label → scale factor)
 VOLTAGE_GAINS = [
@@ -59,6 +56,7 @@ VOLTAGE_GAINS = [
     ("5mV",   3.3 / 65536 * 200 * 2),
     ("1mV",   3.3 / 65536 * 1000 * 2),
 ]
+VOLTAGE_GAIN_LABELS = [label for label, _ in VOLTAGE_GAINS]
 
 FILTER_TYPES = [
     "Delta\t(1–4)",
@@ -85,6 +83,7 @@ DSP_MODES = [
     ("Gated A & B",          4),
     ("Random",               5),
 ]
+DSP_MODE_LABELS = [label for label, _ in DSP_MODES]
 
 FORMULAS = [
     "Direct (x=CH1)",
@@ -98,14 +97,294 @@ DOUT_SIGNALS = [
     ("Internal Trigger 1",     0x01),
     ("Internal Trigger 2",     0x04),
 ]
+DOUT_SIGNAL_LABELS = [label for label, _ in DOUT_SIGNALS]
 
 DSP_OFFSET = 0.4
 
 
+@magicclass(name="Connection", widget_type="groupbox")
+class ConnectionPanel:
+    port = field(str, label="COM Port", options={"choices": ["<none>"]})
+    log_data = field(bool, label="Log Data to File")
+    log_file = field(str, label="Log File")
+
+    def __init__(self):
+        self._host: Optional["MainWindow"] = None
+        self.log_file.value = ""
+
+    def _bind_host(self, host: "MainWindow") -> None:
+        self._host = host
+        self["disconnect_device"].enabled = False
+
+    def refresh_ports(self) -> None:
+        if self._host is not None:
+            self._host._refresh_ports()
+
+    def connect_device(self) -> None:
+        if self._host is not None:
+            self._host._on_connect()
+
+    def disconnect_device(self) -> None:
+        if self._host is not None:
+            self._host._on_disconnect()
+
+
+@magicclass(name="Display", widget_type="groupbox")
+class DisplayPanel:
+    display_time = field(str, label="Display time", options={"choices": DISPLAY_LENGTH_LABELS})
+    input_gain = field(str, label="Display gain (Input)", options={"choices": VOLTAGE_GAIN_LABELS})
+    dsp_gain = field(str, label="Display gain (DSP)", options={"choices": VOLTAGE_GAIN_LABELS})
+    dout_signal = field(str, label="Preview signal (DOUT)", options={"choices": DOUT_SIGNAL_LABELS})
+    dac_gain = field(float, label="DAC Gain", options={"min": 0.1, "max": 1000.0, "step": 0.1})
+    remove_dc = field(bool, label="Remove DC for display")
+
+    def __init__(self):
+        self._host: Optional["MainWindow"] = None
+        self.display_time.value = DISPLAY_LENGTH_LABELS[-1]
+        self.input_gain.value = VOLTAGE_GAIN_LABELS[0]
+        self.dsp_gain.value = VOLTAGE_GAIN_LABELS[0]
+        self.dout_signal.value = DOUT_SIGNAL_LABELS[0]
+        self.dac_gain.value = 5.0
+        self.remove_dc.value = True
+
+    def _bind_host(self, host: "MainWindow") -> None:
+        self._host = host
+        self.dout_signal.changed.connect(lambda _v: self._host._on_dout_changed())
+        self.dac_gain.changed.connect(lambda _v: self._host._on_dac_gain_changed())
+
+
+@magicclass(name="Basic")
+class TriggerBasicPanel:
+    enable_trigger = field(bool, label="Enable Trigger")
+    external_trigger_override = field(bool, label="External Trigger Override")
+    dsp_mode = field(str, label="DSP mode", options={"choices": DSP_MODE_LABELS})
+    dsp_id = field(int, label="DSP ID", options={"min": 0, "max": 1})
+
+    interval_ms = field(float, label="Interval (ms)", options={"min": 0.0, "max": 65535.0, "step": 0.1})
+    pulse_width_ms = field(float, label="Pulse Width (ms)", options={"min": 0.0, "max": 65535.0, "step": 0.1})
+    pulse_cycles = field(int, label="Pulse Cycles", options={"min": 1, "max": 65535})
+
+    filter_type = field(str, label="Filter", options={"choices": FILTER_TYPES})
+    ma_order = field(int, label="MA Order", options={"min": 0, "max": 512})
+    formula = field(str, label="Formula", options={"choices": FORMULAS})
+
+    trigger_threshold = field(float, label="Trigger Threshold", options={"min": 0.1, "max": 65535.0, "step": 0.1})
+    trigger_level_std = field(float, label="Trigger Level (× Std)", options={"min": 0.1, "max": 100.0, "step": 0.1})
+    trigger_mode = field(str, label="Trigger Mode", options={"choices": ["First", "Last"]})
+    abs_threshold = field(str, label="Absolute Threshold")
+
+
+@magicclass(name="Advanced")
+class TriggerAdvancedPanel:
+    fixed_delay_ms = field(float, label="Fixed Delay (ms)", options={"min": 0.0, "max": 3000.0, "step": 0.1})
+    max_rnd_delay_ms = field(float, label="Max Rnd Delay (ms)", options={"min": 0.0, "max": 3000.0, "step": 0.1})
+
+    training_delay_s = field(int, label="Training Delay (s)", options={"min": 0, "max": 65535})
+    training_duration_s = field(int, label="Training Duration (s)", options={"min": 0, "max": 65535})
+
+    random_trigger_min_ms = field(float, label="Random Trigger Min (ms)", options={"min": 0.0, "max": 6553500.0, "step": 100.0})
+    random_trigger_max_ms = field(float, label="Random Trigger Max (ms)", options={"min": 100.0, "max": 6553500.0, "step": 100.0})
+
+    phase_lo_deg = field(float, label="Phase Low (deg)", options={"min": -180.0, "max": 180.0, "step": 0.1})
+    phase_hi_deg = field(float, label="Phase High (deg)", options={"min": -180.0, "max": 180.0, "step": 0.1})
+
+    custom_filter_status = field(str, label="Custom Filter Status")
+
+
+@magicclass(name="Actions")
+class TriggerActionsPanel:
+    def __init__(self):
+        self._host: Optional["MainWindow"] = None
+
+    def _bind_host(self, host: "MainWindow") -> None:
+        self._host = host
+
+    def load_custom_filter_0(self) -> None:
+        if self._host is not None:
+            self._host._load_custom_filter(0)
+
+    def load_custom_filter_1(self) -> None:
+        if self._host is not None:
+            self._host._load_custom_filter(1)
+
+    def download_parameters(self) -> None:
+        if self._host is not None:
+            self._host._on_download_params()
+
+    def force_trigger(self) -> None:
+        if self._host is not None:
+            self._host._on_force_trigger()
+
+
+@magicclass(name="Trigger / DSP", widget_type="tabbed")
+class TriggerDSPPanel:
+    basic = TriggerBasicPanel
+    advanced = TriggerAdvancedPanel
+    actions = TriggerActionsPanel
+
+    def __init__(self):
+        self._host: Optional["MainWindow"] = None
+        self._set_defaults()
+
+    def _bind_host(self, host: "MainWindow") -> None:
+        self._host = host
+        self.actions._bind_host(host)
+        self._wire_events()
+
+    # Compatibility aliases for existing MainWindow logic
+    @property
+    def enable_trigger(self):
+        return self.basic.enable_trigger
+
+    @property
+    def external_trigger_override(self):
+        return self.basic.external_trigger_override
+
+    @property
+    def dsp_mode(self):
+        return self.basic.dsp_mode
+
+    @property
+    def dsp_id(self):
+        return self.basic.dsp_id
+
+    @property
+    def interval_ms(self):
+        return self.basic.interval_ms
+
+    @property
+    def pulse_width_ms(self):
+        return self.basic.pulse_width_ms
+
+    @property
+    def pulse_cycles(self):
+        return self.basic.pulse_cycles
+
+    @property
+    def filter_type(self):
+        return self.basic.filter_type
+
+    @property
+    def ma_order(self):
+        return self.basic.ma_order
+
+    @property
+    def formula(self):
+        return self.basic.formula
+
+    @property
+    def trigger_threshold(self):
+        return self.basic.trigger_threshold
+
+    @property
+    def trigger_level_std(self):
+        return self.basic.trigger_level_std
+
+    @property
+    def trigger_mode(self):
+        return self.basic.trigger_mode
+
+    @property
+    def abs_threshold(self):
+        return self.basic.abs_threshold
+
+    @property
+    def fixed_delay_ms(self):
+        return self.advanced.fixed_delay_ms
+
+    @property
+    def max_rnd_delay_ms(self):
+        return self.advanced.max_rnd_delay_ms
+
+    @property
+    def training_delay_s(self):
+        return self.advanced.training_delay_s
+
+    @property
+    def training_duration_s(self):
+        return self.advanced.training_duration_s
+
+    @property
+    def random_trigger_min_ms(self):
+        return self.advanced.random_trigger_min_ms
+
+    @property
+    def random_trigger_max_ms(self):
+        return self.advanced.random_trigger_max_ms
+
+    @property
+    def phase_lo_deg(self):
+        return self.advanced.phase_lo_deg
+
+    @property
+    def phase_hi_deg(self):
+        return self.advanced.phase_hi_deg
+
+    @property
+    def custom_filter_status(self):
+        return self.advanced.custom_filter_status
+
+    def _set_defaults(self) -> None:
+        self.dsp_mode.value = DSP_MODES[1][0]
+        self.interval_ms.value = 100.0
+        self.filter_type.value = FILTER_TYPES[6]
+        self.pulse_width_ms.value = 10.0
+        self.ma_order.value = 50
+        self.pulse_cycles.value = 1
+        self.formula.value = FORMULAS[0]
+        self.trigger_threshold.value = 1000.0
+        self.trigger_level_std.value = 3.0
+        self.trigger_mode.value = "First"
+
+        self.fixed_delay_ms.value = 0.0
+        self.max_rnd_delay_ms.value = 0.0
+        self.training_delay_s.value = 0
+        self.training_duration_s.value = 5
+        self.random_trigger_min_ms.value = 500.0
+        self.random_trigger_max_ms.value = 5000.0
+        self.phase_lo_deg.value = -180.0
+        self.phase_hi_deg.value = 180.0
+        self.abs_threshold.value = "0"
+        self.custom_filter_status.value = ""
+
+    def _wire_events(self) -> None:
+        if self._host is None:
+            return
+
+        self.enable_trigger.changed.connect(lambda v: self._host._on_enable_trigger(bool(v)))
+        self.dsp_id.changed.connect(lambda _v: self._host._on_dsp_id_changed())
+
+        self.interval_ms.changed.connect(lambda _v: self._host._on_stim_param_changed())
+        self.pulse_width_ms.changed.connect(lambda _v: self._host._on_stim_param_changed())
+        self.pulse_cycles.changed.connect(lambda _v: self._host._on_stim_param_changed())
+        self.fixed_delay_ms.changed.connect(lambda _v: self._host._on_stim_param_changed())
+        self.max_rnd_delay_ms.changed.connect(lambda _v: self._host._on_stim_param_changed())
+
+        self.filter_type.changed.connect(
+            lambda _v: self._host._on_filter_changed(self._choice_index(self.filter_type.value, FILTER_TYPES))
+        )
+        self.trigger_threshold.changed.connect(lambda _v: self._host._on_thresh_changed())
+        self.trigger_level_std.changed.connect(lambda _v: self._host._on_gain_changed())
+        self.trigger_mode.changed.connect(lambda _v: self._host._on_trig_mode_changed())
+        self.phase_lo_deg.changed.connect(lambda _v: self._host._on_phase_changed())
+        self.phase_hi_deg.changed.connect(lambda _v: self._host._on_phase_changed())
+
+    @staticmethod
+    def _choice_index(value: str, choices: list[str]) -> int:
+        try:
+            return choices.index(value)
+        except ValueError:
+            return 0
+
 # ── Main window ──────────────────────────────────────────────────────────────
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(
+        self,
+        trigger_panel: Optional[TriggerDSPPanel] = None,
+        connection_panel: Optional[ConnectionPanel] = None,
+        display_panel: Optional[DisplayPanel] = None,
+    ):
         super().__init__()
         self.setWindowTitle("CL02 Closed-Loop System")
         self.setMinimumSize(1250, 822)
@@ -125,6 +404,15 @@ class MainWindow(QMainWindow):
         self.custom_filter_loaded = [False, False]
         self.log_file = None
         self.log_writer = None
+
+        # magic-class panels (pre-created in entry points for stability)
+        self.trigger_panel = trigger_panel if trigger_panel is not None else TriggerDSPPanel()
+        self.connection_panel = connection_panel if connection_panel is not None else ConnectionPanel()
+        self.display_panel = display_panel if display_panel is not None else DisplayPanel()
+
+        self.trigger_panel._bind_host(self)
+        self.connection_panel._bind_host(self)
+        self.display_panel._bind_host(self)
 
         # ── Build UI ─────────────────────────────────────────────────────
         self._build_ui()
@@ -163,7 +451,6 @@ class MainWindow(QMainWindow):
                 curve = p.plot(pen=pg.mkPen("b", width=1))
                 self.plots.append(p)
                 self.curves.append(curve)
-                # Threshold line for DSP channel
                 if idx == 2:
                     line = pg.InfiniteLine(angle=0, pen=pg.mkPen("r", width=1, style=Qt.PenStyle.DashLine))
                     line.setVisible(False)
@@ -176,287 +463,10 @@ class MainWindow(QMainWindow):
 
         # ── Bottom: control panels ───────────────────────────────────────
         bottom = QHBoxLayout()
-        bottom.addWidget(self._build_connection_panel(), stretch=1)
-        bottom.addWidget(self._build_trigger_panel(), stretch=3)
-        bottom.addWidget(self._build_display_panel(), stretch=1)
+        bottom.addWidget(self.connection_panel.native, stretch=1)
+        bottom.addWidget(self.trigger_panel.native, stretch=3)
+        bottom.addWidget(self.display_panel.native, stretch=1)
         root.addLayout(bottom, stretch=1)
-
-    # ── Connection panel ─────────────────────────────────────────────────
-
-    def _build_connection_panel(self) -> QGroupBox:
-        grp = QGroupBox("Connection")
-        lay = QVBoxLayout(grp)
-
-        h = QHBoxLayout()
-        h.addWidget(QLabel("COM Port:"))
-        self.combo_port = QComboBox()
-        self.combo_port.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        self.combo_port.installEventFilter(self)
-        h.addWidget(self.combo_port)
-        lay.addLayout(h)
-
-        self.btn_connect = QPushButton("Connect")
-        self.btn_connect.clicked.connect(self._on_connect)
-        lay.addWidget(self.btn_connect)
-
-        self.btn_disconnect = QPushButton("Disconnect")
-        self.btn_disconnect.setEnabled(False)
-        self.btn_disconnect.clicked.connect(self._on_disconnect)
-        lay.addWidget(self.btn_disconnect)
-
-        self.cb_log = QCheckBox("Log Data to File")
-        lay.addWidget(self.cb_log)
-
-        self.lbl_file = QLabel("")
-        self.lbl_file.setWordWrap(True)
-        lay.addWidget(self.lbl_file)
-
-        lay.addStretch()
-        return grp
-
-    # ── Trigger/DSP panel ────────────────────────────────────────────────
-
-    def _build_trigger_panel(self) -> QGroupBox:
-        grp = QGroupBox("Trigger / DSP")
-        lay = QGridLayout(grp)
-        row = 0
-
-        # Row 0: Enable + Ext override + DSP mode + DSP ID
-        self.cb_enable = QCheckBox("Enable Trigger")
-        self.cb_enable.toggled.connect(self._on_enable_trigger)
-        lay.addWidget(self.cb_enable, row, 0)
-
-        self.cb_ext_override = QCheckBox("External Trigger Override")
-        lay.addWidget(self.cb_ext_override, row, 1)
-
-        lay.addWidget(QLabel("DSP mode:"), row, 2)
-        self.combo_dsp_mode = QComboBox()
-        for label, _ in DSP_MODES:
-            self.combo_dsp_mode.addItem(label)
-        self.combo_dsp_mode.setCurrentIndex(1)
-        lay.addWidget(self.combo_dsp_mode, row, 3)
-
-        lay.addWidget(QLabel("DSP ID:"), row, 4)
-        self.spin_dsp_id = QSpinBox()
-        self.spin_dsp_id.setRange(0, 1)
-        self.spin_dsp_id.valueChanged.connect(self._on_dsp_id_changed)
-        lay.addWidget(self.spin_dsp_id, row, 5)
-
-        # Row 1: Interval / Pulse width
-        row += 1
-        lay.addWidget(QLabel("Interval (ms):"), row, 0)
-        self.spin_interval = QDoubleSpinBox()
-        self.spin_interval.setRange(0, 65535)
-        self.spin_interval.setDecimals(1)
-        self.spin_interval.setValue(100)
-        self.spin_interval.valueChanged.connect(self._on_stim_param_changed)
-        lay.addWidget(self.spin_interval, row, 1)
-
-        lay.addWidget(QLabel("Filter:"), row, 2)
-        self.combo_filter = QComboBox()
-        for f in FILTER_TYPES:
-            self.combo_filter.addItem(f)
-        self.combo_filter.setCurrentIndex(6)
-        self.combo_filter.currentIndexChanged.connect(self._on_filter_changed)
-        lay.addWidget(self.combo_filter, row, 3)
-
-        # Row 2: Pulse width / MA Order
-        row += 1
-        lay.addWidget(QLabel("Pulse Width (ms):"), row, 0)
-        self.spin_pw = QDoubleSpinBox()
-        self.spin_pw.setRange(0, 65535)
-        self.spin_pw.setDecimals(1)
-        self.spin_pw.setValue(10)
-        self.spin_pw.valueChanged.connect(self._on_stim_param_changed)
-        lay.addWidget(self.spin_pw, row, 1)
-
-        lay.addWidget(QLabel("MA Order:"), row, 2)
-        self.spin_ma = QSpinBox()
-        self.spin_ma.setRange(0, 512)
-        self.spin_ma.setValue(50)
-        lay.addWidget(self.spin_ma, row, 3)
-
-        # Row 3: Pulse Cycles / Custom filter
-        row += 1
-        lay.addWidget(QLabel("Pulse Cycles:"), row, 0)
-        self.spin_cyc = QSpinBox()
-        self.spin_cyc.setRange(1, 65535)
-        self.spin_cyc.setValue(1)
-        self.spin_cyc.valueChanged.connect(self._on_stim_param_changed)
-        lay.addWidget(self.spin_cyc, row, 1)
-
-        self.btn_custom0 = QPushButton("Load Custom Filter 0")
-        self.btn_custom0.clicked.connect(lambda: self._load_custom_filter(0))
-        lay.addWidget(self.btn_custom0, row, 2)
-        self.btn_custom1 = QPushButton("Load Custom Filter 1")
-        self.btn_custom1.clicked.connect(lambda: self._load_custom_filter(1))
-        lay.addWidget(self.btn_custom1, row, 3)
-
-        # Row 4: Fixed delay / Formula
-        row += 1
-        lay.addWidget(QLabel("Fixed Delay (ms):"), row, 0)
-        self.spin_delay = QDoubleSpinBox()
-        self.spin_delay.setRange(0, 3000)
-        self.spin_delay.setDecimals(1)
-        self.spin_delay.valueChanged.connect(self._on_stim_param_changed)
-        lay.addWidget(self.spin_delay, row, 1)
-
-        lay.addWidget(QLabel("Formula:"), row, 2)
-        self.combo_formula = QComboBox()
-        for f in FORMULAS:
-            self.combo_formula.addItem(f)
-        lay.addWidget(self.combo_formula, row, 3)
-
-        # Row 5: Random delay / Trigger threshold
-        row += 1
-        lay.addWidget(QLabel("Max Rnd Delay (ms):"), row, 0)
-        self.spin_rnd_delay = QDoubleSpinBox()
-        self.spin_rnd_delay.setRange(0, 3000)
-        self.spin_rnd_delay.setDecimals(1)
-        self.spin_rnd_delay.valueChanged.connect(self._on_stim_param_changed)
-        lay.addWidget(self.spin_rnd_delay, row, 1)
-
-        lay.addWidget(QLabel("Trigger Threshold:"), row, 2)
-        self.spin_thresh = QDoubleSpinBox()
-        self.spin_thresh.setRange(0.1, 65535)
-        self.spin_thresh.setDecimals(1)
-        self.spin_thresh.setValue(1000)
-        self.spin_thresh.valueChanged.connect(self._on_thresh_changed)
-        lay.addWidget(self.spin_thresh, row, 3)
-
-        self.lbl_abs_thresh = QLabel("")
-        lay.addWidget(self.lbl_abs_thresh, row, 4)
-
-        # Row 6: Training / Trigger level
-        row += 1
-        lay.addWidget(QLabel("Training Delay (s):"), row, 0)
-        self.spin_train_start = QSpinBox()
-        self.spin_train_start.setRange(0, 65535)
-        lay.addWidget(self.spin_train_start, row, 1)
-
-        lay.addWidget(QLabel("Trigger Level:"), row, 2)
-        self.spin_gain = QDoubleSpinBox()
-        self.spin_gain.setRange(0.1, 100)
-        self.spin_gain.setDecimals(1)
-        self.spin_gain.setValue(3.0)
-        self.spin_gain.setSingleStep(0.1)
-        self.spin_gain.valueChanged.connect(self._on_gain_changed)
-        lay.addWidget(self.spin_gain, row, 3)
-        lay.addWidget(QLabel("× Std"), row, 4)
-
-        # Row 7: Training duration / Trigger mode
-        row += 1
-        lay.addWidget(QLabel("Training Duration (s):"), row, 0)
-        self.spin_train_dur = QSpinBox()
-        self.spin_train_dur.setRange(0, 65535)
-        self.spin_train_dur.setValue(5)
-        lay.addWidget(self.spin_train_dur, row, 1)
-
-        lay.addWidget(QLabel("Trigger Mode:"), row, 2)
-        self.combo_trig_mode = QComboBox()
-        self.combo_trig_mode.addItems(["First", "Last"])
-        self.combo_trig_mode.currentIndexChanged.connect(self._on_trig_mode_changed)
-        lay.addWidget(self.combo_trig_mode, row, 3)
-
-        # Row 8: Random trigger range
-        row += 1
-        lay.addWidget(QLabel("Random Trigger Range (ms):"), row, 0)
-        h_rand = QHBoxLayout()
-        self.spin_rand_min = QDoubleSpinBox()
-        self.spin_rand_min.setRange(0, 6553500)
-        self.spin_rand_min.setDecimals(1)
-        self.spin_rand_min.setSingleStep(100)
-        self.spin_rand_min.setValue(500)
-        h_rand.addWidget(self.spin_rand_min)
-        h_rand.addWidget(QLabel("–"))
-        self.spin_rand_max = QDoubleSpinBox()
-        self.spin_rand_max.setRange(100, 6553500)
-        self.spin_rand_max.setDecimals(1)
-        self.spin_rand_max.setSingleStep(100)
-        self.spin_rand_max.setValue(5000)
-        h_rand.addWidget(self.spin_rand_max)
-        lay.addLayout(h_rand, row, 1, 1, 2)
-
-        # Row 9: Phase params + buttons
-        row += 1
-        lay.addWidget(QLabel("Phase degrees (HT mode):"), row, 0)
-        h_phase = QHBoxLayout()
-        self.spin_phase_lo = QDoubleSpinBox()
-        self.spin_phase_lo.setRange(-180, 180)
-        self.spin_phase_lo.setDecimals(1)
-        self.spin_phase_lo.setValue(-180)
-        self.spin_phase_lo.valueChanged.connect(self._on_phase_changed)
-        h_phase.addWidget(self.spin_phase_lo)
-        self.spin_phase_hi = QDoubleSpinBox()
-        self.spin_phase_hi.setRange(-180, 180)
-        self.spin_phase_hi.setDecimals(1)
-        self.spin_phase_hi.setValue(180)
-        self.spin_phase_hi.valueChanged.connect(self._on_phase_changed)
-        h_phase.addWidget(self.spin_phase_hi)
-        lay.addLayout(h_phase, row, 1, 1, 2)
-
-        self.btn_download = QPushButton("Download Parameters")
-        self.btn_download.clicked.connect(self._on_download_params)
-        lay.addWidget(self.btn_download, row, 3)
-
-        self.btn_force = QPushButton("Force Trigger")
-        self.btn_force.clicked.connect(self._on_force_trigger)
-        lay.addWidget(self.btn_force, row, 4)
-
-        self.lbl_custom_filter = QLabel("")
-        lay.addWidget(self.lbl_custom_filter, row + 1, 0, 1, 4)
-
-        return grp
-
-    # ── Display panel ────────────────────────────────────────────────────
-
-    def _build_display_panel(self) -> QGroupBox:
-        grp = QGroupBox("Display")
-        lay = QVBoxLayout(grp)
-
-        lay.addWidget(QLabel("Display time:"))
-        self.combo_disp_len = QComboBox()
-        for d in DISPLAY_LENGTHS:
-            self.combo_disp_len.addItem(f"{d}s")
-        self.combo_disp_len.setCurrentIndex(len(DISPLAY_LENGTHS) - 1)
-        lay.addWidget(self.combo_disp_len)
-
-        lay.addWidget(QLabel("Display gain (Input):"))
-        self.combo_disp_gain = QComboBox()
-        for label, _ in VOLTAGE_GAINS:
-            self.combo_disp_gain.addItem(label)
-        lay.addWidget(self.combo_disp_gain)
-
-        lay.addWidget(QLabel("Display gain (DSP):"))
-        self.combo_dsp_gain = QComboBox()
-        for label, _ in VOLTAGE_GAINS:
-            self.combo_dsp_gain.addItem(label)
-        lay.addWidget(self.combo_dsp_gain)
-
-        lay.addWidget(QLabel("Preview signal (DOUT):"))
-        self.combo_dout = QComboBox()
-        for label, _ in DOUT_SIGNALS:
-            self.combo_dout.addItem(label)
-        self.combo_dout.currentIndexChanged.connect(self._on_dout_changed)
-        lay.addWidget(self.combo_dout)
-
-        h = QHBoxLayout()
-        h.addWidget(QLabel("DAC Gain:"))
-        self.spin_dac_gain = QDoubleSpinBox()
-        self.spin_dac_gain.setRange(0.1, 1000)
-        self.spin_dac_gain.setDecimals(1)
-        self.spin_dac_gain.setValue(5)
-        self.spin_dac_gain.setSingleStep(0.1)
-        self.spin_dac_gain.valueChanged.connect(self._on_dac_gain_changed)
-        h.addWidget(self.spin_dac_gain)
-        lay.addLayout(h)
-
-        self.cb_remove_dc = QCheckBox("Remove DC for display")
-        self.cb_remove_dc.setChecked(True)
-        lay.addWidget(self.cb_remove_dc)
-
-        lay.addStretch()
-        return grp
 
     # =====================================================================
     #  Defaults
@@ -466,39 +476,49 @@ class MainWindow(QMainWindow):
         self._refresh_ports()
 
     def _refresh_ports(self) -> None:
-        self.combo_port.clear()
         ports = list_serial_ports()
-        for p in ports:
-            self.combo_port.addItem(p)
+        if not ports:
+            ports = ["<none>"]
+
+        self.connection_panel.port.choices = ports
+
         auto = find_cl02_port()
         if auto and auto in ports:
-            self.combo_port.setCurrentText(auto)
-
-    def eventFilter(self, obj, event) -> bool:
-        # Refresh port list when combo is clicked
-        from PyQt6.QtCore import QEvent
-        if obj is self.combo_port and event.type() == QEvent.Type.MouseButtonPress:
-            self._refresh_ports()
-        return super().eventFilter(obj, event)
+            self.connection_panel.port.value = auto
+        elif self.connection_panel.port.value not in ports:
+            self.connection_panel.port.value = ports[0]
 
     # =====================================================================
     #  Parameter helpers
     # =====================================================================
 
     def _get_display_length(self) -> int:
-        idx = self.combo_disp_len.currentIndex()
-        return DISPLAY_LENGTHS[idx] if 0 <= idx < len(DISPLAY_LENGTHS) else 10
+        value = self.display_panel.display_time.value
+        try:
+            idx = DISPLAY_LENGTH_LABELS.index(value)
+            return DISPLAY_LENGTHS[idx]
+        except ValueError:
+            return DISPLAY_LENGTHS[-1]
 
     def _get_input_gain(self) -> float:
-        idx = self.combo_disp_gain.currentIndex()
-        return VOLTAGE_GAINS[idx][1] if 0 <= idx < len(VOLTAGE_GAINS) else 1.0
+        label = self.display_panel.input_gain.value
+        for k, v in VOLTAGE_GAINS:
+            if k == label:
+                return v
+        return VOLTAGE_GAINS[0][1]
 
     def _get_dsp_gain(self) -> float:
-        idx = self.combo_dsp_gain.currentIndex()
-        return VOLTAGE_GAINS[idx][1] if 0 <= idx < len(VOLTAGE_GAINS) else 1.0
+        label = self.display_panel.dsp_gain.value
+        for k, v in VOLTAGE_GAINS:
+            if k == label:
+                return v
+        return VOLTAGE_GAINS[0][1]
 
     def _get_cl_mode(self) -> int:
-        idx = self.combo_dsp_mode.currentIndex()
+        try:
+            idx = DSP_MODE_LABELS.index(self.trigger_panel.dsp_mode.value)
+        except ValueError:
+            idx = 0
         return DSP_MODES[idx][1] if 0 <= idx < len(DSP_MODES) else 0
 
     def _ratio(self) -> int:
@@ -508,33 +528,41 @@ class MainWindow(QMainWindow):
         """Collect all GUI values into DeviceConfig (mirrors C# UpdParams)."""
         cl_mode = self._get_cl_mode()
         ratio = self._ratio()
-        dsp_id = self.spin_dsp_id.value()
+        dsp_id = int(self.trigger_panel.dsp_id.value)
 
         common = dict(
             sampling_rate=1000,
-            interval=int(self.spin_interval.value() * ratio),
-            delay=int(self.spin_delay.value() * ratio),
-            rnd_delay=int(self.spin_rnd_delay.value() * ratio),
-            pw=int(self.spin_pw.value() * ratio),
-            cyc=int(self.spin_cyc.value()),
-            train_start=int(self.spin_train_start.value()),
-            train_dur=int(self.spin_train_dur.value()),
+            interval=int(self.trigger_panel.interval_ms.value * ratio),
+            delay=int(self.trigger_panel.fixed_delay_ms.value * ratio),
+            rnd_delay=int(self.trigger_panel.max_rnd_delay_ms.value * ratio),
+            pw=int(self.trigger_panel.pulse_width_ms.value * ratio),
+            cyc=int(self.trigger_panel.pulse_cycles.value),
+            train_start=int(self.trigger_panel.training_delay_s.value),
+            train_dur=int(self.trigger_panel.training_duration_s.value),
             mode=cl_mode,
-            stim_on=int(self.cb_enable.isChecked()),
-            rand_min=int(self.spin_rand_min.value()),
-            rand_max=int(self.spin_rand_max.value()),
-            param1=float(self.spin_phase_lo.value() / 180 * math.pi),
-            param2=float(self.spin_phase_hi.value() / 180 * math.pi),
+            stim_on=int(bool(self.trigger_panel.enable_trigger.value)),
+            rand_min=int(self.trigger_panel.random_trigger_min_ms.value),
+            rand_max=int(self.trigger_panel.random_trigger_max_ms.value),
+            param1=float(self.trigger_panel.phase_lo_deg.value / 180 * math.pi),
+            param2=float(self.trigger_panel.phase_hi_deg.value / 180 * math.pi),
         )
-        # Channel 0 always overridden
         self.device.set_sys_params(0, gain=self.device.sys.trigger_gain[0], **common)
-        # Current channel
-        self.device.set_sys_params(dsp_id, gain=float(self.spin_gain.value()), **common)
+        self.device.set_sys_params(dsp_id, gain=float(self.trigger_panel.trigger_level_std.value), **common)
+
+        try:
+            formula_idx = FORMULAS.index(self.trigger_panel.formula.value)
+        except ValueError:
+            formula_idx = 0
+        try:
+            filter_idx = FILTER_TYPES.index(self.trigger_panel.filter_type.value)
+        except ValueError:
+            filter_idx = 0
+
         self.device.set_dsp_params(
             dsp_id,
-            formula=self.combo_formula.currentIndex(),
-            func1=self.combo_filter.currentIndex(),
-            ma_ord=int(self.spin_ma.value()),
+            formula=formula_idx,
+            func1=filter_idx,
+            ma_ord=int(self.trigger_panel.ma_order.value),
         )
 
     # =====================================================================
@@ -542,49 +570,46 @@ class MainWindow(QMainWindow):
     # =====================================================================
 
     def _on_serial_data(self, raw: bytes, thresholds: list[int]) -> None:
-        """Called from the background reader thread with raw sample bytes."""
         n_samples = len(raw) // (2 * TRANS_CH)
         if n_samples == 0:
             return
 
         input_gain = self._get_input_gain()
         dsp_gain = self._get_dsp_gain()
-        dsp_ch = self.spin_dsp_id.value() + 4
-        remove_dc = self.cb_remove_dc.isChecked()
+        dsp_ch = int(self.trigger_panel.dsp_id.value) + 4
+        remove_dc = bool(self.display_panel.remove_dc.value)
 
         out = np.zeros((N_DISPLAY_CH, n_samples), dtype=np.float64)
 
         for s in range(n_samples):
             base = s * 2 * TRANS_CH
-            # CH1
+
             v = struct.unpack_from("<h", raw, base + 0)[0] * input_gain
             if remove_dc:
                 v = self.dc_filters[0].process(v)
             out[0, s] = v
-            # CH2
+
             v = struct.unpack_from("<h", raw, base + 2)[0] * input_gain
             if remove_dc:
                 v = self.dc_filters[1].process(v)
             out[1, s] = v
-            # DSP
+
             v = struct.unpack_from("<h", raw, base + 2 * dsp_ch)[0] * dsp_gain
             out[2, s] = v - DSP_OFFSET
-            # DOUT
+
             digi = struct.unpack_from("<H", raw, base + 2 * 6)[0]
             bit = digi & self.dout_mask
             out[3, s] = (1.8 if bit else 0.0) - 0.9
 
         self.data.append(out)
 
-        # Log raw bytes
         if self.log_writer:
             try:
                 self.log_writer.write(raw[:n_samples * 2 * TRANS_CH])
             except Exception:
                 pass
 
-        # Update threshold display (cross-thread safe via property)
-        self.thresh_value = thresholds[self.spin_dsp_id.value()]
+        self.thresh_value = thresholds[int(self.trigger_panel.dsp_id.value)]
 
     # =====================================================================
     #  Plot repaint
@@ -602,36 +627,34 @@ class MainWindow(QMainWindow):
         for i in range(N_DISPLAY_CH):
             self.curves[i].setData(x, block[i])
 
-        # Threshold line on DSP plot
         line = self.thresh_lines[2]
         if line is not None:
             dsp_gain_val = self._get_dsp_gain()
-            dac_gain_val = self.spin_dac_gain.value()
+            dac_gain_val = self.display_panel.dac_gain.value
             t = self.thresh_value * dac_gain_val * dsp_gain_val - DSP_OFFSET
             line.setValue(t)
             line.setVisible(True)
 
-        self.lbl_abs_thresh.setText(str(self.thresh_value))
+        self.trigger_panel.abs_threshold.value = str(self.thresh_value)
 
     # =====================================================================
     #  Connection handlers
     # =====================================================================
 
     def _on_connect(self) -> None:
-        port = self.combo_port.currentText()
-        if not port:
+        port = self.connection_panel.port.value
+        if not port or port == "<none>":
             QMessageBox.warning(self, "Error", "No COM port selected")
             return
 
-        # Logging setup
-        if self.cb_log.isChecked():
+        if bool(self.connection_panel.log_data.value):
             path, _ = QFileDialog.getSaveFileName(self, "Save Data", "", "Binary File (*.dat)")
             if path:
-                self.lbl_file.setText(path)
+                self.connection_panel.log_file.value = path
                 self.log_file = open(path, "wb")
                 self.log_writer = self.log_file
             else:
-                return  # cancelled
+                return
 
         try:
             self.serial.open(port)
@@ -641,13 +664,12 @@ class MainWindow(QMainWindow):
 
         self._send_all_settings()
 
-        # Start preview
         self.serial.start_preview()
         self.serial.start_reader()
         self._paint_timer.start()
 
-        self.btn_connect.setEnabled(False)
-        self.btn_disconnect.setEnabled(True)
+        self.connection_panel["connect_device"].enabled = False
+        self.connection_panel["disconnect_device"].enabled = True
 
     def _on_disconnect(self) -> None:
         self._paint_timer.stop()
@@ -659,8 +681,8 @@ class MainWindow(QMainWindow):
             self.log_file = None
             self.log_writer = None
 
-        self.btn_connect.setEnabled(True)
-        self.btn_disconnect.setEnabled(False)
+        self.connection_panel["connect_device"].enabled = True
+        self.connection_panel["disconnect_device"].enabled = False
 
     # =====================================================================
     #  Settings senders
@@ -709,10 +731,11 @@ class MainWindow(QMainWindow):
             self.serial.send_custom_filter(fid, data)
 
     def _send_dac_gain(self) -> None:
-        self.serial.set_dac_gain(int(self.spin_dac_gain.value()))
+        self.serial.set_dac_gain(int(self.display_panel.dac_gain.value))
 
     def _send_trig_mode(self) -> None:
-        self.serial.set_trig_mode(self.combo_trig_mode.currentIndex())
+        mode = self.trigger_panel.trigger_mode.value
+        self.serial.set_trig_mode(0 if mode == "First" else 1)
 
     # =====================================================================
     #  UI event handlers
@@ -722,21 +745,22 @@ class MainWindow(QMainWindow):
         self.serial.set_stim(checked)
 
     def _on_stim_param_changed(self) -> None:
-        if self.spin_pw.value() > self.spin_interval.value():
-            self.spin_interval.setValue(self.spin_pw.value())
+        if self.trigger_panel.pulse_width_ms.value > self.trigger_panel.interval_ms.value:
+            self.trigger_panel.interval_ms.value = self.trigger_panel.pulse_width_ms.value
         self._send_stim_param()
 
     def _on_gain_changed(self) -> None:
-        self.serial.set_gain(self.spin_dsp_id.value(), float(self.spin_gain.value()))
+        self.serial.set_gain(int(self.trigger_panel.dsp_id.value), float(self.trigger_panel.trigger_level_std.value))
 
     def _on_thresh_changed(self) -> None:
-        self.serial.set_gain_abs(self.spin_dsp_id.value(), float(self.spin_thresh.value()))
+        self.serial.set_gain_abs(int(self.trigger_panel.dsp_id.value), float(self.trigger_panel.trigger_threshold.value))
 
     def _on_filter_changed(self, idx: int) -> None:
         if idx < len(FILTER_FREQS):
             v = int(1.0 / FILTER_FREQS[idx] * SAMPLE_RATE * 3)
-            v = min(v, self.spin_ma.maximum())
-            self.spin_ma.setValue(v)
+            v = min(v, int(self.trigger_panel.ma_order.max))
+            self.trigger_panel.ma_order.value = v
+
         n_custom = 2
         n_builtin = len(FILTER_TYPES) - n_custom
         if idx == n_builtin:
@@ -748,7 +772,7 @@ class MainWindow(QMainWindow):
 
     def _on_dsp_id_changed(self) -> None:
         self._update_params()
-        self.dsp_id_curr = self.spin_dsp_id.value()
+        self.dsp_id_curr = int(self.trigger_panel.dsp_id.value)
         self._load_params_to_ui()
 
     def _on_download_params(self) -> None:
@@ -763,43 +787,56 @@ class MainWindow(QMainWindow):
     def _on_dac_gain_changed(self) -> None:
         self._send_dac_gain()
 
-    def _on_dout_changed(self, idx: int) -> None:
-        if 0 <= idx < len(DOUT_SIGNALS):
-            self.dout_mask = DOUT_SIGNALS[idx][1]
+    def _on_dout_changed(self) -> None:
+        label = self.display_panel.dout_signal.value
+        for k, v in DOUT_SIGNALS:
+            if k == label:
+                self.dout_mask = v
+                return
 
     def _on_phase_changed(self) -> None:
         self._update_params()
         self._send_cl_params()
 
     def _load_custom_filter(self, fid: int) -> None:
-        path, _ = QFileDialog.getOpenFileName(self, "Load Custom Filter", "", "Filter Parameter (*.filter);;All Files (*)")
+        path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Load Custom Filter",
+            "",
+            "Filter Parameter (*.filter);;All Files (*)",
+        )
         if path and os.path.isfile(path):
             with open(path, "rb") as f:
                 self.custom_filter_data[fid] = f.read(512)
             self.custom_filter_loaded[fid] = True
-            self.lbl_custom_filter.setText(path)
+            self.trigger_panel.custom_filter_status.value = path
             self._send_custom_filter(fid)
 
     def _load_params_to_ui(self) -> None:
-        """Restore UI controls from DeviceConfig for the current DSP channel."""
         d = self.device
         sid = self.dsp_id_curr
         ratio = self._ratio()
+
         idx = max(0, d.sys.cl_mode)
         mode_values = [v for _, v in DSP_MODES]
         if idx in mode_values:
-            self.combo_dsp_mode.setCurrentIndex(mode_values.index(idx))
-        self.spin_interval.setValue(d.sys.stim_interval[0] / ratio if ratio else 0)
-        self.spin_delay.setValue(d.sys.stim_delay[0] / ratio if ratio else 0)
-        self.spin_rnd_delay.setValue(d.sys.stim_rnd_delay[0] / ratio if ratio else 0)
-        self.spin_pw.setValue(d.sys.pulse_width[0] / ratio if ratio else 0)
-        self.spin_cyc.setValue(d.sys.pulse_cyc[0])
-        self.spin_gain.setValue(d.sys.trigger_gain[sid])
-        self.combo_formula.setCurrentIndex(d.formula[sid])
-        self.combo_filter.setCurrentIndex(d.func[sid])
-        self.spin_ma.setValue(d.ma_ord[sid])
-        self.spin_phase_lo.setValue(d.sys.cl_param1[sid] / math.pi * 180)
-        self.spin_phase_hi.setValue(d.sys.cl_param2[sid] / math.pi * 180)
+            self.trigger_panel.dsp_mode.value = DSP_MODES[mode_values.index(idx)][0]
+
+        self.trigger_panel.interval_ms.value = d.sys.stim_interval[0] / ratio if ratio else 0
+        self.trigger_panel.fixed_delay_ms.value = d.sys.stim_delay[0] / ratio if ratio else 0
+        self.trigger_panel.max_rnd_delay_ms.value = d.sys.stim_rnd_delay[0] / ratio if ratio else 0
+        self.trigger_panel.pulse_width_ms.value = d.sys.pulse_width[0] / ratio if ratio else 0
+        self.trigger_panel.pulse_cycles.value = d.sys.pulse_cyc[0]
+        self.trigger_panel.trigger_level_std.value = d.sys.trigger_gain[sid]
+
+        if 0 <= d.formula[sid] < len(FORMULAS):
+            self.trigger_panel.formula.value = FORMULAS[d.formula[sid]]
+        if 0 <= d.func[sid] < len(FILTER_TYPES):
+            self.trigger_panel.filter_type.value = FILTER_TYPES[d.func[sid]]
+
+        self.trigger_panel.ma_order.value = d.ma_ord[sid]
+        self.trigger_panel.phase_lo_deg.value = d.sys.cl_param1[sid] / math.pi * 180
+        self.trigger_panel.phase_hi_deg.value = d.sys.cl_param2[sid] / math.pi * 180
 
     # =====================================================================
     #  Cleanup

@@ -13,8 +13,8 @@ from __future__ import annotations
 import sys
 import logging
 
-from PyQt6.QtWidgets import QApplication
-from cl02_center.main_window import MainWindow
+from qtpy.QtWidgets import QApplication
+from cl02_center.main_window import MainWindow, TriggerDSPPanel, ConnectionPanel, DisplayPanel
 
 
 def main() -> None:
@@ -26,7 +26,14 @@ def main() -> None:
     app = QApplication(sys.argv)
     app.setApplicationName("CL02 Closed-Loop System")
 
-    window = MainWindow()
+    trigger_panel = TriggerDSPPanel()
+    connection_panel = ConnectionPanel()
+    display_panel = DisplayPanel()
+    window = MainWindow(
+        trigger_panel=trigger_panel,
+        connection_panel=connection_panel,
+        display_panel=display_panel,
+    )
     window.show()
 
     sys.exit(app.exec())
