@@ -13,6 +13,8 @@ import os
 import struct
 import time
 import logging
+import json
+from datetime import datetime
 from typing import Optional
 
 import numpy as np
@@ -265,6 +267,14 @@ class TriggerActionsPanel:
         if self._host is not None:
             self._host._on_download_params()
 
+    def save_parameters(self) -> None:
+        if self._host is not None:
+            self._host._on_save_parameters()
+
+    def load_parameters(self) -> None:
+        if self._host is not None:
+            self._host._on_load_parameters()
+
     def force_trigger(self) -> None:
         if self._host is not None:
             self._host._on_force_trigger()
@@ -476,6 +486,7 @@ class MainWindow(QMainWindow):
         self.custom_filter_loaded = [False, False]
         self.log_file = None
         self.log_writer = None
+        self._suspend_ui_events = False
 
         # magic-class panels (pre-created in entry points for stability)
         self.trigger_panel = (
@@ -567,6 +578,162 @@ class MainWindow(QMainWindow):
             self.connection_panel.port.value = auto
         elif self.connection_panel.port.value not in ports:
             self.connection_panel.port.value = ports[0]
+
+    # =====================================================================
+    #  Parameter save/load
+    # =====================================================================
+
+    def _collect_parameter_state(self) -> dict:
+        return {
+            "schema_version": 1,
+            "exported_at": datetime.now().astimezone().isoformat(),
+            "app": "cl02_center",
+            "trigger": {
+                "basic": {
+                    "enable_trigger": bool(self.trigger_panel.enable_trigger.value),
+                    "external_trigger_override": bool(self.trigger_panel.external_trigger_override.value),
+                    "dsp_mode": str(self.trigger_panel.dsp_mode.value),
+                    "dsp_id": int(self.trigger_panel.dsp_id.value),
+                    "interval_ms": float(self.trigger_panel.interval_ms.value),
+                    "pulse_width_ms": float(self.trigger_panel.pulse_width_ms.value),
+                    "pulse_cycles": int(self.trigger_panel.pulse_cycles.value),
+                    "filter_type": str(self.trigger_panel.filter_type.value),
+                    "ma_order": int(self.trigger_panel.ma_order.value),
+                    "formula": str(self.trigger_panel.formula.value),
+                    "trigger_threshold": float(self.trigger_panel.trigger_threshold.value),
+                    "trigger_level_std": float(self.trigger_panel.trigger_level_std.value),
+                    "trigger_mode": str(self.trigger_panel.trigger_mode.value),
+                },
+                "advanced": {
+                    "fixed_delay_ms": float(self.trigger_panel.fixed_delay_ms.value),
+                    "max_rnd_delay_ms": float(self.trigger_panel.max_rnd_delay_ms.value),
+                    "training_delay_s": int(self.trigger_panel.training_delay_s.value),
+                    "training_duration_s": int(self.trigger_panel.training_duration_s.value),
+                    "random_trigger_min_ms": float(self.trigger_panel.random_trigger_min_ms.value),
+                    "random_trigger_max_ms": float(self.trigger_panel.random_trigger_max_ms.value),
+                    "phase_lo_deg": float(self.trigger_panel.phase_lo_deg.value),
+                    "phase_hi_deg": float(self.trigger_panel.phase_hi_deg.value),
+                },
+            },
+            "display": {
+                "display_time": str(self.display_panel.display_time.value),
+                "input_gain": str(self.display_panel.input_gain.value),
+                "dsp_gain": str(self.display_panel.dsp_gain.value),
+                "dout_signal": str(self.display_panel.dout_signal.value),
+                "dac_gain": float(self.display_panel.dac_gain.value),
+                "remove_dc": bool(self.display_panel.remove_dc.value),
+            },
+            "connection": {
+                "port": str(self.connection_panel.port.value),
+                "log_data": bool(self.connection_panel.log_data.value),
+            },
+        }
+
+    def _set_choice_value(self, widget, value, label: str, warnings: list[str]) -> None:
+        choices = list(widget.choices)
+        if value in choices:
+            widget.value = value
+        else:
+            warnings.append(f"{label}: unsupported choice '{value}', kept current value")
+
+    def _set_numeric_value(self, widget, value, label: str, warnings: list[str], cast) -> None:
+        try:
+            v = cast(value)
+        except (TypeError, ValueError):
+            warnings.append(f"{label}: invalid numeric value '{value}', kept current value")
+            return
+
+        lo = getattr(widget, "min", None)
+        hi = getattr(widget, "max", None)
+        if lo is not None and v < lo:
+            warnings.append(f"{label}: clamped {v} to min {lo}")
+            v = lo
+        if hi is not None and v > hi:
+            warnings.append(f"{label}: clamped {v} to max {hi}")
+            v = hi
+        widget.value = cast(v)
+
+    def _apply_parameter_state(self, payload: dict) -> list[str]:
+        warnings: list[str] = []
+
+        trigger = payload.get("trigger", {}) if isinstance(payload.get("trigger", {}), dict) else {}
+        basic = trigger.get("basic", {}) if isinstance(trigger.get("basic", {}), dict) else {}
+        advanced = trigger.get("advanced", {}) if isinstance(trigger.get("advanced", {}), dict) else {}
+        display = payload.get("display", {}) if isinstance(payload.get("display", {}), dict) else {}
+        connection = payload.get("connection", {}) if isinstance(payload.get("connection", {}), dict) else {}
+
+        self._suspend_ui_events = True
+        try:
+            # Ensure connection choices are up-to-date before applying port.
+            self._refresh_ports()
+
+            if "enable_trigger" in basic:
+                self.trigger_panel.enable_trigger.value = bool(basic["enable_trigger"])
+            if "external_trigger_override" in basic:
+                self.trigger_panel.external_trigger_override.value = bool(basic["external_trigger_override"])
+            if "dsp_mode" in basic:
+                self._set_choice_value(self.trigger_panel.dsp_mode, basic["dsp_mode"], "dsp_mode", warnings)
+            if "dsp_id" in basic:
+                self._set_numeric_value(self.trigger_panel.dsp_id, basic["dsp_id"], "dsp_id", warnings, int)
+            if "interval_ms" in basic:
+                self._set_numeric_value(self.trigger_panel.interval_ms, basic["interval_ms"], "interval_ms", warnings, float)
+            if "pulse_width_ms" in basic:
+                self._set_numeric_value(self.trigger_panel.pulse_width_ms, basic["pulse_width_ms"], "pulse_width_ms", warnings, float)
+            if "pulse_cycles" in basic:
+                self._set_numeric_value(self.trigger_panel.pulse_cycles, basic["pulse_cycles"], "pulse_cycles", warnings, int)
+            if "filter_type" in basic:
+                self._set_choice_value(self.trigger_panel.filter_type, basic["filter_type"], "filter_type", warnings)
+            if "ma_order" in basic:
+                self._set_numeric_value(self.trigger_panel.ma_order, basic["ma_order"], "ma_order", warnings, int)
+            if "formula" in basic:
+                self._set_choice_value(self.trigger_panel.formula, basic["formula"], "formula", warnings)
+            if "trigger_threshold" in basic:
+                self._set_numeric_value(self.trigger_panel.trigger_threshold, basic["trigger_threshold"], "trigger_threshold", warnings, float)
+            if "trigger_level_std" in basic:
+                self._set_numeric_value(self.trigger_panel.trigger_level_std, basic["trigger_level_std"], "trigger_level_std", warnings, float)
+            if "trigger_mode" in basic:
+                self._set_choice_value(self.trigger_panel.trigger_mode, basic["trigger_mode"], "trigger_mode", warnings)
+
+            if "fixed_delay_ms" in advanced:
+                self._set_numeric_value(self.trigger_panel.fixed_delay_ms, advanced["fixed_delay_ms"], "fixed_delay_ms", warnings, float)
+            if "max_rnd_delay_ms" in advanced:
+                self._set_numeric_value(self.trigger_panel.max_rnd_delay_ms, advanced["max_rnd_delay_ms"], "max_rnd_delay_ms", warnings, float)
+            if "training_delay_s" in advanced:
+                self._set_numeric_value(self.trigger_panel.training_delay_s, advanced["training_delay_s"], "training_delay_s", warnings, int)
+            if "training_duration_s" in advanced:
+                self._set_numeric_value(self.trigger_panel.training_duration_s, advanced["training_duration_s"], "training_duration_s", warnings, int)
+            if "random_trigger_min_ms" in advanced:
+                self._set_numeric_value(self.trigger_panel.random_trigger_min_ms, advanced["random_trigger_min_ms"], "random_trigger_min_ms", warnings, float)
+            if "random_trigger_max_ms" in advanced:
+                self._set_numeric_value(self.trigger_panel.random_trigger_max_ms, advanced["random_trigger_max_ms"], "random_trigger_max_ms", warnings, float)
+            if "phase_lo_deg" in advanced:
+                self._set_numeric_value(self.trigger_panel.phase_lo_deg, advanced["phase_lo_deg"], "phase_lo_deg", warnings, float)
+            if "phase_hi_deg" in advanced:
+                self._set_numeric_value(self.trigger_panel.phase_hi_deg, advanced["phase_hi_deg"], "phase_hi_deg", warnings, float)
+
+            if "display_time" in display:
+                self._set_choice_value(self.display_panel.display_time, display["display_time"], "display_time", warnings)
+            if "input_gain" in display:
+                self._set_choice_value(self.display_panel.input_gain, display["input_gain"], "input_gain", warnings)
+            if "dsp_gain" in display:
+                self._set_choice_value(self.display_panel.dsp_gain, display["dsp_gain"], "dsp_gain", warnings)
+            if "dout_signal" in display:
+                self._set_choice_value(self.display_panel.dout_signal, display["dout_signal"], "dout_signal", warnings)
+            if "dac_gain" in display:
+                self._set_numeric_value(self.display_panel.dac_gain, display["dac_gain"], "dac_gain", warnings, float)
+            if "remove_dc" in display:
+                self.display_panel.remove_dc.value = bool(display["remove_dc"])
+
+            if "port" in connection:
+                self._set_choice_value(self.connection_panel.port, connection["port"], "port", warnings)
+            if "log_data" in connection:
+                self.connection_panel.log_data.value = bool(connection["log_data"])
+        finally:
+            self._suspend_ui_events = False
+
+        self._update_params()
+        self._on_dout_changed()
+        return warnings
 
     # =====================================================================
     #  Parameter helpers
@@ -828,9 +995,13 @@ class MainWindow(QMainWindow):
     # =====================================================================
 
     def _on_enable_trigger(self, checked: bool) -> None:
+        if self._suspend_ui_events:
+            return
         self.serial.set_stim(checked)
 
     def _on_stim_param_changed(self) -> None:
+        if self._suspend_ui_events:
+            return
         if (
             self.trigger_panel.pulse_width_ms.value
             > self.trigger_panel.interval_ms.value
@@ -841,18 +1012,24 @@ class MainWindow(QMainWindow):
         self._send_stim_param()
 
     def _on_gain_changed(self) -> None:
+        if self._suspend_ui_events:
+            return
         self.serial.set_gain(
             int(self.trigger_panel.dsp_id.value),
             float(self.trigger_panel.trigger_level_std.value),
         )
 
     def _on_thresh_changed(self) -> None:
+        if self._suspend_ui_events:
+            return
         self.serial.set_gain_abs(
             int(self.trigger_panel.dsp_id.value),
             float(self.trigger_panel.trigger_threshold.value),
         )
 
     def _on_filter_changed(self, idx: int) -> None:
+        if self._suspend_ui_events:
+            return
         if idx < len(FILTER_FREQS):
             v = int(1.0 / FILTER_FREQS[idx] * SAMPLE_RATE * 3)
             v = min(v, int(self.trigger_panel.ma_order.max))
@@ -868,6 +1045,8 @@ class MainWindow(QMainWindow):
                 self._load_custom_filter(1)
 
     def _on_dsp_id_changed(self) -> None:
+        if self._suspend_ui_events:
+            return
         self._update_params()
         self.dsp_id_curr = int(self.trigger_panel.dsp_id.value)
         self._load_params_to_ui()
@@ -879,12 +1058,18 @@ class MainWindow(QMainWindow):
         self.serial.force_trigger()
 
     def _on_trig_mode_changed(self) -> None:
+        if self._suspend_ui_events:
+            return
         self._send_trig_mode()
 
     def _on_dac_gain_changed(self) -> None:
+        if self._suspend_ui_events:
+            return
         self._send_dac_gain()
 
     def _on_dout_changed(self) -> None:
+        if self._suspend_ui_events:
+            return
         label = self.display_panel.dout_signal.value
         for k, v in DOUT_SIGNALS:
             if k == label:
@@ -892,8 +1077,83 @@ class MainWindow(QMainWindow):
                 return
 
     def _on_phase_changed(self) -> None:
+        if self._suspend_ui_events:
+            return
         self._update_params()
         self._send_cl_params()
+
+    def _on_save_parameters(self) -> None:
+        payload = self._collect_parameter_state()
+        ts_name = datetime.now().strftime("cl02_params_%Y%m%d_%H%M%S.json")
+        path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Save Parameters",
+            ts_name,
+            "JSON File (*.json)",
+        )
+        if not path:
+            return
+
+        try:
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(payload, f, indent=2, sort_keys=True)
+        except Exception as e:
+            QMessageBox.warning(self, "Save Failed", f"Could not save parameters:\n{e}")
+            return
+
+        QMessageBox.information(
+            self,
+            "Parameters Saved",
+            f"Saved parameter preset with timestamp:\n{payload['exported_at']}\n\n{path}",
+        )
+
+    def _on_load_parameters(self) -> None:
+        path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Load Parameters",
+            "",
+            "JSON File (*.json);;All Files (*)",
+        )
+        if not path:
+            return
+
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                payload = json.load(f)
+        except Exception as e:
+            QMessageBox.warning(self, "Load Failed", f"Could not read parameter file:\n{e}")
+            return
+
+        if not isinstance(payload, dict):
+            QMessageBox.warning(self, "Load Failed", "Invalid parameter file format: root must be an object")
+            return
+
+        schema = payload.get("schema_version")
+        if not isinstance(schema, int):
+            QMessageBox.warning(self, "Load Failed", "Invalid parameter file: missing integer schema_version")
+            return
+
+        try:
+            warnings = self._apply_parameter_state(payload)
+        except Exception as e:
+            QMessageBox.warning(self, "Load Failed", f"Failed to apply parameters:\n{e}")
+            return
+
+        exported_at = payload.get("exported_at", "unknown")
+        if warnings:
+            details = "\n".join(f"• {w}" for w in warnings[:15])
+            extra = "\n• ..." if len(warnings) > 15 else ""
+            QMessageBox.information(
+                self,
+                "Parameters Loaded (with warnings)",
+                f"Loaded preset exported at: {exported_at}\n\n{details}{extra}",
+            )
+        else:
+            QMessageBox.information(
+                self,
+                "Parameters Loaded",
+                f"Loaded preset exported at: {exported_at}",
+            )
 
     def _load_custom_filter(self, fid: int) -> None:
         path, _ = QFileDialog.getOpenFileName(

@@ -28,6 +28,7 @@ python -m cl02_center
 - **Full MCU command protocol** — identical packet framing and parameter serialization
 - **Cross-platform serial port** auto-detection via pyserial
 - **All original controls**: filter selection, DSP mode, trigger parameters, phase limits, custom filter loading, force trigger, DAC gain, etc.
+- **Parameter presets**: save/load robust JSON presets with schema version and export timestamp
 - **Data logging** to binary `.dat` files (same format as the C# app)
 - **DC removal filter** for display (same IIR coefficients)
 - **NumPy-backed ring buffer** — efficient circular data storage
