@@ -24,8 +24,10 @@ from qtpy.QtCore import Qt, QTimer
 from qtpy.QtWidgets import (
     QMainWindow,
     QWidget,
+    QGroupBox,
     QVBoxLayout,
     QHBoxLayout,
+    QSplitter,
     QFileDialog,
     QMessageBox,
 )
@@ -165,7 +167,7 @@ class DisplayPanel:
         self.dac_gain.changed.connect(lambda _v: self._host._on_dac_gain_changed())
 
 
-@magicclass(name="Basic")
+@magicclass(name="Basic", widget_type="groupbox")
 class TriggerBasicPanel:
     enable_trigger = field(bool, label="Enable Trigger")
     external_trigger_override = field(bool, label="External Trigger Override")
@@ -202,7 +204,7 @@ class TriggerBasicPanel:
     abs_threshold = field(str, label="Absolute Threshold")
 
 
-@magicclass(name="Advanced")
+@magicclass(name="Advanced", widget_type="groupbox")
 class TriggerAdvancedPanel:
     fixed_delay_ms = field(
         float,
@@ -247,7 +249,7 @@ class TriggerAdvancedPanel:
     custom_filter_status = field(str, label="Custom Filter Status")
 
 
-@magicclass(name="Actions")
+@magicclass(name="Actions", widget_type="groupbox")
 class TriggerActionsPanel:
     def __init__(self):
         self._host: Optional["MainWindow"] = None
@@ -280,14 +282,29 @@ class TriggerActionsPanel:
             self._host._on_force_trigger()
 
 
-@magicclass(name="Trigger / DSP", widget_type="tabbed")
 class TriggerDSPPanel:
-    basic = TriggerBasicPanel
-    advanced = TriggerAdvancedPanel
-    actions = TriggerActionsPanel
-
     def __init__(self):
         self._host: Optional["MainWindow"] = None
+        self.basic = TriggerBasicPanel()
+        self.advanced = TriggerAdvancedPanel()
+        self.actions = TriggerActionsPanel()
+
+        # Custom layout:
+        #   [ Basic ] [ Advanced ]
+        #           [ Actions  ]
+        self.native = QGroupBox("Trigger / DSP")
+        root = QHBoxLayout(self.native)
+        root.setContentsMargins(6, 6, 6, 6)
+        root.setSpacing(6)
+
+        root.addWidget(self.basic.native, stretch=1)
+
+        right_col = QVBoxLayout()
+        right_col.setSpacing(6)
+        right_col.addWidget(self.advanced.native, stretch=1)
+        right_col.addWidget(self.actions.native, stretch=0)
+        root.addLayout(right_col, stretch=1)
+
         self._set_defaults()
 
     def _bind_host(self, host: "MainWindow") -> None:
@@ -521,6 +538,10 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central)
         root = QVBoxLayout(central)
         root.setContentsMargins(4, 4, 4, 4)
+        root.setSpacing(6)
+
+        splitter = QSplitter(Qt.Orientation.Vertical)
+        root.addWidget(splitter)
 
         # ── Top: 4 plot panels in 2×2 grid ───────────────────────────────
         plot_widget = pg.GraphicsLayoutWidget()
@@ -550,14 +571,30 @@ class MainWindow(QMainWindow):
                 else:
                     self.thresh_lines.append(None)
 
-        root.addWidget(plot_widget, stretch=3)
+            splitter.addWidget(plot_widget)
 
         # ── Bottom: control panels ───────────────────────────────────────
+        controls_widget = QWidget()
         bottom = QHBoxLayout()
-        bottom.addWidget(self.connection_panel.native, stretch=1)
-        bottom.addWidget(self.trigger_panel.native, stretch=3)
-        bottom.addWidget(self.display_panel.native, stretch=1)
-        root.addLayout(bottom, stretch=1)
+        bottom.setContentsMargins(0, 0, 0, 0)
+        bottom.setSpacing(6)
+        controls_widget.setLayout(bottom)
+
+        left_stack = QWidget()
+        left_layout = QVBoxLayout(left_stack)
+        left_layout.setContentsMargins(0, 0, 0, 0)
+        left_layout.setSpacing(6)
+        left_layout.addWidget(self.connection_panel.native, stretch=1)
+        left_layout.addWidget(self.display_panel.native, stretch=1)
+
+        bottom.addWidget(left_stack, stretch=1)
+        bottom.addWidget(self.trigger_panel.native, stretch=2)
+
+        splitter.addWidget(controls_widget)
+        splitter.setChildrenCollapsible(False)
+        splitter.setStretchFactor(0, 6)
+        splitter.setStretchFactor(1, 2)
+        splitter.setSizes([760, 260])
 
     # =====================================================================
     #  Defaults
