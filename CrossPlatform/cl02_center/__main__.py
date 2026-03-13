@@ -1,4 +1,5 @@
 """Entry point for `python -m cl02_center`."""
+
 from __future__ import annotations
 
 import sys

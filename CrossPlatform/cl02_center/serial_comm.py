@@ -26,13 +26,14 @@ logger = logging.getLogger(__name__)
 
 # ── Protocol constants ───────────────────────────────────────────────────────
 
-HEADER = 0x3C   # '<'
-TAIL   = 0x3E   # '>'
-DATA_HEADER2 = 0xAD   # second header byte of a data packet
-TRANS_CH = 8           # channels per sample in a data packet
-PACKAGE_SIZE = 256     # bytes of raw sample data per packet
+HEADER = 0x3C  # '<'
+TAIL = 0x3E  # '>'
+DATA_HEADER2 = 0xAD  # second header byte of a data packet
+TRANS_CH = 8  # channels per sample in a data packet
+PACKAGE_SIZE = 256  # bytes of raw sample data per packet
 
 # ── Port discovery ───────────────────────────────────────────────────────────
+
 
 def find_cl02_port() -> Optional[str]:
     """Auto-detect the CL02 USB-CDC serial port (cross-platform)."""
@@ -49,7 +50,9 @@ def list_serial_ports() -> list[str]:
     """Return a list of all serial port device paths."""
     return [p.device for p in serial.tools.list_ports.comports()]
 
+
 # ── Command builder helpers ──────────────────────────────────────────────────
+
 
 def _frame(cmd_id: int, payload: bytes = b"") -> bytes:
     """Build a framed packet: <cmd_id payload>."""
@@ -57,6 +60,7 @@ def _frame(cmd_id: int, payload: bytes = b"") -> bytes:
 
 
 # ── Main serial manager ─────────────────────────────────────────────────────
+
 
 class SerialManager:
     """Manages the serial connection to the CL02 MCU."""
@@ -183,8 +187,10 @@ class SerialManager:
     # -- Custom filter (CMD 0x06) --
     def send_custom_filter(self, filter_id: int, data: bytes) -> None:
         padded = bytearray(512)
-        padded[:len(data)] = data[:512]
-        self._write(bytes([HEADER, 0x06, filter_id & 0xFF]) + bytes(padded) + bytes([TAIL]))
+        padded[: len(data)] = data[:512]
+        self._write(
+            bytes([HEADER, 0x06, filter_id & 0xFF]) + bytes(padded) + bytes([TAIL])
+        )
 
     # -- Gain update (CMD 0x10) --
     def set_gain(self, dsp_ch: int, gain: float) -> None:
@@ -210,14 +216,27 @@ class SerialManager:
         self._write(_frame(0x15, payload))
 
     # -- Stim timing params (CMD 0x20) --
-    def set_stim_param(self, dsp_id: int, delay: int, rnd_delay: int,
-                       duration: int, interval: int, cycle: int) -> None:
-        payload = bytes([dsp_id & 0xFF]) + struct.pack("<5I", delay, rnd_delay, duration, interval, cycle)
+    def set_stim_param(
+        self,
+        dsp_id: int,
+        delay: int,
+        rnd_delay: int,
+        duration: int,
+        interval: int,
+        cycle: int,
+    ) -> None:
+        payload = bytes([dsp_id & 0xFF]) + struct.pack(
+            "<5I", delay, rnd_delay, duration, interval, cycle
+        )
         self._write(_frame(0x20, payload))
 
     # -- DSP settings (CMD 0x21) --
-    def set_dsp_param(self, dsp_id: int, ma_ord: int, filter_type: int, formula: int) -> None:
-        payload = bytes([dsp_id & 0xFF]) + struct.pack("<3I", ma_ord, filter_type, formula)
+    def set_dsp_param(
+        self, dsp_id: int, ma_ord: int, filter_type: int, formula: int
+    ) -> None:
+        payload = bytes([dsp_id & 0xFF]) + struct.pack(
+            "<3I", ma_ord, filter_type, formula
+        )
         self._write(_frame(0x21, payload))
 
     # -- Start preview (CMD 0x40) --

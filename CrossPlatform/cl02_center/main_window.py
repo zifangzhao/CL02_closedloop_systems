@@ -47,14 +47,14 @@ DISPLAY_LENGTH_LABELS = [f"{s}s" for s in DISPLAY_LENGTHS]
 
 # Voltage gain look-up  (display_label → scale factor)
 VOLTAGE_GAINS = [
-    ("5V",    3.3 / 65536 / 5 * 2),
-    ("1V",    3.3 / 65536 * 2),
+    ("5V", 3.3 / 65536 / 5 * 2),
+    ("1V", 3.3 / 65536 * 2),
     ("500mV", 3.3 / 65536 * 2 * 2),
     ("100mV", 3.3 / 65536 * 10 * 2),
-    ("50mV",  3.3 / 65536 * 20 * 2),
-    ("10mV",  3.3 / 65536 * 100 * 2),
-    ("5mV",   3.3 / 65536 * 200 * 2),
-    ("1mV",   3.3 / 65536 * 1000 * 2),
+    ("50mV", 3.3 / 65536 * 20 * 2),
+    ("10mV", 3.3 / 65536 * 100 * 2),
+    ("5mV", 3.3 / 65536 * 200 * 2),
+    ("1mV", 3.3 / 65536 * 1000 * 2),
 ]
 VOLTAGE_GAIN_LABELS = [label for label, _ in VOLTAGE_GAINS]
 
@@ -76,12 +76,12 @@ FILTER_TYPES = [
 FILTER_FREQS = [4, 8, 13, 30, 80, 110, 250, 60, 200, 40, 100]
 
 DSP_MODES = [
-    ("Disabled",             0),
-    ("Single A",             1),
-    ("Single A (Hilbert)",   6),
-    ("Cascade A→B",          3),
-    ("Gated A & B",          4),
-    ("Random",               5),
+    ("Disabled", 0),
+    ("Single A", 1),
+    ("Single A (Hilbert)", 6),
+    ("Cascade A→B", 3),
+    ("Gated A & B", 4),
+    ("Random", 5),
 ]
 DSP_MODE_LABELS = [label for label, _ in DSP_MODES]
 
@@ -92,10 +92,10 @@ FORMULAS = [
 ]
 
 DOUT_SIGNALS = [
-    ("Stimulator 1 (output)",  0x02),
-    ("Stimulator 2 (output)",  0x08),
-    ("Internal Trigger 1",     0x01),
-    ("Internal Trigger 2",     0x04),
+    ("Stimulator 1 (output)", 0x02),
+    ("Stimulator 2 (output)", 0x08),
+    ("Internal Trigger 1", 0x01),
+    ("Internal Trigger 2", 0x04),
 ]
 DOUT_SIGNAL_LABELS = [label for label, _ in DOUT_SIGNALS]
 
@@ -131,11 +131,21 @@ class ConnectionPanel:
 
 @magicclass(name="Display", widget_type="groupbox")
 class DisplayPanel:
-    display_time = field(str, label="Display time", options={"choices": DISPLAY_LENGTH_LABELS})
-    input_gain = field(str, label="Display gain (Input)", options={"choices": VOLTAGE_GAIN_LABELS})
-    dsp_gain = field(str, label="Display gain (DSP)", options={"choices": VOLTAGE_GAIN_LABELS})
-    dout_signal = field(str, label="Preview signal (DOUT)", options={"choices": DOUT_SIGNAL_LABELS})
-    dac_gain = field(float, label="DAC Gain", options={"min": 0.1, "max": 1000.0, "step": 0.1})
+    display_time = field(
+        str, label="Display time", options={"choices": DISPLAY_LENGTH_LABELS}
+    )
+    input_gain = field(
+        str, label="Display gain (Input)", options={"choices": VOLTAGE_GAIN_LABELS}
+    )
+    dsp_gain = field(
+        str, label="Display gain (DSP)", options={"choices": VOLTAGE_GAIN_LABELS}
+    )
+    dout_signal = field(
+        str, label="Preview signal (DOUT)", options={"choices": DOUT_SIGNAL_LABELS}
+    )
+    dac_gain = field(
+        float, label="DAC Gain", options={"min": 0.1, "max": 1000.0, "step": 0.1}
+    )
     remove_dc = field(bool, label="Remove DC for display")
 
     def __init__(self):
@@ -160,33 +170,77 @@ class TriggerBasicPanel:
     dsp_mode = field(str, label="DSP mode", options={"choices": DSP_MODE_LABELS})
     dsp_id = field(int, label="DSP ID", options={"min": 0, "max": 1})
 
-    interval_ms = field(float, label="Interval (ms)", options={"min": 0.0, "max": 65535.0, "step": 0.1})
-    pulse_width_ms = field(float, label="Pulse Width (ms)", options={"min": 0.0, "max": 65535.0, "step": 0.1})
+    interval_ms = field(
+        float, label="Interval (ms)", options={"min": 0.0, "max": 65535.0, "step": 0.1}
+    )
+    pulse_width_ms = field(
+        float,
+        label="Pulse Width (ms)",
+        options={"min": 0.0, "max": 65535.0, "step": 0.1},
+    )
     pulse_cycles = field(int, label="Pulse Cycles", options={"min": 1, "max": 65535})
 
     filter_type = field(str, label="Filter", options={"choices": FILTER_TYPES})
     ma_order = field(int, label="MA Order", options={"min": 0, "max": 512})
     formula = field(str, label="Formula", options={"choices": FORMULAS})
 
-    trigger_threshold = field(float, label="Trigger Threshold", options={"min": 0.1, "max": 65535.0, "step": 0.1})
-    trigger_level_std = field(float, label="Trigger Level (× Std)", options={"min": 0.1, "max": 100.0, "step": 0.1})
-    trigger_mode = field(str, label="Trigger Mode", options={"choices": ["First", "Last"]})
+    trigger_threshold = field(
+        float,
+        label="Trigger Threshold",
+        options={"min": 0.1, "max": 65535.0, "step": 0.1},
+    )
+    trigger_level_std = field(
+        float,
+        label="Trigger Level (× Std)",
+        options={"min": 0.1, "max": 100.0, "step": 0.1},
+    )
+    trigger_mode = field(
+        str, label="Trigger Mode", options={"choices": ["First", "Last"]}
+    )
     abs_threshold = field(str, label="Absolute Threshold")
 
 
 @magicclass(name="Advanced")
 class TriggerAdvancedPanel:
-    fixed_delay_ms = field(float, label="Fixed Delay (ms)", options={"min": 0.0, "max": 3000.0, "step": 0.1})
-    max_rnd_delay_ms = field(float, label="Max Rnd Delay (ms)", options={"min": 0.0, "max": 3000.0, "step": 0.1})
+    fixed_delay_ms = field(
+        float,
+        label="Fixed Delay (ms)",
+        options={"min": 0.0, "max": 3000.0, "step": 0.1},
+    )
+    max_rnd_delay_ms = field(
+        float,
+        label="Max Rnd Delay (ms)",
+        options={"min": 0.0, "max": 3000.0, "step": 0.1},
+    )
 
-    training_delay_s = field(int, label="Training Delay (s)", options={"min": 0, "max": 65535})
-    training_duration_s = field(int, label="Training Duration (s)", options={"min": 0, "max": 65535})
+    training_delay_s = field(
+        int, label="Training Delay (s)", options={"min": 0, "max": 65535}
+    )
+    training_duration_s = field(
+        int, label="Training Duration (s)", options={"min": 0, "max": 65535}
+    )
 
-    random_trigger_min_ms = field(float, label="Random Trigger Min (ms)", options={"min": 0.0, "max": 6553500.0, "step": 100.0})
-    random_trigger_max_ms = field(float, label="Random Trigger Max (ms)", options={"min": 100.0, "max": 6553500.0, "step": 100.0})
+    random_trigger_min_ms = field(
+        float,
+        label="Random Trigger Min (ms)",
+        options={"min": 0.0, "max": 6553500.0, "step": 100.0},
+    )
+    random_trigger_max_ms = field(
+        float,
+        label="Random Trigger Max (ms)",
+        options={"min": 100.0, "max": 6553500.0, "step": 100.0},
+    )
 
-    phase_lo_deg = field(float, label="Phase Low (deg)", options={"min": -180.0, "max": 180.0, "step": 0.1})
-    phase_hi_deg = field(float, label="Phase High (deg)", options={"min": -180.0, "max": 180.0, "step": 0.1})
+    phase_lo_deg = field(
+        float,
+        label="Phase Low (deg)",
+        options={"min": -180.0, "max": 180.0, "step": 0.1},
+    )
+    phase_hi_deg = field(
+        float,
+        label="Phase High (deg)",
+        options={"min": -180.0, "max": 180.0, "step": 0.1},
+    )
 
     custom_filter_status = field(str, label="Custom Filter Status")
 
@@ -351,19 +405,33 @@ class TriggerDSPPanel:
         if self._host is None:
             return
 
-        self.enable_trigger.changed.connect(lambda v: self._host._on_enable_trigger(bool(v)))
+        self.enable_trigger.changed.connect(
+            lambda v: self._host._on_enable_trigger(bool(v))
+        )
         self.dsp_id.changed.connect(lambda _v: self._host._on_dsp_id_changed())
 
         self.interval_ms.changed.connect(lambda _v: self._host._on_stim_param_changed())
-        self.pulse_width_ms.changed.connect(lambda _v: self._host._on_stim_param_changed())
-        self.pulse_cycles.changed.connect(lambda _v: self._host._on_stim_param_changed())
-        self.fixed_delay_ms.changed.connect(lambda _v: self._host._on_stim_param_changed())
-        self.max_rnd_delay_ms.changed.connect(lambda _v: self._host._on_stim_param_changed())
+        self.pulse_width_ms.changed.connect(
+            lambda _v: self._host._on_stim_param_changed()
+        )
+        self.pulse_cycles.changed.connect(
+            lambda _v: self._host._on_stim_param_changed()
+        )
+        self.fixed_delay_ms.changed.connect(
+            lambda _v: self._host._on_stim_param_changed()
+        )
+        self.max_rnd_delay_ms.changed.connect(
+            lambda _v: self._host._on_stim_param_changed()
+        )
 
         self.filter_type.changed.connect(
-            lambda _v: self._host._on_filter_changed(self._choice_index(self.filter_type.value, FILTER_TYPES))
+            lambda _v: self._host._on_filter_changed(
+                self._choice_index(self.filter_type.value, FILTER_TYPES)
+            )
         )
-        self.trigger_threshold.changed.connect(lambda _v: self._host._on_thresh_changed())
+        self.trigger_threshold.changed.connect(
+            lambda _v: self._host._on_thresh_changed()
+        )
         self.trigger_level_std.changed.connect(lambda _v: self._host._on_gain_changed())
         self.trigger_mode.changed.connect(lambda _v: self._host._on_trig_mode_changed())
         self.phase_lo_deg.changed.connect(lambda _v: self._host._on_phase_changed())
@@ -376,7 +444,9 @@ class TriggerDSPPanel:
         except ValueError:
             return 0
 
+
 # ── Main window ──────────────────────────────────────────────────────────────
+
 
 class MainWindow(QMainWindow):
     def __init__(
@@ -394,7 +464,9 @@ class MainWindow(QMainWindow):
         self.serial = SerialManager()
         self.serial.on_data = self._on_serial_data
 
-        self.data = DataSource(N_DISPLAY_CH, DISPLAY_LENGTHS[-1] * SAMPLE_RATE * 100, SAMPLE_RATE)
+        self.data = DataSource(
+            N_DISPLAY_CH, DISPLAY_LENGTHS[-1] * SAMPLE_RATE * 100, SAMPLE_RATE
+        )
         self.dc_filters = [make_dc_removal_filter(), make_dc_removal_filter()]
 
         self.dsp_id_curr = 0
@@ -406,9 +478,15 @@ class MainWindow(QMainWindow):
         self.log_writer = None
 
         # magic-class panels (pre-created in entry points for stability)
-        self.trigger_panel = trigger_panel if trigger_panel is not None else TriggerDSPPanel()
-        self.connection_panel = connection_panel if connection_panel is not None else ConnectionPanel()
-        self.display_panel = display_panel if display_panel is not None else DisplayPanel()
+        self.trigger_panel = (
+            trigger_panel if trigger_panel is not None else TriggerDSPPanel()
+        )
+        self.connection_panel = (
+            connection_panel if connection_panel is not None else ConnectionPanel()
+        )
+        self.display_panel = (
+            display_panel if display_panel is not None else DisplayPanel()
+        )
 
         self.trigger_panel._bind_host(self)
         self.connection_panel._bind_host(self)
@@ -452,7 +530,9 @@ class MainWindow(QMainWindow):
                 self.plots.append(p)
                 self.curves.append(curve)
                 if idx == 2:
-                    line = pg.InfiniteLine(angle=0, pen=pg.mkPen("r", width=1, style=Qt.PenStyle.DashLine))
+                    line = pg.InfiniteLine(
+                        angle=0, pen=pg.mkPen("r", width=1, style=Qt.PenStyle.DashLine)
+                    )
                     line.setVisible(False)
                     p.addItem(line)
                     self.thresh_lines.append(line)
@@ -547,7 +627,9 @@ class MainWindow(QMainWindow):
             param2=float(self.trigger_panel.phase_hi_deg.value / 180 * math.pi),
         )
         self.device.set_sys_params(0, gain=self.device.sys.trigger_gain[0], **common)
-        self.device.set_sys_params(dsp_id, gain=float(self.trigger_panel.trigger_level_std.value), **common)
+        self.device.set_sys_params(
+            dsp_id, gain=float(self.trigger_panel.trigger_level_std.value), **common
+        )
 
         try:
             formula_idx = FORMULAS.index(self.trigger_panel.formula.value)
@@ -605,7 +687,7 @@ class MainWindow(QMainWindow):
 
         if self.log_writer:
             try:
-                self.log_writer.write(raw[:n_samples * 2 * TRANS_CH])
+                self.log_writer.write(raw[: n_samples * 2 * TRANS_CH])
             except Exception:
                 pass
 
@@ -648,7 +730,9 @@ class MainWindow(QMainWindow):
             return
 
         if bool(self.connection_panel.log_data.value):
-            path, _ = QFileDialog.getSaveFileName(self, "Save Data", "", "Binary File (*.dat)")
+            path, _ = QFileDialog.getSaveFileName(
+                self, "Save Data", "", "Binary File (*.dat)"
+            )
             if path:
                 self.connection_panel.log_file.value = path
                 self.log_file = open(path, "wb")
@@ -718,7 +802,9 @@ class MainWindow(QMainWindow):
             ft = self.device.func[dsp_id]
             if self.device.sys.cl_mode > 5:
                 ft += 24
-            self.serial.set_dsp_param(dsp_id, self.device.ma_ord[dsp_id], ft, self.device.formula[dsp_id])
+            self.serial.set_dsp_param(
+                dsp_id, self.device.ma_ord[dsp_id], ft, self.device.formula[dsp_id]
+            )
             time.sleep(0.05)
 
     def _send_cl_params(self) -> None:
@@ -745,15 +831,26 @@ class MainWindow(QMainWindow):
         self.serial.set_stim(checked)
 
     def _on_stim_param_changed(self) -> None:
-        if self.trigger_panel.pulse_width_ms.value > self.trigger_panel.interval_ms.value:
-            self.trigger_panel.interval_ms.value = self.trigger_panel.pulse_width_ms.value
+        if (
+            self.trigger_panel.pulse_width_ms.value
+            > self.trigger_panel.interval_ms.value
+        ):
+            self.trigger_panel.interval_ms.value = (
+                self.trigger_panel.pulse_width_ms.value
+            )
         self._send_stim_param()
 
     def _on_gain_changed(self) -> None:
-        self.serial.set_gain(int(self.trigger_panel.dsp_id.value), float(self.trigger_panel.trigger_level_std.value))
+        self.serial.set_gain(
+            int(self.trigger_panel.dsp_id.value),
+            float(self.trigger_panel.trigger_level_std.value),
+        )
 
     def _on_thresh_changed(self) -> None:
-        self.serial.set_gain_abs(int(self.trigger_panel.dsp_id.value), float(self.trigger_panel.trigger_threshold.value))
+        self.serial.set_gain_abs(
+            int(self.trigger_panel.dsp_id.value),
+            float(self.trigger_panel.trigger_threshold.value),
+        )
 
     def _on_filter_changed(self, idx: int) -> None:
         if idx < len(FILTER_FREQS):
@@ -822,10 +919,18 @@ class MainWindow(QMainWindow):
         if idx in mode_values:
             self.trigger_panel.dsp_mode.value = DSP_MODES[mode_values.index(idx)][0]
 
-        self.trigger_panel.interval_ms.value = d.sys.stim_interval[0] / ratio if ratio else 0
-        self.trigger_panel.fixed_delay_ms.value = d.sys.stim_delay[0] / ratio if ratio else 0
-        self.trigger_panel.max_rnd_delay_ms.value = d.sys.stim_rnd_delay[0] / ratio if ratio else 0
-        self.trigger_panel.pulse_width_ms.value = d.sys.pulse_width[0] / ratio if ratio else 0
+        self.trigger_panel.interval_ms.value = (
+            d.sys.stim_interval[0] / ratio if ratio else 0
+        )
+        self.trigger_panel.fixed_delay_ms.value = (
+            d.sys.stim_delay[0] / ratio if ratio else 0
+        )
+        self.trigger_panel.max_rnd_delay_ms.value = (
+            d.sys.stim_rnd_delay[0] / ratio if ratio else 0
+        )
+        self.trigger_panel.pulse_width_ms.value = (
+            d.sys.pulse_width[0] / ratio if ratio else 0
+        )
         self.trigger_panel.pulse_cycles.value = d.sys.pulse_cyc[0]
         self.trigger_panel.trigger_level_std.value = d.sys.trigger_gain[sid]
 

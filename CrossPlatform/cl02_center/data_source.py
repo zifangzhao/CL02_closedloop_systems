@@ -23,14 +23,21 @@ class DataSource:
         Nominal sample rate in Hz — stored for convenience.
     """
 
-    __slots__ = ("n_channels", "capacity", "sample_rate", "_buf", "_write_pos", "_total_written")
+    __slots__ = (
+        "n_channels",
+        "capacity",
+        "sample_rate",
+        "_buf",
+        "_write_pos",
+        "_total_written",
+    )
 
     def __init__(self, n_channels: int, max_samples: int, sample_rate: int = 1000):
         self.n_channels = n_channels
         self.capacity = max_samples
         self.sample_rate = sample_rate
         self._buf = np.zeros((n_channels, max_samples), dtype=np.float64)
-        self._write_pos = 0      # next index to write
+        self._write_pos = 0  # next index to write
         self._total_written = 0  # cumulative sample count (never resets)
 
     # ── Write ────────────────────────────────────────────────────────────
@@ -42,11 +49,11 @@ class DataSource:
 
         end = self._write_pos + n_samps
         if end <= self.capacity:
-            self._buf[:, self._write_pos:end] = data
+            self._buf[:, self._write_pos : end] = data
         else:
             # Wrap around
             first = self.capacity - self._write_pos
-            self._buf[:, self._write_pos:] = data[:, :first]
+            self._buf[:, self._write_pos :] = data[:, :first]
             remainder = n_samps - first
             self._buf[:, :remainder] = data[:, first:]
 
@@ -68,10 +75,10 @@ class DataSource:
 
         start = (self._write_pos - n) % self.capacity
         if start + n <= self.capacity:
-            return self._buf[:, start:start + n].copy()
+            return self._buf[:, start : start + n].copy()
         else:
             first = self.capacity - start
-            return np.hstack([self._buf[:, start:], self._buf[:, :n - first]]).copy()
+            return np.hstack([self._buf[:, start:], self._buf[:, : n - first]]).copy()
 
     def reset(self) -> None:
         self._buf[:] = 0.0

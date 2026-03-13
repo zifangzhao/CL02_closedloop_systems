@@ -15,10 +15,11 @@ from typing import List
 # ── Constants ────────────────────────────────────────────────────────────────
 
 SYSTEM_PARAM_SIZE = 512  # bytes sent with CMD 0x01
-DSP_PARAM_SIZE = 512     # bytes sent with CMD 0x02
-DSP_COUNT = 2            # number of independent DSP channels
+DSP_PARAM_SIZE = 512  # bytes sent with CMD 0x02
+DSP_COUNT = 2  # number of independent DSP channels
 
 # ── System parameters ────────────────────────────────────────────────────────
+
 
 @dataclass
 class SystemParams:
@@ -87,14 +88,16 @@ class SystemParams:
         buf = bytearray(SYSTEM_PARAM_SIZE)
         le = "<"  # little-endian
 
-        struct.pack_into(f"{le}I", buf, 0, self.fs)             # 0: fs
+        struct.pack_into(f"{le}I", buf, 0, self.fs)  # 0: fs
         # 4: AUX_mode (unused, 0)
         # 8: Nch (unused, 0)
         # 12..139: convCmd[64] — 128 bytes (unused)
         # 140: dispCH
         # 144: func1, 148: func2, 152: cmd_ch, 156: rec_ch  — unused here
-        struct.pack_into(f"{le}I", buf, 160, self.stim_mode)    # 160: stim_mode
-        struct.pack_into(f"{le}I", buf, 164, self.cl_mode)      # 164: cl_mode (was at +168 in C#; offsets from the struct def)
+        struct.pack_into(f"{le}I", buf, 160, self.stim_mode)  # 160: stim_mode
+        struct.pack_into(
+            f"{le}I", buf, 164, self.cl_mode
+        )  # 164: cl_mode (was at +168 in C#; offsets from the struct def)
 
         # Offsets from C# struct definition
         # NOTE: the C# struct comments show cumulative byte offsets.  We use
@@ -114,58 +117,78 @@ class SystemParams:
         # Total = 512
 
         off = 0
-        struct.pack_into(f"{le}I", buf, off, self.fs);            off += 4   # fs
-        off += 4   # AUX_mode
-        off += 4   # Nch
-        off += 128 # convCmd
-        off += 4   # dispCH
-        off += 4   # func1
-        off += 4   # func2
-        off += 4   # cmd_ch
-        off += 4   # rec_ch
-        struct.pack_into(f"{le}I", buf, off, self.stim_mode);    off += 4
-        struct.pack_into(f"{le}I", buf, off, self.cl_mode);      off += 4
+        struct.pack_into(f"{le}I", buf, off, self.fs)
+        off += 4  # fs
+        off += 4  # AUX_mode
+        off += 4  # Nch
+        off += 128  # convCmd
+        off += 4  # dispCH
+        off += 4  # func1
+        off += 4  # func2
+        off += 4  # cmd_ch
+        off += 4  # rec_ch
+        struct.pack_into(f"{le}I", buf, off, self.stim_mode)
+        off += 4
+        struct.pack_into(f"{le}I", buf, off, self.cl_mode)
+        off += 4
 
         for i in range(4):
-            struct.pack_into(f"{le}I", buf, off, self.stim_interval[i]); off += 4
+            struct.pack_into(f"{le}I", buf, off, self.stim_interval[i])
+            off += 4
         for i in range(4):
-            struct.pack_into(f"{le}I", buf, off, self.pulse_width[i]); off += 4
+            struct.pack_into(f"{le}I", buf, off, self.pulse_width[i])
+            off += 4
         for i in range(4):
-            struct.pack_into(f"{le}I", buf, off, self.pulse_cyc[i]); off += 4
+            struct.pack_into(f"{le}I", buf, off, self.pulse_cyc[i])
+            off += 4
         for i in range(4):
-            struct.pack_into(f"{le}I", buf, off, self.stim_delay[i]); off += 4
+            struct.pack_into(f"{le}I", buf, off, self.stim_delay[i])
+            off += 4
         for i in range(4):
-            struct.pack_into(f"{le}I", buf, off, self.stim_rnd_delay[i]); off += 4
+            struct.pack_into(f"{le}I", buf, off, self.stim_rnd_delay[i])
+            off += 4
 
-        struct.pack_into(f"{le}I", buf, off, self.trigger_train_start); off += 4
-        struct.pack_into(f"{le}I", buf, off, self.trigger_train_duration); off += 4
+        struct.pack_into(f"{le}I", buf, off, self.trigger_train_start)
+        off += 4
+        struct.pack_into(f"{le}I", buf, off, self.trigger_train_duration)
+        off += 4
 
         for i in range(4):
-            struct.pack_into(f"{le}f", buf, off, self.trigger_gain[i]); off += 4
+            struct.pack_into(f"{le}f", buf, off, self.trigger_gain[i])
+            off += 4
 
         off += 4  # SD_capacity
-        struct.pack_into(f"{le}I", buf, off, self.led_pulse_cnt); off += 4
-        struct.pack_into(f"{le}I", buf, off, self.preview_channel_bank); off += 4
+        struct.pack_into(f"{le}I", buf, off, self.led_pulse_cnt)
+        off += 4
+        struct.pack_into(f"{le}I", buf, off, self.preview_channel_bank)
+        off += 4
         off += 4  # system_status
 
         for i in range(4):
-            struct.pack_into(f"{le}I", buf, off, self.stim_intensity[i]); off += 4
+            struct.pack_into(f"{le}I", buf, off, self.stim_intensity[i])
+            off += 4
         for i in range(4):
-            struct.pack_into(f"{le}I", buf, off, self.stim_ch[i]); off += 4
+            struct.pack_into(f"{le}I", buf, off, self.stim_ch[i])
+            off += 4
 
-        struct.pack_into(f"{le}I", buf, off, self.randtrig_min); off += 4
-        struct.pack_into(f"{le}I", buf, off, self.randtrig_max); off += 4
+        struct.pack_into(f"{le}I", buf, off, self.randtrig_min)
+        off += 4
+        struct.pack_into(f"{le}I", buf, off, self.randtrig_max)
+        off += 4
 
         for i in range(4):
-            struct.pack_into(f"{le}f", buf, off, self.cl_param1[i]); off += 4
+            struct.pack_into(f"{le}f", buf, off, self.cl_param1[i])
+            off += 4
         for i in range(4):
-            struct.pack_into(f"{le}f", buf, off, self.cl_param2[i]); off += 4
+            struct.pack_into(f"{le}f", buf, off, self.cl_param2[i])
+            off += 4
 
         # remainder is unassigned padding — already zeroed
         return bytes(buf)
 
 
 # ── DSP parameters ───────────────────────────────────────────────────────────
+
 
 @dataclass
 class DspParams:
@@ -182,14 +205,19 @@ class DspParams:
         for i, v in enumerate(self.ch_ord[:128]):
             buf[i] = v & 0xFF
         off = 128
-        struct.pack_into("<I", buf, off, self.formula); off += 4
-        struct.pack_into("<I", buf, off, self.func1);   off += 4
-        struct.pack_into("<I", buf, off, self.func2);   off += 4
-        struct.pack_into("<I", buf, off, self.ma_ord);  off += 4
+        struct.pack_into("<I", buf, off, self.formula)
+        off += 4
+        struct.pack_into("<I", buf, off, self.func1)
+        off += 4
+        struct.pack_into("<I", buf, off, self.func2)
+        off += 4
+        struct.pack_into("<I", buf, off, self.ma_ord)
+        off += 4
         return bytes(buf)
 
 
 # ── Convenience wrapper (mirrors CE_core class) ─────────────────────────────
+
 
 class DeviceConfig:
     """High-level device configuration that aggregates system + DSP params."""
@@ -208,7 +236,9 @@ class DeviceConfig:
     def set_sys_params(self, dsp_idx: int, **kw) -> None:
         self.sys.set_sys(dsp_idx, **kw)
 
-    def set_dsp_params(self, dsp_idx: int, formula: int, func1: int, ma_ord: int) -> None:
+    def set_dsp_params(
+        self, dsp_idx: int, formula: int, func1: int, ma_ord: int
+    ) -> None:
         self.formula[dsp_idx] = formula
         self.func[dsp_idx] = func1
         self.ma_ord[dsp_idx] = ma_ord
