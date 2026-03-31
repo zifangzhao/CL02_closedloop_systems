@@ -81,3 +81,13 @@ Trigger time logic
 8. Switch device back to Run mode  (Switch is under the USB connector, Same as BNC connector side is Run mode, device must be powered-off)
 
 ![Untitled](CL02%20Instructions%2031aee3053eb14f1c8ba4a66c70837c62/Untitled%203.png)
+
+# Developer Notes
+
+```bash
+# Build the firmware
+make clean && make
+
+# Flash the firmware
+make flash
+```
