@@ -1,0 +1,104 @@
+site_name: CL02 Closed-Loop System
+site_description: Documentation for the CL02 closed-loop electrophysiology trigger controller
+site_url: https://zifangzhao.github.io/CL02_closedloop_systems/
+repo_url: https://github.com/zifangzhao/CL02_closedloop_systems
+repo_name: zifangzhao/CL02_closedloop_systems
+edit_uri: edit/V2.2/docs/
+
+theme:
+  name: material
+  language: en
+  icon:
+    logo: material/access-point
+    repo: fontawesome/brands/github
+  font:
+    text: Inter
+    code: JetBrains Mono
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.action.edit
+    - content.code.copy
+    - content.tabs.link
+  palette:
+    - scheme: default
+      primary: blue grey
+      accent: cyan
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue grey
+      accent: cyan
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra_css:
+  - stylesheets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/zifangzhao/CL02_closedloop_systems
+      name: CL02 on GitHub
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - getting-started/index.md
+      - Installation: getting-started/installation.md
+      - First Run: getting-started/first-run.md
+      - Firmware Update: getting-started/firmware-update.md
+  - Hardware:
+      - hardware/index.md
+      - Connections and Indicators: hardware/connections-indicators.md
+      - PCB and Assembly Files: hardware/pcb.md
+  - Software:
+      - software/index.md
+      - Control Center: software/control-center.md
+      - Trigger Logic: software/trigger-logic.md
+      - External Control: software/external-control.md
+      - Filters: software/filters.md
+  - Firmware and Analysis:
+      - firmware-analysis/index.md
+      - Firmware: firmware-analysis/firmware.md
+      - MATLAB Tools: firmware-analysis/matlab.md
+  - Reference:
+      - reference/index.md
+      - Parameters: reference/parameters.md
+      - Troubleshooting: reference/troubleshooting.md
+      - Contributing: reference/contributing.md
+
+copyright: Copyright &copy; CL02 contributors

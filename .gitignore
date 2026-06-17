@@ -39,3 +39,5 @@ Windows/packages/EntityFramework.zh-Hans.6.1.3/lib/net40/zh-Hans/EntityFramework
 Windows/packages/EntityFramework.zh-Hans.6.1.3/lib/net40/zh-Hans/EntityFramework.xml
 Windows/packages/EntityFramework.zh-Hans.6.1.3/lib/net45/zh-Hans/EntityFramework.SqlServer.xml
 Windows/packages/EntityFramework.zh-Hans.6.1.3/lib/net45/zh-Hans/EntityFramework.xml
+site/
+.codex-cl02-http*.log
