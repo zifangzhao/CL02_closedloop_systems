@@ -157,4 +157,13 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PostBuildEvent>for /f %25%25i in ('powershell -NoProfile -Command "(Get-Item \"$(TargetPath)\").VersionInfo.FileVersion"') do set APPVER=%25%25i
+
+if not exist "$(SolutionDir)CL02_installer.nsi" exit /b 1
+
+"C:\Program Files (x86)\NSIS\makensis.exe" ^
+  /DPRODUCT_VERSION=%25APPVER%25 ^
+  "$(SolutionDir)CL02_installer.nsi"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

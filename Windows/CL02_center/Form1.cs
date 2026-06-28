@@ -41,6 +41,16 @@ namespace CL02_center
     }
     public partial class CL02_center_MainInterface : Form
     {
+        private class ComPortItem
+        {
+            public string PortName { get; set; }
+            public string DisplayName { get; set; }
+
+            public override string ToString()
+            {
+                return DisplayName;
+            }
+        }
 
         private List<Panel> Panels = new List<Panel>();
 
@@ -198,6 +208,7 @@ namespace CL02_center
             }
 
             comboBox_TrigMode.SelectedIndex = 0;
+            RefreshComPortDropdown();
             //InitSocket();
             InitTimer();
         }
@@ -334,15 +345,13 @@ namespace CL02_center
     private void button1_Click(object sender, EventArgs e)
         {
             checkBox_LogFile.Enabled = false;
-            comboBoxPort.Items.Clear();
-            string name = "com" + GetComNum().ToString();
-            //portname = System.IO.Ports.SerialPort.GetPortNames();
-            //foreach (string i in portname)
-            //{
-            //    comboBoxPort.Items.Add(i);
-            //}
-            comboBoxPort.Items.Add(name);
-            comboBoxPort.Text = name;
+            RefreshComPortDropdown();
+            ComPortItem selectedPort = comboBoxPort.SelectedItem as ComPortItem;
+            if (selectedPort == null)
+            {
+                MessageBox.Show("No COM port selected. Please choose one from the list.");
+                return;
+            }
 
             try
             {
@@ -360,7 +369,7 @@ namespace CL02_center
                     strWR = new System.IO.BinaryWriter(fs_buf);
                 }
 
-                serialPort1.PortName = name;
+                serialPort1.PortName = selectedPort.PortName;
                 serialPort1.Open();
                 serialPort1.DiscardInBuffer();
 
@@ -495,6 +504,103 @@ namespace CL02_center
                 strs = null;
             }
         }//end of func GetHarewareInfo().
+
+        private void RefreshComPortDropdown()
+        {
+            string selectedPort = (comboBoxPort.SelectedItem as ComPortItem)?.PortName;
+
+            Dictionary<string, string> friendlyNameMap = GetComPortFriendlyNames();
+            string[] ports = System.IO.Ports.SerialPort.GetPortNames()
+                .OrderBy(GetComPortSortKey)
+                .ThenBy(p => p, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            comboBoxPort.Items.Clear();
+            foreach (string port in ports)
+            {
+                string friendlyName;
+                if (!friendlyNameMap.TryGetValue(port, out friendlyName))
+                {
+                    friendlyName = port;
+                }
+
+                comboBoxPort.Items.Add(new ComPortItem
+                {
+                    PortName = port,
+                    DisplayName = string.Format("{0} - {1}", port.ToUpperInvariant(), friendlyName)
+                });
+            }
+
+            if (comboBoxPort.Items.Count == 0)
+            {
+                return;
+            }
+
+            ComPortItem matchedPort = comboBoxPort.Items.Cast<ComPortItem>()
+                .FirstOrDefault(x => string.Equals(x.PortName, selectedPort, StringComparison.OrdinalIgnoreCase));
+            if (matchedPort != null)
+            {
+                comboBoxPort.SelectedItem = matchedPort;
+            }
+            else if (comboBoxPort.Items.Count == 1)
+            {
+                comboBoxPort.SelectedIndex = 0;
+            }
+            else
+            {
+                comboBoxPort.SelectedIndex = -1;
+            }
+        }
+
+        private static Dictionary<string, string> GetComPortFriendlyNames()
+        {
+            Dictionary<string, string> map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            string[] deviceNames = GetHarewareInfo(HardwareEnum.Win32_PnPEntity, "Name");
+            if (deviceNames == null)
+            {
+                return map;
+            }
+
+            foreach (string deviceName in deviceNames)
+            {
+                if (string.IsNullOrWhiteSpace(deviceName))
+                {
+                    continue;
+                }
+
+                int start = deviceName.LastIndexOf("(COM", StringComparison.OrdinalIgnoreCase);
+                int end = deviceName.LastIndexOf(")");
+                if (start < 0 || end <= start)
+                {
+                    continue;
+                }
+
+                string portName = deviceName.Substring(start + 1, end - start - 1).Trim();
+                if (!string.IsNullOrWhiteSpace(portName) && !map.ContainsKey(portName))
+                {
+                    map.Add(portName, deviceName.Trim());
+                }
+            }
+
+            return map;
+        }
+
+        private static int GetComPortSortKey(string portName)
+        {
+            if (string.IsNullOrWhiteSpace(portName))
+            {
+                return int.MaxValue;
+            }
+
+            string numberPart = new string(portName.Where(char.IsDigit).ToArray());
+            int portNumber;
+            if (int.TryParse(numberPart, out portNumber))
+            {
+                return portNumber;
+            }
+
+            return int.MaxValue;
+        }
 
         /// <summary>
         /// 枚举win32 api
@@ -949,9 +1055,7 @@ namespace CL02_center
 
         private void comboBoxPort_MouseClick(object sender, MouseEventArgs e)
         {
-            int comport = GetComNum();
-            comboBoxPort.Items.Clear();
-            comboBoxPort.Items.Add("com" + comport.ToString());
+            RefreshComPortDropdown();
         }
 
         private void numericUpDown_TgInt_ValueChanged(object sender, EventArgs e)

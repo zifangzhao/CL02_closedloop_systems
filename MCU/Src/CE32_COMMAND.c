@@ -99,7 +99,7 @@ int CE32_COMMAND_Dequeue_Byte(CE32_command *handle,uint8_t* data)	//Continuous o
 			handle->stream_out.logging=1;
 		}
 		*data=handle->stream_out.addr[handle->stream_out.idx++];
-		if(handle->stream_out.idx>=handle->stream_out.len)
+		if(handle->stream_out.idx>=handle->stream_out.len)                                                                                                                                                                                                               
 		{
 			handle->stream_out.logging=0;
 			CE32_COMMAND_DequeueCmd(handle,NULL,NULL);

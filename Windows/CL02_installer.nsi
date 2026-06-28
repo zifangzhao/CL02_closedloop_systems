@@ -2,7 +2,10 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "CL02 Closed-loop system"
-!define PRODUCT_VERSION "2.2.0.1"
+!ifndef PRODUCT_VERSION
+  !define PRODUCT_VERSION "2.2.0.1"
+!endif
+
 !define PRODUCT_PUBLISHER "FTL"
 !define PRODUCT_WEB_SITE "https://zifangzhao.notion.site/CL02-Instructions-d0e2a1d6ffdf4666bf22a0d3cb299155"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\CL02_center.exe"
@@ -38,7 +41,7 @@
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "Setup_${PRODUCT_VERSION}.exe"
+OutFile "CL02_Setup_${PRODUCT_VERSION}.exe"
 InstallDir "$PROGRAMFILES\CL02 Closed-loop system"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show

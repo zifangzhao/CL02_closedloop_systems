@@ -41,3 +41,12 @@ Windows/packages/EntityFramework.zh-Hans.6.1.3/lib/net45/zh-Hans/EntityFramework
 Windows/packages/EntityFramework.zh-Hans.6.1.3/lib/net45/zh-Hans/EntityFramework.xml
 site/
 .codex-cl02-http*.log
+Windows/CL02_center/bin/Debug/CL02_center.application
+Windows/CL02_center/bin/Debug/CL02_center.exe
+Windows/CL02_center/bin/Debug/app.publish/CL02_center.exe
+Windows/CL02_center/obj/Debug/CL02_center.application
+Windows/CL02_center/obj/Debug/CL02_center.csproj.FileListAbsolute.txt
+Windows/CL02_center/obj/Debug/CL02_center.exe
+Windows/CL02_center/obj/Release/CL02_center.application
+Windows/CL02_center/obj/Release/CL02_center.csproj.FileListAbsolute.txt
+Windows/CL02_center/obj/Release/CL02_center.exe
